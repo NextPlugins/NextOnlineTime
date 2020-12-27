@@ -93,9 +93,22 @@
         </dependency>
 
         <dependency>
+            <groupId>com.github.HenryFabio</groupId>
+            <artifactId>sql-provider</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.SaiintBrisson.command-framework</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
