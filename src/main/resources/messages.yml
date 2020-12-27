@@ -1,3 +1,12 @@
+command-help:
+  - '&6&LTEMPO ONLINE &fAjuda'
+  - ''
+  - ' &e/%label% ver [jogador] &7| &fVer o tempo online de tal jogador'
+  - ' &e/%label% menu &7| &fAbrir o menu de recompensas e top players'
+  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo a algum jogador'
+  - ''
+
+time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
 already-collected: '&cVocê já coletou esta recompensa.'
 no-time-to-collect: '&cVocê não tem tempo online suficiente para coletar esta recompensa.'

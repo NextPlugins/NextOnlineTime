@@ -26,6 +26,9 @@ public class MessageValue {
     @Getter private static final MessageValue instance = new MessageValue();
     @Inject @Named("messages") private Configuration config;
 
+    private final List<String> helpMessage = messageList("command-help");
+
+    private final String timeOfTarget = message("time-of-target");
     private final String collectedReward = message("collected-reward");
     private final String alreadyCollected = message("already-collected");
     private final String noTimeToCollect = message("no-time-to-collect");
@@ -34,18 +37,18 @@ public class MessageValue {
         return supplier.apply(MessageValue.instance);
     }
 
-    private String colors(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
+    private String colored(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     private String message(String key) {
-        return colors(config.getString(key));
+        return colored(config.getString(key));
     }
 
     private List<String> messageList(String key) {
         return config.getStringList(key)
                 .stream()
-                .map(this::colors)
+                .map(this::colored)
                 .collect(Collectors.toList());
     }
 
