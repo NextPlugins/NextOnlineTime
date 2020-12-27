@@ -1,0 +1,7 @@
+reward1:
+  name: '&cPacote inicial'
+  description: '&fVocê receberá 2500 moedas e uma picareta'
+  time: 5 # in minutes
+  commands:
+    - 'coins add %player% 2500'
+    - 'give %player% diamond_pickaxe'

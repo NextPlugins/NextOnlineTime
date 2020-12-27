@@ -6,19 +6,29 @@ import com.henryfabio.sqlprovider.mysql.MySQLProvider;
 import com.henryfabio.sqlprovider.mysql.configuration.MySQLConfiguration;
 import com.henryfabio.sqlprovider.sqlite.SQLiteProvider;
 import com.henryfabio.sqlprovider.sqlite.configuration.SQLiteConfiguration;
+import com.yuhtin.minecraft.lyces.tempoonline.command.OnlineTimeCommand;
+import com.yuhtin.minecraft.lyces.tempoonline.configuration.ConfigurationManager;
+import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.ConfigValue;
+import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.MessageValue;
 import com.yuhtin.minecraft.lyces.tempoonline.guice.PluginModule;
 import lombok.Getter;
+import me.saiintbrisson.bukkit.command.BukkitFrame;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 
+@Getter
 public final class TempoOnline extends JavaPlugin {
 
     private Injector injector;
+    private SQLProvider sqlProvider;
 
-    @Getter private SQLProvider sqlProvider;
+    private Configuration messagesConfig;
+    private Configuration rewadsConfig;
 
     public static TempoOnline getInstance() {
         return getPlugin(TempoOnline.class);
@@ -26,21 +36,46 @@ public final class TempoOnline extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        saveDefaultConfig();
+
+        this.saveDefaultConfig();
+        this.messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
+        this.rewadsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
+
     }
 
     @Override
     public void onEnable() {
 
-        configureSqlProvider();
-        this.sqlProvider.connect();
+        try {
 
-        this.getLogger().info("Connection with sql successfully");
+            configureSqlProvider();
+            this.sqlProvider.connect();
 
-        this.injector = PluginModule.from(this).createInjector();
-        this.injector.injectMembers(this);
+            this.getLogger().info("Connection with sql successfully");
 
-        this.getLogger().info("Guice injection successfully");
+            this.injector = PluginModule.from(this).createInjector();
+            this.injector.injectMembers(this);
+
+            this.injector.injectMembers(ConfigValue.instance());
+            this.injector.injectMembers(MessageValue.instance());
+
+            this.getLogger().info("Guice injection successfully");
+
+            BukkitFrame bukkitFrame = new BukkitFrame(this);
+            bukkitFrame.registerCommands(
+                    this.injector.getInstance(OnlineTimeCommand.class)
+            );
+
+            this.getLogger().info("Registered commands successfully");
+
+        }catch (Exception exception) {
+
+            exception.printStackTrace();
+            this.getLogger().severe("A error occurred on plugin startup, turning off");
+
+            Bukkit.getPluginManager().disablePlugin(this);
+
+        }
 
 
     }

@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.henryfabio.sqlprovider.common.SQLProvider;
 import com.yuhtin.minecraft.lyces.tempoonline.TempoOnline;
+import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.ConfigValue;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.configuration.Configuration;
@@ -32,8 +33,17 @@ public class PluginModule extends AbstractModule {
                 .annotatedWith(Names.named("main"))
                 .toInstance(tempoOnline.getConfig());
 
+        bind(Configuration.class)
+                .annotatedWith(Names.named("messages"))
+                .toInstance(tempoOnline.getMessagesConfig());
+
+        bind(Configuration.class)
+                .annotatedWith(Names.named("rewards"))
+                .toInstance(tempoOnline.getRewadsConfig());
+
         bind(SQLProvider.class)
                 .toInstance(tempoOnline.getSqlProvider());
+
     }
 
     public Injector createInjector() {
