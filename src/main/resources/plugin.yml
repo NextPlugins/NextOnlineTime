@@ -1,0 +1,4 @@
+name: TempoOnline
+version: ${project.version}
+main: com.yuhtin.minecraft.lyces.tempoonline.TempoOnline
+authors: [ Yuhtin ]
