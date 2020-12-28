@@ -1,6 +1,6 @@
-package com.yuhtin.minecraft.lyces.tempoonline.configuration;
+package com.nextplugins.onlinetime.configuration;
 
-import com.yuhtin.minecraft.lyces.tempoonline.TempoOnline;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import lombok.Data;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,7 +19,7 @@ public class ConfigurationManager {
 
     public ConfigurationManager saveDefault() {
 
-        TempoOnline instance = TempoOnline.getInstance();
+        NextOnlineTime instance = NextOnlineTime.getInstance();
         instance.saveResource(config, false);
 
         return this;

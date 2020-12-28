@@ -1,8 +1,10 @@
-package com.yuhtin.minecraft.lyces.tempoonline.command;
+package com.nextplugins.onlinetime.command;
 
-import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.MessageValue;
-import com.yuhtin.minecraft.lyces.tempoonline.inventory.OnlineTimeInventory;
-import com.yuhtin.minecraft.lyces.tempoonline.utils.TimeUtils;
+import com.google.inject.Inject;
+import com.nextplugins.onlinetime.configuration.values.MessageValue;
+import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
+import com.nextplugins.onlinetime.manager.RewardManager;
+import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
 import me.saiintbrisson.minecraft.command.annotation.Optional;
 import me.saiintbrisson.minecraft.command.command.Context;
@@ -16,6 +18,8 @@ import java.util.stream.Collectors;
  * Github: https://github.com/Yuhtin
  */
 public class OnlineTimeCommand {
+
+    @Inject private RewardManager rewardManager;
 
     @Command(
             name = "tempo",
@@ -50,7 +54,7 @@ public class OnlineTimeCommand {
 
         }
 
-        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory().init();
+        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory(rewardManager).init();
         onlineTimeInventory.openInventory(context.getSender());
 
     }

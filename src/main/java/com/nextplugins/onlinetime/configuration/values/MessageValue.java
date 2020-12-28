@@ -1,4 +1,4 @@
-package com.yuhtin.minecraft.lyces.tempoonline.configuration.values;
+package com.nextplugins.onlinetime.configuration.values;
 
 import com.google.inject.Inject;
 import lombok.AccessLevel;
@@ -27,11 +27,14 @@ public class MessageValue {
     @Inject @Named("messages") private Configuration config;
 
     private final List<String> helpMessage = messageList("command-help");
+    private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
 
     private final String timeOfTarget = message("time-of-target");
     private final String collectedReward = message("collected-reward");
-    private final String alreadyCollected = message("already-collected");
-    private final String noTimeToCollect = message("no-time-to-collect");
+
+    private final String alreadyCollected = message("rewardInfo.already-collected");
+    private final String noTimeToCollect = message("rewardInfo.no-time-to-collect");
+    private final String collect = message("rewardInfo.collect");
 
     public static <T> T get(Function<MessageValue, T> supplier) {
         return supplier.apply(MessageValue.instance);

@@ -1,4 +1,4 @@
-package com.yuhtin.minecraft.lyces.tempoonline;
+package com.nextplugins.onlinetime;
 
 import com.google.inject.Injector;
 import com.henryfabio.sqlprovider.common.SQLProvider;
@@ -6,11 +6,11 @@ import com.henryfabio.sqlprovider.mysql.MySQLProvider;
 import com.henryfabio.sqlprovider.mysql.configuration.MySQLConfiguration;
 import com.henryfabio.sqlprovider.sqlite.SQLiteProvider;
 import com.henryfabio.sqlprovider.sqlite.configuration.SQLiteConfiguration;
-import com.yuhtin.minecraft.lyces.tempoonline.command.OnlineTimeCommand;
-import com.yuhtin.minecraft.lyces.tempoonline.configuration.ConfigurationManager;
-import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.ConfigValue;
-import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.MessageValue;
-import com.yuhtin.minecraft.lyces.tempoonline.guice.PluginModule;
+import com.nextplugins.onlinetime.command.OnlineTimeCommand;
+import com.nextplugins.onlinetime.configuration.ConfigurationManager;
+import com.nextplugins.onlinetime.configuration.values.ConfigValue;
+import com.nextplugins.onlinetime.configuration.values.MessageValue;
+import com.nextplugins.onlinetime.guice.PluginModule;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import org.bukkit.Bukkit;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 @Getter
-public final class TempoOnline extends JavaPlugin {
+public final class NextOnlineTime extends JavaPlugin {
 
     private Injector injector;
     private SQLProvider sqlProvider;
@@ -30,8 +30,8 @@ public final class TempoOnline extends JavaPlugin {
     private Configuration messagesConfig;
     private Configuration rewadsConfig;
 
-    public static TempoOnline getInstance() {
-        return getPlugin(TempoOnline.class);
+    public static NextOnlineTime getInstance() {
+        return getPlugin(NextOnlineTime.class);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.yuhtin.minecraft.lyces.tempoonline.api.player;
+package com.nextplugins.onlinetime.api.player;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

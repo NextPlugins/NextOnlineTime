@@ -1,12 +1,11 @@
-package com.yuhtin.minecraft.lyces.tempoonline.guice;
+package com.nextplugins.onlinetime.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.henryfabio.sqlprovider.common.SQLProvider;
-import com.yuhtin.minecraft.lyces.tempoonline.TempoOnline;
-import com.yuhtin.minecraft.lyces.tempoonline.configuration.values.ConfigValue;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.configuration.Configuration;
@@ -17,32 +16,32 @@ import java.util.logging.Logger;
 @Data(staticConstructor = "from")
 public class PluginModule extends AbstractModule {
 
-    private final TempoOnline tempoOnline;
+    private final NextOnlineTime nextOnlineTime;
 
     @Override
     protected void configure() {
 
-        bind(TempoOnline.class)
-                .toInstance(tempoOnline);
+        bind(NextOnlineTime.class)
+                .toInstance(nextOnlineTime);
 
         bind(Logger.class)
                 .annotatedWith(Names.named("main"))
-                .toInstance(tempoOnline.getLogger());
+                .toInstance(nextOnlineTime.getLogger());
 
         bind(Configuration.class)
                 .annotatedWith(Names.named("main"))
-                .toInstance(tempoOnline.getConfig());
+                .toInstance(nextOnlineTime.getConfig());
 
         bind(Configuration.class)
                 .annotatedWith(Names.named("messages"))
-                .toInstance(tempoOnline.getMessagesConfig());
+                .toInstance(nextOnlineTime.getMessagesConfig());
 
         bind(Configuration.class)
                 .annotatedWith(Names.named("rewards"))
-                .toInstance(tempoOnline.getRewadsConfig());
+                .toInstance(nextOnlineTime.getRewadsConfig());
 
         bind(SQLProvider.class)
-                .toInstance(tempoOnline.getSqlProvider());
+                .toInstance(nextOnlineTime.getSqlProvider());
 
     }
 

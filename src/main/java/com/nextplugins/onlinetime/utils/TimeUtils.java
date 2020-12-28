@@ -1,4 +1,4 @@
-package com.yuhtin.minecraft.lyces.tempoonline.utils;
+package com.nextplugins.onlinetime.utils;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

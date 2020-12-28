@@ -1,4 +1,4 @@
-package com.yuhtin.minecraft.lyces.tempoonline.configuration.values;
+package com.nextplugins.onlinetime.configuration.values;
 
 import com.google.inject.Inject;
 import lombok.AccessLevel;

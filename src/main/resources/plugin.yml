@@ -1,4 +1,5 @@
-name: TempoOnline
+name: NextOnlineTime
 version: ${project.version}
-main: com.yuhtin.minecraft.lyces.tempoonline.TempoOnline
-authors: [ Yuhtin ]
+main: com.nextplugins.onlinetime.NextOnlineTime
+authors: [ "Yuhtin", "Henry_Fabio", "Eike", "Gabriel Santos" ]
+website: "https://github.com/NextPlugins"

@@ -8,5 +8,16 @@ command-help:
 
 time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
-already-collected: '&cVocê já coletou esta recompensa.'
-no-time-to-collect: '&cVocê não tem tempo online suficiente para coletar esta recompensa.'
+
+rewardInfo:
+  already-collected: '&cVocê já coletou este prêmio posteriormente.'
+  no-time-collect: '&eVocê não tem tempo suficiente para coletar este prêmio.'
+  collect: '&aClique aqui para coletar este prêmio.'
+  reward-lore:
+    - ''
+    - '&fInformações:'
+    - ''
+    - '%reward_description%'
+    - ''
+    - '&7Tempo necessário: &f%time%'
+    - '%collect_message%'
