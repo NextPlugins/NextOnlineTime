@@ -11,8 +11,10 @@ import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.ConfigValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
+import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.manager.RewardManager;
+import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import org.bukkit.Bukkit;
@@ -32,8 +34,8 @@ public final class NextOnlineTime extends JavaPlugin {
     private Configuration messagesConfig;
     private Configuration rewadsConfig;
 
-    @Inject
-    private RewardManager rewardManager;
+    @Inject private RewardManager rewardManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -75,6 +77,8 @@ public final class NextOnlineTime extends JavaPlugin {
 
             this.rewardManager.loadRewards();
             this.getLogger().info("Loaded all rewards");
+
+            this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
         } catch (Exception exception) {
 

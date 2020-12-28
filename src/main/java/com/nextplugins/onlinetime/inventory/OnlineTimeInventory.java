@@ -8,12 +8,16 @@ import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.border.Border;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.impl.ViewerConfigurationImpl;
 import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
+import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.RewardManager;
+import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +29,10 @@ import java.util.List;
 public class OnlineTimeInventory extends PagedInventory {
 
     private RewardManager rewardManager;
+    private TimedPlayerManager timedPlayerManager;
 
-    public OnlineTimeInventory(RewardManager rewardManager) {
+    public OnlineTimeInventory(RewardManager rewardManager,
+                               TimedPlayerManager timedPlayerManager) {
         super(
                 "online-time.main",
                 "Seu tempo no servidor",
@@ -34,6 +40,7 @@ public class OnlineTimeInventory extends PagedInventory {
         );
 
         this.rewardManager = rewardManager;
+        this.timedPlayerManager = timedPlayerManager;
 
     }
 
@@ -71,14 +78,14 @@ public class OnlineTimeInventory extends PagedInventory {
 
         List<InventoryItemSupplier> items = new ArrayList<>();
 
+        Player player = viewer.getPlayer();
+        TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
+
         for (String name : rewardManager.getRewards().keySet()) {
 
             Reward reward = rewardManager.getByName(name);
-            String collectStatus = MessageValue.get(MessageValue::collect);
-
-            //TODO
-            // if (timePlayer.getTime() < reward.getTime()) collectStatus = MessageValue.get(MessageValue::noTimeToCollect);
-            // if (timePlayer.getCollectedRewards().contains(name)) collectStatus = MessageValue.get(MessageValue::alreadyCollected);
+            int statusCode = getStatusCode(timedPlayer, reward);
+            String collectStatus = getStatusMessage(statusCode);
 
             List<String> replacedLore = new ArrayList<>();
             for (String line : MessageValue.get(MessageValue::rewardLore)) {
@@ -100,13 +107,55 @@ public class OnlineTimeInventory extends PagedInventory {
                             .name(reward.getColoredName())
                             .setLore(replacedLore)
                             .wrap()
-                    )
+                    ).defaultCallback(callback -> {
+
+                        if (statusCode != 1) {
+
+                            player.sendMessage(collectStatus);
+                            return;
+
+                        }
+
+                        for (String command : reward.getCommands()) {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                        }
+
+                        player.sendMessage(MessageValue.get(MessageValue::collectedReward));
+                        timedPlayer.getCollectedRewards().add(name);
+                        callback.updateInventory();
+
+                    })
             );
 
 
         }
 
         return items;
+
+    }
+
+    public int getStatusCode(TimedPlayer timedPlayer, Reward reward) {
+
+        int statusCode = 0;
+        if (timedPlayer.getTimeInServer() < reward.getTime()) statusCode = 1;
+        if (timedPlayer.getCollectedRewards().contains(reward.getName())) statusCode = 2;
+
+        return statusCode;
+
+    }
+
+    public String getStatusMessage(int statusCode) {
+
+        switch (statusCode) {
+
+            case 0:
+                return MessageValue.get(MessageValue::collect);
+            case 1:
+                return MessageValue.get(MessageValue::noTimeToCollect);
+            default:
+                return MessageValue.get(MessageValue::alreadyCollected);
+
+        }
 
     }
 }

@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.api.player;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +12,11 @@ import java.util.List;
  */
 
 @Data
-@NoArgsConstructor
+@Builder
 public class TimedPlayer {
 
-    private long timeInServer = 0;
-    private final List<String> collectedRewards = new ArrayList<>();
+    private String name;
+    @Builder.Default private long timeInServer = 0;
+    @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
 
 }

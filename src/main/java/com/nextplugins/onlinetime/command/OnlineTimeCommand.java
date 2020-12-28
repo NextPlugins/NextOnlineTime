@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
 import com.nextplugins.onlinetime.manager.RewardManager;
+import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
 import me.saiintbrisson.minecraft.command.annotation.Optional;
@@ -19,7 +20,10 @@ import java.util.stream.Collectors;
  */
 public class OnlineTimeCommand {
 
-    @Inject private RewardManager rewardManager;
+    @Inject
+    private RewardManager rewardManager;
+    @Inject
+    private TimedPlayerManager timedPlayerManager;
 
     @Command(
             name = "tempo",
@@ -54,7 +58,11 @@ public class OnlineTimeCommand {
 
         }
 
-        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory(rewardManager).init();
+        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory(
+                rewardManager,
+                timedPlayerManager
+        ).init();
+
         onlineTimeInventory.openInventory(context.getSender());
 
     }
