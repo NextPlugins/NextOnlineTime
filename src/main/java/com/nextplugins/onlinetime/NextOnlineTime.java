@@ -1,5 +1,6 @@
 package com.nextplugins.onlinetime;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.henryfabio.sqlprovider.common.SQLProvider;
 import com.henryfabio.sqlprovider.mysql.MySQLProvider;
@@ -11,6 +12,7 @@ import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.ConfigValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
+import com.nextplugins.onlinetime.manager.RewardManager;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import org.bukkit.Bukkit;
@@ -29,6 +31,9 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private Configuration messagesConfig;
     private Configuration rewadsConfig;
+
+    @Inject
+    private RewardManager rewardManager;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -68,7 +73,10 @@ public final class NextOnlineTime extends JavaPlugin {
 
             this.getLogger().info("Registered commands successfully");
 
-        }catch (Exception exception) {
+            this.rewardManager.loadRewards();
+            this.getLogger().info("Loaded all rewards");
+
+        } catch (Exception exception) {
 
             exception.printStackTrace();
             this.getLogger().severe("A error occurred on plugin startup, turning off");

@@ -11,15 +11,12 @@ import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.RewardManager;
-import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Yuhtin

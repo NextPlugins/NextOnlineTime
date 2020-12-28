@@ -11,6 +11,7 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * @author Yuhtin
@@ -20,19 +21,29 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class RewardParser {
 
+    @Inject @Named("main") private Logger logger;
     @Inject @Named("rewards") private Configuration configuration;
     @Inject private ItemParser itemParser;
 
     public Reward parseSection(ConfigurationSection section) {
 
-        return Reward.builder()
-                .name(section.getName())
-                .coloredName(ColorUtils.colored(section.getString("name")))
-                .icon(this.itemParser.parseSection(section))
-                .time(TimeUnit.MINUTES.toMillis(section.getInt("time")))
-                .description(ColorUtils.colored(section.getStringList("description")))
-                .commands(section.getStringList("commands"))
-                .build();
+        try {
+
+            return Reward.builder()
+                    .name(section.getName())
+                    .coloredName(ColorUtils.colored(section.getString("name")))
+                    .icon(this.itemParser.parseSection(section))
+                    .time(TimeUnit.MINUTES.toMillis(section.getInt("time")))
+                    .description(ColorUtils.colored(section.getStringList("description")))
+                    .commands(section.getStringList("commands"))
+                    .build();
+
+        } catch (Exception exception) {
+
+            this.logger.warning("Error on parse reward " + section.getName());
+            return null;
+
+        }
 
     }
 
@@ -41,9 +52,10 @@ public class RewardParser {
         List<Reward> rewards = new ArrayList<>();
         for (String key : section.getKeys(false)) {
 
-            rewards.add(
-                    this.parseSection(section.getConfigurationSection(key))
-            );
+            Reward reward = this.parseSection(section.getConfigurationSection(key));
+            if (reward == null) continue;
+
+            rewards.add(reward);
 
         }
 
