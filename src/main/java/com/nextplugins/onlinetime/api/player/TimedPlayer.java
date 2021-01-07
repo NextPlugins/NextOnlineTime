@@ -21,7 +21,11 @@ public class TimedPlayer {
     @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
 
     public void addTime(int time, TimeUnit timeUnit) {
-        this.timeInServer += timeUnit.toMillis(time);
+        this.addTime(timeUnit.toMillis(time));
+    }
+
+    public void addTime(long time) {
+        this.timeInServer += time;
     }
 
 }

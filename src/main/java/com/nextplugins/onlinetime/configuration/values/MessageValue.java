@@ -29,9 +29,17 @@ public class MessageValue {
     private final List<String> helpMessage = messageList("command-help");
     private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
 
+    private final String incorrectUsage = message("incorrect-usage");
+
     private final String timeOfTarget = message("time-of-target");
     private final String collectedReward = message("collected-reward");
     private final String noSpace = message("no-space");
+
+    private final String invalidTime = message("invalid-time");
+    private final String noTime = message("no-time");
+
+    private final String sendedTime = message("sendTime.sended");
+    private final String receivedTime = message("sendTime.received");
 
     private final String alreadyCollected = message("rewardInfo.already-collected");
     private final String noTimeToCollect = message("rewardInfo.no-time-to-collect");

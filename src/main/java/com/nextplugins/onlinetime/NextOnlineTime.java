@@ -14,6 +14,7 @@ import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
+import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -68,6 +69,11 @@ public final class NextOnlineTime extends JavaPlugin {
             BukkitFrame bukkitFrame = new BukkitFrame(this);
             bukkitFrame.registerCommands(
                     this.injector.getInstance(OnlineTimeCommand.class)
+            );
+
+            bukkitFrame.getMessageHolder().setMessage(
+                    MessageType.INCORRECT_USAGE,
+                    MessageValue.get(MessageValue::incorrectUsage)
             );
 
             this.getLogger().info("Registered commands successfully");

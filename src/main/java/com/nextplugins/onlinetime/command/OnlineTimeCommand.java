@@ -1,6 +1,7 @@
 package com.nextplugins.onlinetime.command;
 
 import com.google.inject.Inject;
+import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
 import com.nextplugins.onlinetime.manager.RewardManager;
@@ -20,10 +21,8 @@ import java.util.stream.Collectors;
  */
 public class OnlineTimeCommand {
 
-    @Inject
-    private RewardManager rewardManager;
-    @Inject
-    private TimedPlayerManager timedPlayerManager;
+    @Inject private RewardManager rewardManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
     @Command(
             name = "tempo",
@@ -47,16 +46,20 @@ public class OnlineTimeCommand {
     public void viewTimeCommand(Context<Player> context,
                                 @Optional Player target) {
 
-        if (target != null) {
+        if (target == null) target = context.getSender();
 
-            context.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
-                    .replace("%target%", target.getName())
-                    .replace("%time%", "1 dia e 1 hora")
-            );
+        context.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
+                .replace("%target%", target.getName())
+                .replace("%time%", TimeUtils.formatTime(this.timedPlayerManager.getByName(target.getName()).getTimeInServer()))
+        );
 
-            return;
+    }
 
-        }
+    @Command(
+            name = "tempo.menu",
+            target = CommandTarget.PLAYER
+    )
+    public void openInventoryCommand(Context<Player> context) {
 
         OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory(
                 rewardManager,
@@ -69,14 +72,43 @@ public class OnlineTimeCommand {
 
     @Command(
             name = "tempo.enviar",
-            target = CommandTarget.PLAYER
+            target = CommandTarget.PLAYER,
+            permission = "onlinetime.sendtime"
     )
     public void sendTimeCommand(Context<Player> context,
                                 Player target,
                                 String time) {
 
         long timeInMillis = TimeUtils.getTime(time);
-        // TODO
+        if (timeInMillis < 1) {
+
+            context.sendMessage(MessageValue.get(MessageValue::invalidTime));
+            return;
+
+        }
+
+        TimedPlayer timedPlayer = this.timedPlayerManager.getByName(context.getSender().getName());
+        if (timedPlayer.getTimeInServer() < timeInMillis) {
+
+            context.sendMessage(MessageValue.get(MessageValue::noTime));
+            return;
+
+        }
+
+        TimedPlayer timedTarget = this.timedPlayerManager.getByName(target.getName());
+
+        timedTarget.addTime(timeInMillis);
+        timedPlayer.setTimeInServer(timedPlayer.getTimeInServer() - timeInMillis);
+
+        context.sendMessage(MessageValue.get(MessageValue::sendedTime)
+                .replace("%time%", TimeUtils.formatTime(timeInMillis))
+                .replace("%target%", target.getName())
+        );
+
+        target.sendMessage(MessageValue.get(MessageValue::receivedTime)
+                .replace("%time%", TimeUtils.formatTime(timeInMillis))
+                .replace("%sender%", context.getSender().getName())
+        );
 
     }
 }
