@@ -7,3 +7,11 @@ connection:
     database: "test"
   sqlite:
     file: "online-time.sql"
+
+# De quanto em quantos minutos irá atualizar o tempo dos jogadores
+# Recomendado: 10 minutos
+updaterTime: 10
+
+# Formatos: MINUTES ou HOURS
+# Recomendado: MINUTES
+timeFormat: MINUTES

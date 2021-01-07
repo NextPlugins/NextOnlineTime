@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
-import com.henryfabio.sqlprovider.common.SQLProvider;
+import com.henryfabio.sqlprovider.executor.SQLExecutor;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,8 +40,8 @@ public class PluginModule extends AbstractModule {
                 .annotatedWith(Names.named("rewards"))
                 .toInstance(nextOnlineTime.getRewadsConfig());
 
-        bind(SQLProvider.class)
-                .toInstance(nextOnlineTime.getSqlProvider());
+        bind(SQLExecutor.class)
+                .toInstance(new SQLExecutor(nextOnlineTime.getSqlConnector()));
 
     }
 

@@ -2,19 +2,16 @@ package com.nextplugins.onlinetime;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.henryfabio.sqlprovider.common.SQLProvider;
-import com.henryfabio.sqlprovider.mysql.MySQLProvider;
-import com.henryfabio.sqlprovider.mysql.configuration.MySQLConfiguration;
-import com.henryfabio.sqlprovider.sqlite.SQLiteProvider;
-import com.henryfabio.sqlprovider.sqlite.configuration.SQLiteConfiguration;
+import com.henryfabio.sqlprovider.connector.SQLConnector;
+import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
+import com.henryfabio.sqlprovider.connector.type.impl.SQLiteDatabaseType;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
-import com.nextplugins.onlinetime.configuration.values.ConfigValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
-import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import org.bukkit.Bukkit;
@@ -24,15 +21,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class NextOnlineTime extends JavaPlugin {
 
     private Injector injector;
-    private SQLProvider sqlProvider;
+    private SQLConnector sqlConnector;
 
     private Configuration messagesConfig;
     private Configuration rewadsConfig;
+
+    private UpdatePlayerTimeTask updatePlayerTimeTask;
 
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
@@ -56,14 +56,11 @@ public final class NextOnlineTime extends JavaPlugin {
         try {
 
             configureSqlProvider();
-            this.sqlProvider.connect();
-
             this.getLogger().info("Connection with sql successfully");
 
             this.injector = PluginModule.from(this).createInjector();
             this.injector.injectMembers(this);
 
-            this.injector.injectMembers(ConfigValue.instance());
             this.injector.injectMembers(MessageValue.instance());
 
             this.getLogger().info("Guice injection successfully");
@@ -80,6 +77,20 @@ public final class NextOnlineTime extends JavaPlugin {
 
             this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
+            int updaterTime = this.getConfig().getInt("updaterTime");
+            TimeUnit timeFormat = this.parseTime(this.getConfig().getString("timeFormat"));
+
+            long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
+
+            this.updatePlayerTimeTask = new UpdatePlayerTimeTask(
+                    updaterTime,
+                    timeFormat,
+                    timedPlayerManager
+            );
+
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, updatePlayerTimeTask, updateTimeInTicks, updateTimeInTicks);
+
+
         } catch (Exception exception) {
 
             exception.printStackTrace();
@@ -92,9 +103,21 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
+    private TimeUnit parseTime(String string) {
+
+        TimeUnit timeUnit = TimeUnit.valueOf(string);
+
+        if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
+        return timeUnit;
+
+    }
+
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
+        this.updatePlayerTimeTask.run();
+        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
+
     }
 
     private void configureSqlProvider() {
@@ -104,23 +127,25 @@ public final class NextOnlineTime extends JavaPlugin {
 
             ConfigurationSection mysqlSection = configuration.getConfigurationSection("connection.mysql");
 
-            sqlProvider = new MySQLProvider(new MySQLConfiguration()
+            sqlConnector = MySQLDatabaseType.builder()
                     .address(mysqlSection.getString("address"))
                     .username(mysqlSection.getString("username"))
                     .password(mysqlSection.getString("password"))
                     .database(mysqlSection.getString("database"))
-            );
+                    .build()
+                    .connect();
 
         } else {
 
             ConfigurationSection sqliteSection = configuration.getConfigurationSection("connection.sqlite");
 
-            sqlProvider = new SQLiteProvider(new SQLiteConfiguration()
+            sqlConnector = SQLiteDatabaseType.builder()
                     .file(new File(
                             this.getDataFolder(),
                             sqliteSection.getString("file")
                     ))
-            );
+                    .build()
+                    .connect();
 
         }
 

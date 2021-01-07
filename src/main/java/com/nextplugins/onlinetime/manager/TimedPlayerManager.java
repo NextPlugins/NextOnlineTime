@@ -5,8 +5,11 @@ import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,4 +49,22 @@ public class TimedPlayerManager {
 
     }
 
+    public void purge(Player player) {
+
+        TimedPlayer timedPlayer = this.players.getOrDefault(player.getName(), null);
+        if (timedPlayer == null) return;
+
+        this.purge(timedPlayer);
+        this.players.remove(player.getName());
+
+
+    }
+
+    public void purge(TimedPlayer timedPlayer) {
+        this.timedPlayerDAO.saveOne(timedPlayer);
+    }
+
+    public Collection<TimedPlayer> getPlayers() {
+        return this.players.values();
+    }
 }

@@ -8,6 +8,7 @@ command-help:
 
 time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
+no-space: '&cVocê precisa ter mais %spaces% no inventário.'
 
 rewardInfo:
   already-collected: '&cVocê já coletou este prêmio posteriormente.'

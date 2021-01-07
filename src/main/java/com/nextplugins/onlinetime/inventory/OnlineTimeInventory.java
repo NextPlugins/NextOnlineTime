@@ -18,6 +18,7 @@ import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,23 @@ public class OnlineTimeInventory extends PagedInventory {
                         if (statusCode != 1) {
 
                             player.sendMessage(collectStatus);
+                            return;
+
+                        }
+
+                        int avaliableSpaces = 0;
+                        for (ItemStack content : player.getInventory().getContents()) {
+
+                            if (content != null && content.getType() != Material.AIR) continue;
+                            ++avaliableSpaces;
+
+                        }
+
+                        if (avaliableSpaces < reward.getCommands().size()) {
+
+                            player.sendMessage(MessageValue.get(MessageValue::noSpace)
+                                    .replace("%spaces%", String.valueOf(reward.getCommands().size() - avaliableSpaces))
+                            );
                             return;
 
                         }

@@ -1,8 +1,13 @@
 reward1:
   name: '&cPacote inicial'
   description:
-    - '&8- &7Utilize este pacote para começar'
-    - '&8- &7sua jogatina no servidor'
+    - '&7Utilize este pacote para começar'
+    - '&7sua jogatina no servidor'
+    - ''
+    - '&fItens:'
+    - ''
+    - '&8- &72500 coins'
+    - '&8- &7Picareta de Diamante'
   time: 5 # in minutes
   id: 388
   data: 0
@@ -12,7 +17,14 @@ reward1:
 
 reward2:
   name: '&cPacote inicial 2'
-  description: '&fVocê receberá 5000 moedas e uma picareta'
+  description:
+    - '&7Utilize este pacote para melhorar'
+    - '&7seus equipamentos'
+    - ''
+    - '&fItens:'
+    - ''
+    - '&8- &75000 coins'
+    - '&8- &7Picareta de Diamante'
   time: 15 # in minutes
   head: 'http://textures.minecraft.net/texture/5f55a7dc6322ec72f31ecd3c3b0024903b52bba584aedea1cf1a7e6eae27a280'
   commands:

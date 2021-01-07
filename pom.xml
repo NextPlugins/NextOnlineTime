@@ -95,7 +95,7 @@
         <dependency>
             <groupId>com.github.HenryFabio</groupId>
             <artifactId>sql-provider</artifactId>
-            <version>1.0.0</version>
+            <version>9561f20fd2</version>
         </dependency>
 
         <dependency>

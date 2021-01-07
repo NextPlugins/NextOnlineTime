@@ -31,6 +31,7 @@ public class MessageValue {
 
     private final String timeOfTarget = message("time-of-target");
     private final String collectedReward = message("collected-reward");
+    private final String noSpace = message("no-space");
 
     private final String alreadyCollected = message("rewardInfo.already-collected");
     private final String noTimeToCollect = message("rewardInfo.no-time-to-collect");
