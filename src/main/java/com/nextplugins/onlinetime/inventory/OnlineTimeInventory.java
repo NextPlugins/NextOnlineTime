@@ -23,13 +23,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
 public class OnlineTimeInventory extends PagedInventory {
+
+    private final Map<String, Integer> playerRewardFilter = new LinkedHashMap<>();
 
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
@@ -64,6 +69,8 @@ public class OnlineTimeInventory extends PagedInventory {
                 )
         );
 
+        editor.setItem(48, changeFilterInventoryItem(viewer));
+
         editor.setItem(50, InventoryItem.of(
                 new ItemBuilder(Material.GOLD_INGOT)
                         .name("&6TOP Online")
@@ -82,10 +89,14 @@ public class OnlineTimeInventory extends PagedInventory {
         Player player = viewer.getPlayer();
         TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
 
+        int rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
+
         for (String name : rewardManager.getRewards().keySet()) {
 
             Reward reward = rewardManager.getByName(name);
             int statusCode = getStatusCode(timedPlayer, reward);
+            if (rewardFilter != -1 && rewardFilter != statusCode) continue;
+
             String collectStatus = getStatusMessage(statusCode);
 
             List<String> replacedLore = new ArrayList<>();
@@ -176,4 +187,26 @@ public class OnlineTimeInventory extends PagedInventory {
         }
 
     }
+
+    private InventoryItem changeFilterInventoryItem(Viewer viewer) {
+        AtomicInteger currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
+        return InventoryItem.of(new ItemBuilder(Material.HOPPER)
+                .name("&eFiltro de recompensas")
+                .setLore(
+                        getColorByFilter(currentFilter.get(), -1) + "* Todas as recompensas",
+                        getColorByFilter(currentFilter.get(), 0) + "* Recompensas para coletar",
+                        getColorByFilter(currentFilter.get(), 1) + "* Recompensas futuras",
+                        getColorByFilter(currentFilter.get(), 2) + "* Recompensas já coletadas"
+                )
+                .wrap())
+                .defaultCallback(event -> {
+                    playerRewardFilter.put(viewer.getName(), currentFilter.incrementAndGet() > 2 ? -1 : currentFilter.get());
+                    event.updateInventory();
+                });
+    }
+
+    private String getColorByFilter(int currentFilter, int loopFilter) {
+        return currentFilter == loopFilter ? "&a" : "&7";
+    }
+
 }
