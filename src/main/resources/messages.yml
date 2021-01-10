@@ -3,7 +3,7 @@ command-help:
   - ''
   - ' &e/%label% ver [jogador] &7| &fVer o tempo online de tal jogador'
   - ' &e/%label% menu &7| &fAbrir o menu de recompensas e top players'
-  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador' # Permissão: onlinetime.sendtime
+  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador'
   - ''
 
 incorrect-usage: '&cUtilize /{usage}.'

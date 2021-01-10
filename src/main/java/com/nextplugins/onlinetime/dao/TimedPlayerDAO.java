@@ -10,12 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 @Singleton
 public final class TimedPlayerDAO {
 
-    private final String table = "onlinetime_players";
+    private static final String TABLE = "onlinetime_players";
     @Inject private SQLExecutor sqlExecutor;
 
     public void createTable() {
 
-        this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + table + "(" +
+        this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
                 "name VARCHAR(16) NOT NULL PRIMARY KEY," +
                 "time INTEGER(16)," +
                 "collectedRewards TEXT" +
@@ -26,7 +26,7 @@ public final class TimedPlayerDAO {
     public TimedPlayer selectOne(String name) {
 
         return this.sqlExecutor.resultOneQuery(
-                "SELECT * FROM " + table + " WHERE name = ?",
+                "SELECT * FROM " + TABLE + " WHERE name = ?",
                 statment -> statment.set(1, name),
                 TimedPlayerAdapter.class
         );
@@ -36,11 +36,11 @@ public final class TimedPlayerDAO {
     public void insertOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "INSERT INTO " + table + " VALUES(?,?,?);",
+                "INSERT INTO " + TABLE + " VALUES(?,?,?);",
                 statment -> {
                     statment.set(1, timedPlayer.getName());
                     statment.set(2, timedPlayer.getTimeInServer());
-                    statment.set(3, StringUtils.join(",", timedPlayer.getCollectedRewards()));
+                    statment.set(3, String.join(",", timedPlayer.getCollectedRewards()));
                 }
         );
 
@@ -49,10 +49,10 @@ public final class TimedPlayerDAO {
     public void saveOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "UPDATE " + table + " SET time = ?, collectedRewards = ? WHERE name = ?",
+                "UPDATE " + TABLE + " SET time = ?, collectedRewards = ? WHERE name = ?",
                 statment -> {
                     statment.set(1, timedPlayer.getTimeInServer());
-                    statment.set(2, StringUtils.join(",", timedPlayer.getCollectedRewards()));
+                    statment.set(2, String.join(",", timedPlayer.getCollectedRewards()));
                     statment.set(3, timedPlayer.getName());
                 }
         );

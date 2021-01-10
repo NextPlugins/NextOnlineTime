@@ -13,14 +13,14 @@ import java.io.File;
  */
 
 @Data(staticConstructor = "of")
-public class ConfigurationManager {
+public final class ConfigurationManager {
 
     private final String config;
 
     public ConfigurationManager saveDefault() {
 
         NextOnlineTime instance = NextOnlineTime.getInstance();
-        instance.saveResource(config, false);
+        instance.saveResource(this.config, false);
 
         return this;
 
@@ -28,8 +28,10 @@ public class ConfigurationManager {
 
     public Configuration load() {
 
+        NextOnlineTime instance = NextOnlineTime.getInstance();
+
         return YamlConfiguration.loadConfiguration(
-                new File(config)
+                new File(instance.getDataFolder(), this.config)
         );
 
     }

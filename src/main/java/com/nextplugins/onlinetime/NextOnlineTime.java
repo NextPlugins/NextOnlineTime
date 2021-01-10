@@ -2,6 +2,7 @@ package com.nextplugins.onlinetime;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.henryfabio.minecraft.inventoryapi.manager.InventoryManager;
 import com.henryfabio.sqlprovider.connector.SQLConnector;
 import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
 import com.henryfabio.sqlprovider.connector.type.impl.SQLiteDatabaseType;
@@ -56,13 +57,13 @@ public final class NextOnlineTime extends JavaPlugin {
 
         try {
 
+            InventoryManager.enable(this);
+
             configureSqlProvider();
             this.getLogger().info("Connection with sql successfully");
 
             this.injector = PluginModule.from(this).createInjector();
             this.injector.injectMembers(this);
-
-            this.injector.injectMembers(MessageValue.instance());
 
             this.getLogger().info("Guice injection successfully");
 
@@ -83,19 +84,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
             this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
-            int updaterTime = this.getConfig().getInt("updaterTime");
-            TimeUnit timeFormat = this.parseTime(this.getConfig().getString("timeFormat"));
-
-            long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
-
-            this.updatePlayerTimeTask = new UpdatePlayerTimeTask(
-                    updaterTime,
-                    timeFormat,
-                    timedPlayerManager
-            );
-
-            Bukkit.getScheduler().runTaskTimerAsynchronously(this, updatePlayerTimeTask, updateTimeInTicks, updateTimeInTicks);
-
+            registerTimeUpdaterTask();
 
         } catch (Exception exception) {
 
@@ -105,16 +94,6 @@ public final class NextOnlineTime extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
 
         }
-
-
-    }
-
-    private TimeUnit parseTime(String string) {
-
-        TimeUnit timeUnit = TimeUnit.valueOf(string);
-
-        if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
-        return timeUnit;
 
     }
 
@@ -154,6 +133,37 @@ public final class NextOnlineTime extends JavaPlugin {
                     .connect();
 
         }
+
+    }
+
+    private void registerTimeUpdaterTask() {
+
+        int updaterTime = this.getConfig().getInt("updaterTime");
+        TimeUnit timeFormat = this.parseTime(this.getConfig().getString("timeFormat"));
+
+        long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
+
+        this.updatePlayerTimeTask = new UpdatePlayerTimeTask(
+                updaterTime,
+                timeFormat,
+                timedPlayerManager
+        );
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+                this,
+                updatePlayerTimeTask,
+                updateTimeInTicks,
+                updateTimeInTicks
+        );
+
+    }
+
+    private TimeUnit parseTime(String string) {
+
+        TimeUnit timeUnit = TimeUnit.valueOf(string);
+
+        if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
+        return timeUnit;
 
     }
 }

@@ -1,5 +1,6 @@
 package com.nextplugins.onlinetime.inventory;
 
+import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
 import com.henryfabio.minecraft.inventoryapi.inventory.impl.paged.PagedInventory;
 import com.henryfabio.minecraft.inventoryapi.item.InventoryItem;
@@ -8,6 +9,7 @@ import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.border.Border;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.impl.ViewerConfigurationImpl;
 import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
@@ -29,19 +31,17 @@ import java.util.List;
  */
 public class OnlineTimeInventory extends PagedInventory {
 
-    private RewardManager rewardManager;
-    private TimedPlayerManager timedPlayerManager;
+    @Inject private RewardManager rewardManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
-    public OnlineTimeInventory(RewardManager rewardManager,
-                               TimedPlayerManager timedPlayerManager) {
+    public OnlineTimeInventory() {
         super(
                 "online-time.main",
                 "Seu tempo no servidor",
                 6 * 9
         );
 
-        this.rewardManager = rewardManager;
-        this.timedPlayerManager = timedPlayerManager;
+        NextOnlineTime.getInstance().getInjector().injectMembers(this);
 
     }
 

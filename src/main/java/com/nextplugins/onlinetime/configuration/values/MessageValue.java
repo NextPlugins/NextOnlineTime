@@ -1,6 +1,6 @@
 package com.nextplugins.onlinetime.configuration.values;
 
-import com.google.inject.Inject;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.experimental.Accessors;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
 
-import javax.inject.Named;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,10 +20,11 @@ import java.util.stream.Collectors;
 @Getter
 @Accessors(fluent = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MessageValue {
+public final class MessageValue {
 
-    @Getter private static final MessageValue instance = new MessageValue();
-    @Inject @Named("messages") private Configuration config;
+    private static final MessageValue instance = new MessageValue();
+
+    private final Configuration configuration = NextOnlineTime.getInstance().getMessagesConfig();
 
     private final List<String> helpMessage = messageList("command-help");
     private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
@@ -42,7 +42,7 @@ public class MessageValue {
     private final String receivedTime = message("sendTime.received");
 
     private final String alreadyCollected = message("rewardInfo.already-collected");
-    private final String noTimeToCollect = message("rewardInfo.no-time-to-collect");
+    private final String noTimeToCollect = message("rewardInfo.no-time-collect");
     private final String collect = message("rewardInfo.collect");
 
     public static <T> T get(Function<MessageValue, T> supplier) {
@@ -54,11 +54,11 @@ public class MessageValue {
     }
 
     private String message(String key) {
-        return colored(config.getString(key));
+        return colored(configuration.getString(key));
     }
 
     private List<String> messageList(String key) {
-        return config.getStringList(key)
+        return configuration.getStringList(key)
                 .stream()
                 .map(this::colored)
                 .collect(Collectors.toList());
