@@ -28,8 +28,8 @@ public class TimedPlayer {
 
     public RewardStatus canCollect(Reward reward) {
 
-        if (this.timeInServer < reward.getTime()) return RewardStatus.NO_TIME;
         if (this.collectedRewards.contains(reward.getName())) return RewardStatus.COLLECTED;
+        if (this.timeInServer < reward.getTime()) return RewardStatus.NO_TIME;
         return RewardStatus.CAN_COLLECT;
 
     }
