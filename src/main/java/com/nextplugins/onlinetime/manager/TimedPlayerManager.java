@@ -7,7 +7,6 @@ import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,9 +39,11 @@ public class TimedPlayerManager {
 
             }
 
+            timedPlayer.setLastUpdateTime(System.currentTimeMillis());
             this.players.put(name, timedPlayer);
 
         }
+
 
         return timedPlayer;
 
@@ -56,14 +57,13 @@ public class TimedPlayerManager {
         this.purge(timedPlayer);
         this.players.remove(player.getName());
 
-
     }
 
     public void purge(TimedPlayer timedPlayer) {
+
+        timedPlayer.addTime(System.currentTimeMillis() - timedPlayer.getLastUpdateTime());
         this.timedPlayerDAO.saveOne(timedPlayer);
+
     }
 
-    public Collection<TimedPlayer> getPlayers() {
-        return this.players.values();
-    }
 }

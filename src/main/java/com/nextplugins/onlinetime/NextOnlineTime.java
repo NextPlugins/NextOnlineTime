@@ -10,8 +10,10 @@ import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
+import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
@@ -20,7 +22,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -34,10 +38,9 @@ public final class NextOnlineTime extends JavaPlugin {
     private Configuration messagesConfig;
     private Configuration rewadsConfig;
 
-    private UpdatePlayerTimeTask updatePlayerTimeTask;
-
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private TopTimedPlayerTask topTimedPlayerTask;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -54,6 +57,8 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        PluginManager pluginManager = Bukkit.getPluginManager();
 
         try {
 
@@ -77,7 +82,9 @@ public final class NextOnlineTime extends JavaPlugin {
                     MessageValue.get(MessageValue::incorrectUsage)
             );
 
-            this.getLogger().info("Registered commands successfully");
+            pluginManager.registerEvents(new UserConnectListener(this.timedPlayerManager), this);
+
+            this.getLogger().info("Registered commands and events successfully");
 
             this.rewardManager.loadRewards();
             this.getLogger().info("Loaded all rewards");
@@ -91,7 +98,7 @@ public final class NextOnlineTime extends JavaPlugin {
             exception.printStackTrace();
             this.getLogger().severe("A error occurred on plugin startup, turning off");
 
-            Bukkit.getPluginManager().disablePlugin(this);
+            pluginManager.disablePlugin(this);
 
         }
 
@@ -100,7 +107,6 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        this.updatePlayerTimeTask.run();
         Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
 
     }
@@ -138,22 +144,29 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private void registerTimeUpdaterTask() {
 
+        BukkitScheduler scheduler = Bukkit.getScheduler();
+
         int updaterTime = this.getConfig().getInt("updaterTime");
         TimeUnit timeFormat = this.parseTime(this.getConfig().getString("timeFormat"));
 
         long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
-        this.updatePlayerTimeTask = new UpdatePlayerTimeTask(
-                updaterTime,
-                timeFormat,
-                timedPlayerManager
-        );
+        UpdatePlayerTimeTask updatePlayerTimeTask = new UpdatePlayerTimeTask();
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
+        this.injector.injectMembers(updatePlayerTimeTask);
+
+        scheduler.runTaskTimerAsynchronously(
                 this,
                 updatePlayerTimeTask,
                 updateTimeInTicks,
                 updateTimeInTicks
+        );
+
+        scheduler.runTaskTimerAsynchronously(
+                this,
+                this.topTimedPlayerTask,
+                0,
+                30 * 60 * 20L
         );
 
     }

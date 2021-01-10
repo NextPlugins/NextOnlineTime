@@ -1,19 +1,14 @@
 package com.nextplugins.onlinetime.task;
 
+import com.google.inject.Inject;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.TimeUnit;
-
-@AllArgsConstructor
 public class UpdatePlayerTimeTask implements Runnable {
 
-    private final int time;
-    private final TimeUnit timeUnit;
-    private final TimedPlayerManager timedPlayerManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
     @Override
     public void run() {
@@ -21,7 +16,9 @@ public class UpdatePlayerTimeTask implements Runnable {
         for (Player player : Bukkit.getOnlinePlayers()) {
 
             TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
-            timedPlayer.addTime(time, timeUnit);
+
+            timedPlayer.addTime(System.currentTimeMillis() - timedPlayer.getLastUpdateTime());
+            timedPlayer.setLastUpdateTime(System.currentTimeMillis());
 
         }
 

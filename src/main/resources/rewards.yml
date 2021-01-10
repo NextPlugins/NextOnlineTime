@@ -26,7 +26,8 @@ reward2:
     - '&8- &75000 coins'
     - '&8- &7Picareta de Diamante'
   time: 15 # in minutes
-  head: 'http://textures.minecraft.net/texture/5f55a7dc6322ec72f31ecd3c3b0024903b52bba584aedea1cf1a7e6eae27a280'
+  id: 7
+  data: 0
   commands:
     - 'coins add %player% 5000'
     - 'give %player% diamond_pickaxe'

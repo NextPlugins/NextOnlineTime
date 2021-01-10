@@ -16,23 +16,11 @@ public class ItemParser {
 
     public ItemStack parseSection(ConfigurationSection section) {
 
-        ItemBuilder itemBuilder;
-
-        if (section.contains("id")) {
-
-            itemBuilder = new ItemBuilder(
-                    Material.getMaterial(section.getInt("id")),
-                    1,
-                    (short) section.getInt("data")
-            );
-
-        } else {
-
-            itemBuilder = new ItemBuilder(section.getString("head"));
-
-        }
-
-        return itemBuilder.wrap();
+        return new ItemBuilder(
+                Material.getMaterial(section.getInt("id")),
+                1,
+                (short) section.getInt("data")
+        ).wrap();
 
     }
 

@@ -1,11 +1,12 @@
 package com.nextplugins.onlinetime.api.player;
 
+import com.nextplugins.onlinetime.api.reward.Reward;
+import com.nextplugins.onlinetime.models.enums.RewardStatus;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Yuhtin
@@ -17,15 +18,20 @@ import java.util.concurrent.TimeUnit;
 public class TimedPlayer {
 
     private String name;
+    private long lastUpdateTime;
     @Builder.Default private long timeInServer = 0;
     @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
 
-    public void addTime(int time, TimeUnit timeUnit) {
-        this.addTime(timeUnit.toMillis(time));
-    }
-
     public void addTime(long time) {
         this.timeInServer += time;
+    }
+
+    public RewardStatus canCollect(Reward reward) {
+
+        if (this.timeInServer < reward.getTime()) return RewardStatus.NO_TIME;
+        if (this.collectedRewards.contains(reward.getName())) return RewardStatus.COLLECTED;
+        return RewardStatus.CAN_COLLECT;
+
     }
 
 }

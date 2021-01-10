@@ -9,9 +9,12 @@ public final class TimedPlayerAdapter implements SQLResultAdapter<TimedPlayer> {
     @Override
     public TimedPlayer adaptResult(SimpleResultSet resultSet) {
 
+        String userName = resultSet.get("name");
+        long timeInServer = Long.parseLong(resultSet.get("time"));
+
         TimedPlayer timedPlayer = TimedPlayer.builder()
-                .timeInServer(Long.parseLong(resultSet.get("time")))
-                .name(resultSet.get("name"))
+                .name(userName)
+                .timeInServer(timeInServer)
                 .build();
 
         String collectedRewards = resultSet.get("collectedRewards");

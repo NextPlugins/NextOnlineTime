@@ -3,9 +3,11 @@ package com.nextplugins.onlinetime.dao;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.henryfabio.sqlprovider.executor.SQLExecutor;
+import com.henryfabio.sqlprovider.executor.statement.SimpleStatement;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.adapter.TimedPlayerAdapter;
-import org.apache.commons.lang3.StringUtils;
+
+import java.util.Set;
 
 @Singleton
 public final class TimedPlayerDAO {
@@ -17,7 +19,7 @@ public final class TimedPlayerDAO {
 
         this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
                 "name VARCHAR(16) NOT NULL PRIMARY KEY," +
-                "time INTEGER(16)," +
+                "time TEXT," +
                 "collectedRewards TEXT" +
                 ");");
 
@@ -28,6 +30,16 @@ public final class TimedPlayerDAO {
         return this.sqlExecutor.resultOneQuery(
                 "SELECT * FROM " + TABLE + " WHERE name = ?",
                 statment -> statment.set(1, name),
+                TimedPlayerAdapter.class
+        );
+
+    }
+
+    public Set<TimedPlayer> selectAll(String preferences) {
+
+        return this.sqlExecutor.resultManyQuery(
+                "SELECT * FROM " + TABLE + " " + preferences,
+                SimpleStatement::executeUpdate,
                 TimedPlayerAdapter.class
         );
 

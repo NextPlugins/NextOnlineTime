@@ -31,7 +31,9 @@ public final class MessageValue {
 
     private final String incorrectUsage = message("incorrect-usage");
 
+    private final String cantSendForYou = message("cant-send-for-you");
     private final String timeOfTarget = message("time-of-target");
+    private final String usedTime = message("used-time");
     private final String collectedReward = message("collected-reward");
     private final String noSpace = message("no-space");
 
@@ -43,7 +45,7 @@ public final class MessageValue {
 
     private final String alreadyCollected = message("rewardInfo.already-collected");
     private final String noTimeToCollect = message("rewardInfo.no-time-collect");
-    private final String collect = message("rewardInfo.collect");
+    private final String canCollect = message("rewardInfo.canCollect");
 
     public static <T> T get(Function<MessageValue, T> supplier) {
         return supplier.apply(MessageValue.instance);

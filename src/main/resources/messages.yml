@@ -7,9 +7,11 @@ command-help:
   - ''
 
 incorrect-usage: '&cUtilize /{usage}.'
+cant-send-for-you: '&cVocê não pode enviar tempo para si mesmo.'
 
 time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
+used-time: '&aVocê utlizou &f%time% &apara receber a recompensa.'
 no-space: '&cVocê precisa ter mais %spaces% no inventário.'
 
 invalid-time: '&cO tempo inserido é inválido.'
@@ -22,7 +24,7 @@ sendTime:
 rewardInfo:
   already-collected: '&cVocê já coletou este prêmio posteriormente.'
   no-time-collect: '&eVocê não tem tempo suficiente para coletar este prêmio.'
-  collect: '&aClique aqui para coletar este prêmio.'
+  canCollect: '&aClique aqui para coletar este prêmio.'
   reward-lore:
     - ''
     - '&fInformações:'

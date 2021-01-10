@@ -61,11 +61,7 @@ public class OnlineTimeCommand {
     )
     public void openInventoryCommand(Context<Player> context) {
 
-        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory(
-                rewardManager,
-                timedPlayerManager
-        ).init();
-
+        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory().init();
         onlineTimeInventory.openInventory(context.getSender());
 
     }
@@ -78,6 +74,13 @@ public class OnlineTimeCommand {
     public void sendTimeCommand(Context<Player> context,
                                 Player target,
                                 String time) {
+
+        if (context.getSender() == target) {
+
+            context.sendMessage(MessageValue.get(MessageValue::cantSendForYou));
+            return;
+
+        }
 
         long timeInMillis = TimeUtils.getTime(time);
         if (timeInMillis < 1) {

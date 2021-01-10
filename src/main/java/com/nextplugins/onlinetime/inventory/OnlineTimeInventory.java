@@ -15,6 +15,7 @@ import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,10 +35,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class OnlineTimeInventory extends PagedInventory {
 
-    private final Map<String, Integer> playerRewardFilter = new LinkedHashMap<>();
+    private final Map<String, Integer> playerRewardFilter = new HashMap<>();
 
-    @Inject private RewardManager rewardManager;
-    @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject
+    private RewardManager rewardManager;
+    @Inject
+    private TimedPlayerManager timedPlayerManager;
 
     public OnlineTimeInventory() {
         super(
@@ -51,32 +54,45 @@ public class OnlineTimeInventory extends PagedInventory {
     }
 
     @Override
-    protected void configureInventory(Viewer viewer, InventoryEditor editor) {
+    protected void configureViewer(PagedViewer viewer) {
 
         ViewerConfigurationImpl.Paged pagedViewer = viewer.getConfiguration();
 
         pagedViewer.itemPageLimit(21);
         pagedViewer.border(Border.of(1, 1, 2, 1));
 
+    }
+
+    @Override
+    protected void configureInventory(Viewer viewer, InventoryEditor editor) {
+
+        Player player = viewer.getPlayer();
+        TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+
         editor.setItem(48, InventoryItem.of(
                 new ItemBuilder(viewer.getPlayer().getName())
                         .name("&a" + viewer.getPlayer().getName())
                         .setLore(
                                 "&7Confia seu progresso abaixo:",
-                                "&7Total de tempo online: &f1 dia e 2 horas"
+                                "&7Total de tempo online: &f" + TimeUtils.formatTime(timedPlayer.getTimeInServer())
                         )
                         .wrap()
                 )
         );
 
-        editor.setItem(48, changeFilterInventoryItem(viewer));
+        editor.setItem(49, changeFilterInventoryItem(viewer));
 
         editor.setItem(50, InventoryItem.of(
                 new ItemBuilder(Material.GOLD_INGOT)
                         .name("&6TOP Online")
                         .setLore("&7Clique para ver os top jogadores", "&7onlines no servidor")
                         .wrap()
-                )
+                ).defaultCallback(callback -> {
+
+                    TopOnlineTimeInventory topOnlineTimeInventory = new TopOnlineTimeInventory().init();
+                    topOnlineTimeInventory.openInventory(player);
+
+                })
         );
 
     }
@@ -94,10 +110,9 @@ public class OnlineTimeInventory extends PagedInventory {
         for (String name : rewardManager.getRewards().keySet()) {
 
             Reward reward = rewardManager.getByName(name);
-            int statusCode = getStatusCode(timedPlayer, reward);
-            if (rewardFilter != -1 && rewardFilter != statusCode) continue;
+            RewardStatus rewardStatus = timedPlayer.canCollect(reward);
 
-            String collectStatus = getStatusMessage(statusCode);
+            if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) continue;
 
             List<String> replacedLore = new ArrayList<>();
             for (String line : MessageValue.get(MessageValue::rewardLore)) {
@@ -107,7 +122,7 @@ public class OnlineTimeInventory extends PagedInventory {
 
                     replacedLore.add(line
                             .replace("%time%", TimeUtils.formatTime(reward.getTime()))
-                            .replace("%collect_message%", collectStatus)
+                            .replace("%collect_message%", rewardStatus.getMessage())
                     );
 
                 }
@@ -121,9 +136,9 @@ public class OnlineTimeInventory extends PagedInventory {
                             .wrap()
                     ).defaultCallback(callback -> {
 
-                        if (statusCode != 1) {
+                        if (!rewardStatus.isCanCollect()) {
 
-                            player.sendMessage(collectStatus);
+                            player.sendMessage(rewardStatus.getMessage());
                             return;
 
                         }
@@ -149,8 +164,20 @@ public class OnlineTimeInventory extends PagedInventory {
                             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
                         }
 
-                        player.sendMessage(MessageValue.get(MessageValue::collectedReward));
+                        player.sendMessage(
+                                MessageValue.get(MessageValue::collectedReward)
+                                        .replace("%reward%", reward.getColoredName())
+                        );
+
                         timedPlayer.getCollectedRewards().add(name);
+
+                        if (NextOnlineTime.getInstance().getConfig().getBoolean("type")) {
+
+                            timedPlayer.setTimeInServer(timedPlayer.getTimeInServer() - reward.getTime());
+                            player.sendMessage(MessageValue.get(MessageValue::usedTime));
+
+                        }
+
                         callback.updateInventory();
 
                     })
@@ -163,50 +190,33 @@ public class OnlineTimeInventory extends PagedInventory {
 
     }
 
-    public int getStatusCode(TimedPlayer timedPlayer, Reward reward) {
-
-        int statusCode = 0;
-        if (timedPlayer.getTimeInServer() < reward.getTime()) statusCode = 1;
-        if (timedPlayer.getCollectedRewards().contains(reward.getName())) statusCode = 2;
-
-        return statusCode;
-
-    }
-
-    public String getStatusMessage(int statusCode) {
-
-        switch (statusCode) {
-
-            case 0:
-                return MessageValue.get(MessageValue::collect);
-            case 1:
-                return MessageValue.get(MessageValue::noTimeToCollect);
-            default:
-                return MessageValue.get(MessageValue::alreadyCollected);
-
-        }
-
-    }
-
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {
         AtomicInteger currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
         return InventoryItem.of(new ItemBuilder(Material.HOPPER)
-                .name("&eFiltro de recompensas")
+                .name("&6Filtro de recompensas")
                 .setLore(
-                        getColorByFilter(currentFilter.get(), -1) + "* Todas as recompensas",
-                        getColorByFilter(currentFilter.get(), 0) + "* Recompensas para coletar",
-                        getColorByFilter(currentFilter.get(), 1) + "* Recompensas futuras",
-                        getColorByFilter(currentFilter.get(), 2) + "* Recompensas já coletadas"
+                        "&7Veja apenas as recompensas que deseja",
+                        "",
+                        getColorByFilter(currentFilter.get(), -1) + " Todas as recompensas",
+                        getColorByFilter(currentFilter.get(), 0) + " Recompensas liberadas",
+                        getColorByFilter(currentFilter.get(), 1) + " Recompensas bloqueadas",
+                        getColorByFilter(currentFilter.get(), 2) + " Recompensas coletadas",
+                        "",
+                        "&aClique para mudar o filtro!"
                 )
                 .wrap())
                 .defaultCallback(event -> {
+
                     playerRewardFilter.put(viewer.getName(), currentFilter.incrementAndGet() > 2 ? -1 : currentFilter.get());
+
+                    configureInventory(viewer, viewer.getEditor());
                     event.updateInventory();
+
                 });
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {
-        return currentFilter == loopFilter ? "&a" : "&7";
+        return currentFilter == loopFilter ? " &b➤" : "&8";
     }
 
 }

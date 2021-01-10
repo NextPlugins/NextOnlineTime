@@ -21,9 +21,17 @@ connection:
     file: "online-time.sql"
 
 # De quanto em quantos minutos irá atualizar o tempo dos jogadores
-# Recomendado: 10 minutos
-updaterTime: 10
+# Recomendado: 5 minutos
+updaterTime: 5
 
 # Formatos: MINUTES ou HOURS
 # Recomendado: MINUTES
 timeFormat: MINUTES
+
+# O plugin trabalha com dois tipos de sistema
+# 1 - Formato padrão do sistema
+# 2 - Quando pegar uma recompensa, o tempo dela é retirado da quantidade de tempo do jogador
+# Exemplo: Caso o jogador tenha 1 hora de tempo online e pega uma recompensa de 20 minutos, ele passará a ter 40 minutos
+# Para ativar esta função, coloque true a baixo
+# Para usar a função normal do plugin, coloque false
+type: false
