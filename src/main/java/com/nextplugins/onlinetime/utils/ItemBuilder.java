@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 
 public class ItemBuilder {
 
-    private ItemStack item;
+    private final ItemStack item;
 
     public ItemBuilder(ItemStack item) {
         this.item = item;

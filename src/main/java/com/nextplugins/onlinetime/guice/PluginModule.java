@@ -29,14 +29,6 @@ public class PluginModule extends AbstractModule {
                 .toInstance(nextOnlineTime.getLogger());
 
         bind(Configuration.class)
-                .annotatedWith(Names.named("main"))
-                .toInstance(nextOnlineTime.getConfig());
-
-        bind(Configuration.class)
-                .annotatedWith(Names.named("messages"))
-                .toInstance(nextOnlineTime.getMessagesConfig());
-
-        bind(Configuration.class)
                 .annotatedWith(Names.named("rewards"))
                 .toInstance(nextOnlineTime.getRewadsConfig());
 

@@ -37,10 +37,8 @@ public class OnlineTimeInventory extends PagedInventory {
 
     private final Map<String, Integer> playerRewardFilter = new HashMap<>();
 
-    @Inject
-    private RewardManager rewardManager;
-    @Inject
-    private TimedPlayerManager timedPlayerManager;
+    @Inject private RewardManager rewardManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
     public OnlineTimeInventory() {
         super(
@@ -174,7 +172,10 @@ public class OnlineTimeInventory extends PagedInventory {
                         if (NextOnlineTime.getInstance().getConfig().getBoolean("type")) {
 
                             timedPlayer.setTimeInServer(timedPlayer.getTimeInServer() - reward.getTime());
-                            player.sendMessage(MessageValue.get(MessageValue::usedTime));
+
+                            player.sendMessage(MessageValue.get(MessageValue::usedTime)
+                                    .replace("%time%", TimeUtils.formatTime(reward.getTime()))
+                            );
 
                         }
 
@@ -187,6 +188,14 @@ public class OnlineTimeInventory extends PagedInventory {
         }
 
         return items;
+
+    }
+
+    @Override
+    protected void update(Viewer viewer, InventoryEditor editor) {
+
+        super.update(viewer, editor);
+        configureInventory(viewer, viewer.getEditor());
 
     }
 
@@ -208,8 +217,6 @@ public class OnlineTimeInventory extends PagedInventory {
                 .defaultCallback(event -> {
 
                     playerRewardFilter.put(viewer.getName(), currentFilter.incrementAndGet() > 2 ? -1 : currentFilter.get());
-
-                    configureInventory(viewer, viewer.getEditor());
                     event.updateInventory();
 
                 });

@@ -3,10 +3,8 @@ package com.nextplugins.onlinetime.dao;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.henryfabio.sqlprovider.executor.SQLExecutor;
-import com.henryfabio.sqlprovider.executor.statement.SimpleStatement;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.adapter.TimedPlayerAdapter;
-import org.bukkit.Sound;
 
 import java.util.Set;
 

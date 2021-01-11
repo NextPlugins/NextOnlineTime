@@ -40,7 +40,9 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
+
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
+    @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -151,13 +153,9 @@ public final class NextOnlineTime extends JavaPlugin {
 
         long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
-        UpdatePlayerTimeTask updatePlayerTimeTask = new UpdatePlayerTimeTask();
-
-        this.injector.injectMembers(updatePlayerTimeTask);
-
         scheduler.runTaskTimerAsynchronously(
                 this,
-                updatePlayerTimeTask,
+                this.updatePlayerTimeTask,
                 updateTimeInTicks,
                 updateTimeInTicks
         );
