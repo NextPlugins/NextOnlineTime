@@ -2,15 +2,11 @@ package com.nextplugins.onlinetime.inventory;
 
 import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
-import com.henryfabio.minecraft.inventoryapi.inventory.impl.simple.SimpleInventory;
+import com.henryfabio.minecraft.inventoryapi.inventory.impl.global.GlobalInventory;
 import com.henryfabio.minecraft.inventoryapi.item.InventoryItem;
 import com.henryfabio.minecraft.inventoryapi.item.enums.DefaultItem;
-import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
-import com.henryfabio.minecraft.inventoryapi.viewer.configuration.ViewerConfiguration;
-import com.henryfabio.minecraft.inventoryapi.viewer.impl.simple.SimpleViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
-import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Material;
@@ -19,9 +15,8 @@ import org.bukkit.Material;
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
-public class TopOnlineTimeInventory extends SimpleInventory {
+public class TopOnlineTimeInventory extends GlobalInventory {
 
-    @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private TopTimedPlayerManager topTimedPlayerManager;
 
     public TopOnlineTimeInventory() {
@@ -37,15 +32,15 @@ public class TopOnlineTimeInventory extends SimpleInventory {
     }
 
     @Override
-    protected void configureInventory(Viewer viewer, InventoryEditor editor) {
+    protected void configureInventory(InventoryEditor editor) {
 
-        editor.setItem(31, DefaultItem.BACK.toInventoryItem(viewer));
+        editor.setItem(31, DefaultItem.BACK.toInventoryItem());
 
         editor.setItem(32, InventoryItem.of(new ItemBuilder(Material.DOUBLE_PLANT)
                 .name("&6Próxima Atualização")
                 .setLore(
                         "&7O top tempo será atualizado em",
-                        "&f" + TimeUtils.formatTime(this.topTimedPlayerTask.getNextUpdate() - System.currentTimeMillis())
+                        "&f" + TimeUtils.formatTime(this.topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
                 )
                 .wrap()));
 
@@ -69,13 +64,6 @@ public class TopOnlineTimeInventory extends SimpleInventory {
 
         }
 
-    }
-
-    @Override
-    protected void configureViewer(SimpleViewer viewer) {
-
-        ViewerConfiguration configuration = viewer.getConfiguration();
-        configuration.backInventory("online-time.main");
 
     }
 

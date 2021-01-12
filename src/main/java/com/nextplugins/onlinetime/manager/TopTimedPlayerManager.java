@@ -2,7 +2,7 @@ package com.nextplugins.onlinetime.manager;
 
 import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.LinkedHashMap;
 
@@ -11,10 +11,12 @@ import java.util.LinkedHashMap;
  * Github: https://github.com/Yuhtin
  */
 
+@Data
 @Singleton
 public class TopTimedPlayerManager {
 
-    @Getter private final LinkedHashMap<String, Long> topPlayers = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Long> topPlayers = new LinkedHashMap<>();
+    private long nextUpdate;
 
     public void addPlayer(TimedPlayer timedPlayer) {
         this.topPlayers.put(timedPlayer.getName(), timedPlayer.getTimeInServer());

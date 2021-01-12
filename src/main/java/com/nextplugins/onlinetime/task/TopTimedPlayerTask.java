@@ -5,7 +5,6 @@ import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
-import lombok.Getter;
 
 import java.time.Instant;
 import java.util.Set;
@@ -22,8 +21,6 @@ public class TopTimedPlayerTask implements Runnable {
     @Inject private TimedPlayerDAO timedPlayerDAO;
     @Inject private TopTimedPlayerManager topTimedPlayerManager;
 
-    @Getter private long nextUpdate;
-
     @Override
     public void run() {
 
@@ -32,9 +29,9 @@ public class TopTimedPlayerTask implements Runnable {
         this.topTimedPlayerManager.getTopPlayers().clear();
         timedPlayers.forEach(this.topTimedPlayerManager::addPlayer);
 
-        this.nextUpdate = Instant.now()
+        this.topTimedPlayerManager.setNextUpdate(Instant.now()
                 .plusMillis(TimeUnit.MINUTES.toMillis(30))
-                .toEpochMilli();
+                .toEpochMilli());
 
     }
 }
