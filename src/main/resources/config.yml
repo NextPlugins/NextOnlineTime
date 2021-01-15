@@ -18,7 +18,7 @@ connection:
     password: ""
     database: "test"
   sqlite:
-    file: "online-time.sql"
+    file: "plugins/NextOnlineTime/online-time.sql"
 
 # De quanto em quantos minutos irá atualizar o tempo dos jogadores
 # Recomendado: 5 minutos

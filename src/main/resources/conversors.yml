@@ -1,0 +1,27 @@
+AtlasTempoOnline:
+  # Para deixar a opção de conversão disponível, ative esta opção
+  use: true
+  connection:
+    table: "onlinetime" # não mude caso não saiba o que está fazendo
+    mysql:
+      enable: false
+      address: "localhost:3306"
+      username: "root"
+      password: ""
+      database: "test"
+    sqlite:
+      file: "plugins/AtlasTempoOnline/database.db"
+
+OnlineTimePlus:
+  # Para deixar a opção de conversão disponível, ative esta opção
+  use: true
+  connection:
+    table: "tempo" # não mude caso não saiba o que está fazendo
+    mysql:
+      enable: false
+      address: "localhost:3306"
+      username: "root"
+      password: ""
+      database: "test"
+    sqlite:
+      file: "plugins/OnlineTimePlus/storage.db"

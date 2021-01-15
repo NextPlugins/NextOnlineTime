@@ -6,11 +6,14 @@ import com.henryfabio.minecraft.inventoryapi.manager.InventoryManager;
 import com.henryfabio.sqlprovider.connector.SQLConnector;
 import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
 import com.henryfabio.sqlprovider.connector.type.impl.SQLiteDatabaseType;
+import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConversor;
+import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
+import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
@@ -21,7 +24,6 @@ import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -36,10 +38,12 @@ public final class NextOnlineTime extends JavaPlugin {
     private SQLConnector sqlConnector;
 
     private Configuration messagesConfig;
-    private Configuration rewadsConfig;
+    private Configuration rewardsConfig;
+    private Configuration conversorsConfig;
 
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private ConversorManager conversorManager;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
@@ -53,7 +57,8 @@ public final class NextOnlineTime extends JavaPlugin {
 
         this.saveDefaultConfig();
         this.messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
-        this.rewadsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
+        this.rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
+        this.conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
 
     }
 
@@ -66,7 +71,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
             InventoryManager.enable(this);
 
-            configureSqlProvider();
+            this.sqlConnector = configureSqlProvider(this.getConfig());
             this.getLogger().info("Connection with sql successfully");
 
             this.injector = PluginModule.from(this).createInjector();
@@ -95,12 +100,51 @@ public final class NextOnlineTime extends JavaPlugin {
 
             registerTimeUpdaterTask();
 
+            loadConversors();
+            this.getLogger().info("Loaded info of conversors successfully");
+
         } catch (Exception exception) {
 
             exception.printStackTrace();
             this.getLogger().severe("A error occurred on plugin startup, turning off");
 
             pluginManager.disablePlugin(this);
+
+        }
+
+    }
+
+    private void loadConversors() {
+
+        String atlasConversor = "AtlasTempoOnline";
+        if (conversorsConfig.getBoolean(atlasConversor + ".use")) {
+
+            ConfigurationSection section = conversorsConfig.getConfigurationSection(atlasConversor);
+            SQLConnector connector = this.configureSqlProvider(section);
+
+            AtlasOnlineTimeConversor conversor = new AtlasOnlineTimeConversor(
+                    atlasConversor,
+                    section.getString("connection.table"),
+                    connector
+            );
+
+            this.conversorManager.registerConversor(conversor);
+
+        }
+
+        String onlineTimePlusConversor = "OnlineTimePlus";
+        if (conversorsConfig.getBoolean(onlineTimePlusConversor + ".use")) {
+
+            ConfigurationSection section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
+            SQLConnector connector = this.configureSqlProvider(section);
+
+            OnlineTimePlusConversor conversor = new OnlineTimePlusConversor(
+                    onlineTimePlusConversor,
+                    section.getString("connection.table"),
+                    connector
+            );
+
+            this.conversorManager.registerConversor(conversor);
 
         }
 
@@ -113,14 +157,14 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
-    private void configureSqlProvider() {
+    private SQLConnector configureSqlProvider(ConfigurationSection section) {
 
-        FileConfiguration configuration = getConfig();
-        if (configuration.getBoolean("connection.mysql.enable")) {
+        SQLConnector connector;
+        if (section.getBoolean("connection.mysql.enable")) {
 
-            ConfigurationSection mysqlSection = configuration.getConfigurationSection("connection.mysql");
+            ConfigurationSection mysqlSection = section.getConfigurationSection("connection.mysql");
 
-            sqlConnector = MySQLDatabaseType.builder()
+            connector = MySQLDatabaseType.builder()
                     .address(mysqlSection.getString("address"))
                     .username(mysqlSection.getString("username"))
                     .password(mysqlSection.getString("password"))
@@ -130,17 +174,16 @@ public final class NextOnlineTime extends JavaPlugin {
 
         } else {
 
-            ConfigurationSection sqliteSection = configuration.getConfigurationSection("connection.sqlite");
+            ConfigurationSection sqliteSection = section.getConfigurationSection("connection.sqlite");
 
-            sqlConnector = SQLiteDatabaseType.builder()
-                    .file(new File(
-                            this.getDataFolder(),
-                            sqliteSection.getString("file")
-                    ))
+            connector = SQLiteDatabaseType.builder()
+                    .file(new File(sqliteSection.getString("file")))
                     .build()
                     .connect();
 
         }
+
+        return connector;
 
     }
 

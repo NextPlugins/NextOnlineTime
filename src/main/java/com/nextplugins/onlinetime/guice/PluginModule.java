@@ -30,7 +30,7 @@ public class PluginModule extends AbstractModule {
 
         bind(Configuration.class)
                 .annotatedWith(Names.named("rewards"))
-                .toInstance(nextOnlineTime.getRewadsConfig());
+                .toInstance(nextOnlineTime.getRewardsConfig());
 
         bind(SQLExecutor.class)
                 .toInstance(new SQLExecutor(nextOnlineTime.getSqlConnector()));

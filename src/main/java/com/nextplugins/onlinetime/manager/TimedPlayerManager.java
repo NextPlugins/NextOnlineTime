@@ -20,7 +20,7 @@ public class TimedPlayerManager {
 
     @Getter @Inject private TimedPlayerDAO timedPlayerDAO;
 
-    private final Map<String, TimedPlayer> players = new HashMap<>();
+    @Getter private final Map<String, TimedPlayer> players = new HashMap<>();
 
     public TimedPlayer getByName(String name) {
 

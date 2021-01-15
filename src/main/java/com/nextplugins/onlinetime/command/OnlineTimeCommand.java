@@ -1,18 +1,25 @@
 package com.nextplugins.onlinetime.command;
 
 import com.google.inject.Inject;
+import com.nextplugins.onlinetime.NextOnlineTime;
+import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
+import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
 import me.saiintbrisson.minecraft.command.annotation.Optional;
 import me.saiintbrisson.minecraft.command.command.Context;
 import me.saiintbrisson.minecraft.command.target.CommandTarget;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -21,8 +28,12 @@ import java.util.stream.Collectors;
  */
 public class OnlineTimeCommand {
 
-    @Inject private RewardManager rewardManager;
-    @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject
+    private RewardManager rewardManager;
+    @Inject
+    private TimedPlayerManager timedPlayerManager;
+    @Inject
+    private ConversorManager conversorManager;
 
     @Command(
             name = "tempo",
@@ -114,4 +125,45 @@ public class OnlineTimeCommand {
         );
 
     }
+
+    @Command(
+            name = "conversor",
+            permission = "onlinetime.admin",
+            target = CommandTarget.ALL
+    )
+    public void onConversorCommand(Context<CommandSender> context,
+                                   String conversor) {
+
+        Conversor pluginConversor = this.conversorManager.getByName(conversor);
+        if (pluginConversor == null) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.avaliableConversors()
+            ));
+            return;
+
+        }
+
+        context.sendMessage(ColorUtils.colored(
+                "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
+        ));
+
+        long initial = System.currentTimeMillis();
+
+        Bukkit.getScheduler().runTaskAsynchronously(
+                NextOnlineTime.getInstance(),
+                () -> {
+
+                    Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
+                    timedPlayers.forEach(this.timedPlayerManager.getTimedPlayerDAO()::insertOne);
+
+                    context.sendMessage(ColorUtils.colored(
+                            "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "ms&a."
+                    ));
+
+                }
+        );
+
+    }
+
 }

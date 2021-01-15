@@ -18,7 +18,7 @@ public final class TimedPlayerDAO {
 
         this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
                 "name VARCHAR(16) NOT NULL PRIMARY KEY," +
-                "time TEXT," +
+                "time BIGINT," +
                 "collectedRewards TEXT" +
                 ");");
 
