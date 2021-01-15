@@ -136,7 +136,7 @@ public class OnlineTimeCommand {
         if (converting) {
 
             context.sendMessage(ColorUtils.colored(
-                    "&aVocê já está convertendo uma tabela, aguarde a finalização da mesma."
+                    "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
             ));
             return;
 
