@@ -19,6 +19,7 @@ import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
+import me.bristermitten.pdm.PluginDependencyManager;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bukkit.Bukkit;
@@ -65,52 +66,55 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        PluginManager pluginManager = Bukkit.getPluginManager();
+        PluginDependencyManager.of(this).loadAllDependencies().thenRun(() -> {
 
-        try {
+            PluginManager pluginManager = Bukkit.getPluginManager();
+            try {
 
-            InventoryManager.enable(this);
+                InventoryManager.enable(this);
 
-            this.sqlConnector = configureSqlProvider(this.getConfig());
-            this.getLogger().info("Connection with sql successfully");
+                this.sqlConnector = configureSqlProvider(this.getConfig());
+                this.getLogger().info("Connection with sql successfully");
 
-            this.injector = PluginModule.from(this).createInjector();
-            this.injector.injectMembers(this);
+                this.injector = PluginModule.from(this).createInjector();
+                this.injector.injectMembers(this);
 
-            this.getLogger().info("Guice injection successfully");
+                this.getLogger().info("Guice injection successfully");
 
-            BukkitFrame bukkitFrame = new BukkitFrame(this);
-            bukkitFrame.registerCommands(
-                    this.injector.getInstance(OnlineTimeCommand.class)
-            );
+                BukkitFrame bukkitFrame = new BukkitFrame(this);
+                bukkitFrame.registerCommands(
+                        this.injector.getInstance(OnlineTimeCommand.class)
+                );
 
-            bukkitFrame.getMessageHolder().setMessage(
-                    MessageType.INCORRECT_USAGE,
-                    MessageValue.get(MessageValue::incorrectUsage)
-            );
+                bukkitFrame.getMessageHolder().setMessage(
+                        MessageType.INCORRECT_USAGE,
+                        MessageValue.get(MessageValue::incorrectUsage)
+                );
 
-            pluginManager.registerEvents(new UserConnectListener(this.timedPlayerManager), this);
+                pluginManager.registerEvents(new UserConnectListener(this.timedPlayerManager), this);
 
-            this.getLogger().info("Registered commands and events successfully");
+                this.getLogger().info("Registered commands and events successfully");
 
-            this.rewardManager.loadRewards();
-            this.getLogger().info("Loaded all rewards");
+                this.rewardManager.loadRewards();
+                this.getLogger().info("Loaded all rewards");
 
-            this.timedPlayerManager.getTimedPlayerDAO().createTable();
+                this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
-            registerTimeUpdaterTask();
+                registerTimeUpdaterTask();
 
-            loadConversors();
-            this.getLogger().info("Loaded info of conversors successfully");
+                loadConversors();
+                this.getLogger().info("Loaded info of conversors successfully");
 
-        } catch (Exception exception) {
+            } catch (Exception exception) {
 
-            exception.printStackTrace();
-            this.getLogger().severe("A error occurred on plugin startup, turning off");
+                exception.printStackTrace();
+                this.getLogger().severe("A error occurred on plugin startup, turning off");
 
-            pluginManager.disablePlugin(this);
+                pluginManager.disablePlugin(this);
 
-        }
+            }
+
+        });
 
     }
 
