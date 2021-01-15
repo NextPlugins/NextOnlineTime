@@ -47,11 +47,17 @@ public final class TimedPlayerDAO {
     public void insertOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "INSERT INTO " + TABLE + " VALUES(?,?,?);",
+                "INSERT INTO " + TABLE + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE time = ?, collectedRewards = ?;",
                 statment -> {
                     statment.set(1, timedPlayer.getName());
+
                     statment.set(2, timedPlayer.getTimeInServer());
-                    statment.set(3, String.join(",", timedPlayer.getCollectedRewards()));
+                    statment.set(4, timedPlayer.getTimeInServer());
+
+                    String rewards = String.join(",", timedPlayer.getCollectedRewards());
+                    statment.set(3, rewards);
+                    statment.set(5, rewards);
+
                 }
         );
 
