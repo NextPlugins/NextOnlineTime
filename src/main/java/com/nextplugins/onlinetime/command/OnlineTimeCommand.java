@@ -28,12 +28,11 @@ import java.util.stream.Collectors;
  */
 public class OnlineTimeCommand {
 
-    @Inject
-    private RewardManager rewardManager;
-    @Inject
-    private TimedPlayerManager timedPlayerManager;
-    @Inject
-    private ConversorManager conversorManager;
+    @Inject private RewardManager rewardManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private ConversorManager conversorManager;
+
+    private boolean converting;
 
     @Command(
             name = "tempo",
@@ -134,6 +133,25 @@ public class OnlineTimeCommand {
     public void onConversorCommand(Context<CommandSender> context,
                                    String conversor) {
 
+        if (converting) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&aVocê já está convertendo uma tabela, aguarde a finalização da mesma."
+            ));
+            return;
+
+        }
+
+        int maxPlayers = context.getSender() instanceof Player ? 1 : 0;
+        if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&cEsta função só pode ser usada com apenas você online."
+            ));
+            return;
+
+        }
+
         Conversor pluginConversor = this.conversorManager.getByName(conversor);
         if (pluginConversor == null) {
 
@@ -149,6 +167,7 @@ public class OnlineTimeCommand {
         ));
 
         long initial = System.currentTimeMillis();
+        converting = true;
 
         Bukkit.getScheduler().runTaskAsynchronously(
                 NextOnlineTime.getInstance(),
@@ -158,8 +177,11 @@ public class OnlineTimeCommand {
                     timedPlayers.forEach(this.timedPlayerManager.getTimedPlayerDAO()::insertOne);
 
                     context.sendMessage(ColorUtils.colored(
-                            "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "ms&a."
+                            "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "&a.",
+                            "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
                     ));
+
+                    converting = false;
 
                 }
         );

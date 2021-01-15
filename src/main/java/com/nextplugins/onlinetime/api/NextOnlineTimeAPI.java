@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 
 /**
@@ -47,6 +46,17 @@ public final class NextOnlineTimeAPI {
         return this.rewardManager.getByName(name);
     }
 
+    /**
+     * Get player by filter
+     * Can be used to search players with more x time
+     *
+     * WARNING:
+     * Only from cache.
+     * If you want to search with all players, access {@link com.nextplugins.onlinetime.dao.TimedPlayerDAO} in {@link TimedPlayerManager}
+     *
+     * @param filter custom filter to search
+     * @return {@link Optional} with the player found
+     */
     public Optional<TimedPlayer> findPlayerByFilter(Predicate<TimedPlayer> filter) {
 
         return allCachedPlayers().stream()
@@ -55,6 +65,11 @@ public final class NextOnlineTimeAPI {
 
     }
 
+    /**
+     * Get player cache
+     *
+     * @return {@link Collection} with all players in cache
+     */
     public Collection<TimedPlayer> allCachedPlayers() {
         return this.timedPlayerManager.getPlayers().values();
     }

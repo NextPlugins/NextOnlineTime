@@ -20,7 +20,7 @@ public class ConversorManager {
     public Conversor getByName(String name) {
 
         return conversors.stream()
-                .filter(conversor -> conversor.getName().equalsIgnoreCase(name))
+                .filter(conversor -> conversor.getConversorName().equalsIgnoreCase(name))
                 .findAny()
                 .orElse(null);
 
@@ -29,7 +29,7 @@ public class ConversorManager {
     public List<String> avaliableConversors() {
 
         return conversors.stream()
-                .map(Conversor::getName)
+                .map(Conversor::getConversorName)
                 .collect(Collectors.toList());
 
     }
