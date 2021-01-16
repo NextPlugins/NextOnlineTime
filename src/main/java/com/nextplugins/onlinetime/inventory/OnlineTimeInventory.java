@@ -71,7 +71,7 @@ public class OnlineTimeInventory extends PagedInventory {
                 new ItemBuilder(viewer.getPlayer().getName())
                         .name("&a" + viewer.getPlayer().getName())
                         .setLore(
-                                "&7Confia seu progresso abaixo:",
+                                "&7Confira seu progresso abaixo:",
                                 "&7Total de tempo online: &f" + TimeUtils.formatTime(timedPlayer.getTimeInServer())
                         )
                         .wrap()

@@ -130,7 +130,7 @@ public class OnlineTimeCommand {
 
     @Command(
             name = "conversor",
-            permission = "onlinetime.admin",
+            permission = "nextonlinetime.admin",
             target = CommandTarget.ALL
     )
     public void onConversorCommand(Context<CommandSender> context,

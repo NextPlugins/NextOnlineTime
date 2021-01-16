@@ -27,7 +27,7 @@ public class UserConnectListener implements Listener {
         if (!conversorManager.isConverting()) return;
 
         event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-        event.setKickMessage(ColorUtils.colored("&cO servidor está no meio de uma conversão, aguarde"));
+        event.setKickMessage(ColorUtils.colored("&cO servidor está no meio de uma conversão de dados, aguarde"));
 
     }
 
