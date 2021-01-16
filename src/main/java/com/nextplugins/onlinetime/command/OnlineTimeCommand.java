@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
  */
 public class OnlineTimeCommand {
 
+    private static final String CONVERSION_FORMAT = "&b&L%s &a> &eConvertido &a%s &ede &a%s &edados em &6%s";
+
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
@@ -209,6 +211,7 @@ public class OnlineTimeCommand {
         if (context.getSender() instanceof ConsoleCommandSender) return;
 
         Player sender = (Player) context.getSender();
+
         int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(NextOnlineTime.getInstance(), () -> {
 
             if (!sender.isOnline()) return;
@@ -218,8 +221,8 @@ public class OnlineTimeCommand {
 
             }
 
-            String format = ColorUtils.colored(String.format(
-                    "&b&LNextOnlineTime &a> &eConvertido &a%s &ede &a%s &edados em &6%s",
+            String format = ColorUtils.colored(String.format(CONVERSION_FORMAT,
+                    pluginConversor.getConversorName(),
                     converted,
                     timedPlayers.size(),
                     TimeUtils.formatTime(System.currentTimeMillis() - initial)

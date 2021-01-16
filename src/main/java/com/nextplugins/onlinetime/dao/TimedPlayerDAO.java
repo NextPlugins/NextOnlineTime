@@ -12,6 +12,7 @@ import java.util.Set;
 public final class TimedPlayerDAO {
 
     private static final String TABLE = "onlinetime_players";
+
     @Inject private SQLExecutor sqlExecutor;
     @Inject private String duplicateEntry;
 
@@ -19,7 +20,7 @@ public final class TimedPlayerDAO {
 
         this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
                 "name VARCHAR(16) NOT NULL PRIMARY KEY UNIQUE," +
-                "time BIGINT," +
+                "time INTEGER(8)," +
                 "collectedRewards TEXT" +
                 ");");
 
@@ -39,7 +40,8 @@ public final class TimedPlayerDAO {
 
         return this.sqlExecutor.resultManyQuery(
                 "SELECT * FROM " + TABLE + " " + preferences,
-                simpleStatement -> {},
+                simpleStatement -> {
+                },
                 TimedPlayerAdapter.class
         );
 
@@ -48,16 +50,21 @@ public final class TimedPlayerDAO {
     public void insertOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "INSERT INTO " + TABLE + " VALUES(?,?,?) " + duplicateEntry + "  time = ?, collectedRewards = ?",
+                String.format(duplicateEntry, TABLE),
                 statment -> {
+
                     String rewards = String.join(",", timedPlayer.getCollectedRewards());
 
                     statment.set(1, timedPlayer.getName());
                     statment.set(2, timedPlayer.getTimeInServer());
                     statment.set(3, rewards);
 
-                    statment.set(4, timedPlayer.getTimeInServer());
-                    statment.set(5, rewards);
+                    if (duplicateEntry.contains("ON")) {
+
+                        statment.set(4, timedPlayer.getTimeInServer());
+                        statment.set(5, rewards);
+
+                    }
 
                 }
         );

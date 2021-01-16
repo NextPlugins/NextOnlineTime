@@ -2,11 +2,12 @@ package com.nextplugins.onlinetime.inventory;
 
 import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
-import com.henryfabio.minecraft.inventoryapi.inventory.impl.global.GlobalInventory;
 import com.henryfabio.minecraft.inventoryapi.inventory.impl.simple.SimpleInventory;
 import com.henryfabio.minecraft.inventoryapi.item.InventoryItem;
 import com.henryfabio.minecraft.inventoryapi.item.enums.DefaultItem;
 import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
+import com.henryfabio.minecraft.inventoryapi.viewer.configuration.ViewerConfiguration;
+import com.henryfabio.minecraft.inventoryapi.viewer.impl.simple.SimpleViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
@@ -65,6 +66,14 @@ public class TopOnlineTimeInventory extends SimpleInventory {
             ++position;
 
         }
+
+    }
+
+    @Override
+    protected void configureViewer(SimpleViewer viewer) {
+
+        ViewerConfiguration configuration = viewer.getConfiguration();
+        configuration.backInventory("online-time.main");
 
     }
 

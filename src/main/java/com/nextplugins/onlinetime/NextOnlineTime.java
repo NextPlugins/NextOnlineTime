@@ -187,7 +187,7 @@ public final class NextOnlineTime extends JavaPlugin {
                     .build()
                     .connect();
 
-            this.duplicateEntry = "ON DUPLICATE KEY UPDATE";
+            this.duplicateEntry = "INSERT INTO %s VALUES(?,?,?) ON DUPLICATE KEY UPDATE time = ?, collectedRewards = ?";
 
         } else {
 
@@ -198,7 +198,7 @@ public final class NextOnlineTime extends JavaPlugin {
                     .build()
                     .connect();
 
-            this.duplicateEntry = "ON CONFLICT(name) DO UPDATE SET";
+            this.duplicateEntry = "INSERT OR REPLACE INTO %s VALUES(?,?,?)";
 
         }
 
