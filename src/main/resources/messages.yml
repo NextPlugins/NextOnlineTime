@@ -3,7 +3,7 @@ command-help:
   - ''
   - ' &e/%label% ver [jogador] &7| &fVer o tempo online de tal jogador'
   - ' &e/%label% menu &7| &fAbrir o menu de recompensas e top players'
-  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador' # formato: 1d6h3m2s, 1dia6horas ..
+  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador' # permissão: nextonlinetime.sendtime
   - ''
 
 incorrect-usage: '&cUtilize /{usage}.'
@@ -14,7 +14,7 @@ collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom suces
 used-time: '&aVocê utlizou &f%time% &apara receber a recompensa.'
 no-space: '&cVocê precisa ter mais %spaces% no inventário.'
 
-invalid-time: '&cO tempo inserido é inválido.'
+invalid-time: '&cO tempo inserido é inválido, formato válido, 1d3h2m, 25s, 1w, 3w2d (3 semanas, 2 dias).'
 no-time: '&cVocê não tem esta quantidade de tempo online.'
 
 sendTime:
@@ -22,7 +22,7 @@ sendTime:
   received: '&aVocê recebeu %time% do jogador %sender%.'
 
 rewardInfo:
-  already-collected: '&cVocê já coletou este prêmio posteriormente.'
+  already-collected: '&cVocê já coletou este prêmio antes.'
   no-time-collect: '&eVocê não tem tempo suficiente para coletar este prêmio.'
   canCollect: '&aClique aqui para coletar este prêmio.'
   reward-lore:

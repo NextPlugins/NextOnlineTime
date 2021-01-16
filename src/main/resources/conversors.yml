@@ -1,6 +1,22 @@
+# Para você converter os dados de um sistema, você deverá configurar ele abaixo
+# Caso utilize SQLite no sistema desejado, só ativar a opção de conversão dele
+#
+# Após configuar e ativar a conversão, você precisa reiniciar o servidor
+# Depois de ligado, utilize o comando /conversor <nome do plugin>
+# O comando só pode ser executado com apenas você online (se for pelo console, com ninguem online); para evitar conflitos
+# A conversão pode levar um tempo demorando do tanto de dados para ser convertido
+#
+# O AtlasTempoOnline normalmente demora mais por salvar os dados em JSON,
+# e o plugin terá que deserializar cada dado e converter para seu sistema
+#
+# Uma database do AtlasTempoOnline com 3500 usuários (800KB) levou 3 minutos e 25 segundos para ser convertida,
+# Após a conversão, a database do NextOnlineTime estava pesando 154KB, quase 7x menos dados, salvando as mesmas funções
+#
+# Antes de iniciar um processo de conversão, é recomendado que faça um backup da tabela (caso seja sqlite, salve o arquivo)
+# Em caso de interrupção no meio do processo, coloque o backup feito e começe a conversão novamente
 AtlasTempoOnline:
   # Para deixar a opção de conversão disponível, ative esta opção
-  use: true
+  use: false
   connection:
     table: "onlinetime" # não mude caso não saiba o que está fazendo
     mysql:
@@ -14,7 +30,7 @@ AtlasTempoOnline:
 
 OnlineTimePlus:
   # Para deixar a opção de conversão disponível, ative esta opção
-  use: true
+  use: false
   connection:
     table: "tempo" # não mude caso não saiba o que está fazendo
     mysql:

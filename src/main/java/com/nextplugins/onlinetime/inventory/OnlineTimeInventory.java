@@ -171,7 +171,7 @@ public class OnlineTimeInventory extends PagedInventory {
 
                         if (NextOnlineTime.getInstance().getConfig().getBoolean("type")) {
 
-                            timedPlayer.setTimeInServer(timedPlayer.getTimeInServer() - reward.getTime());
+                            timedPlayer.removeTime(reward.getTime());
 
                             player.sendMessage(MessageValue.get(MessageValue::usedTime)
                                     .replace("%time%", TimeUtils.formatTime(reward.getTime()))

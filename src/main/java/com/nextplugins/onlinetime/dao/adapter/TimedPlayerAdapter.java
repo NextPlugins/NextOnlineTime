@@ -10,7 +10,7 @@ public final class TimedPlayerAdapter implements SQLResultAdapter<TimedPlayer> {
     public TimedPlayer adaptResult(SimpleResultSet resultSet) {
 
         String userName = resultSet.get("name");
-        long timeInServer = resultSet.get("time");
+        int timeInServer = resultSet.get("time");
 
         TimedPlayer timedPlayer = TimedPlayer.builder()
                 .name(userName)

@@ -22,8 +22,12 @@ public class TimedPlayer {
     @Builder.Default private long timeInServer = 0;
     @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
 
-    public void addTime(long time) {
+    public synchronized void addTime(long time) {
         this.timeInServer += time;
+    }
+
+    public synchronized void removeTime(long time) {
+        this.timeInServer -= time;
     }
 
     public RewardStatus canCollect(Reward reward) {

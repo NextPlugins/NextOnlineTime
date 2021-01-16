@@ -2,6 +2,9 @@ package com.nextplugins.onlinetime.manager;
 
 import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +15,13 @@ import java.util.stream.Collectors;
  * Github: https://github.com/Yuhtin
  */
 
+@Data
 @Singleton
 public class ConversorManager {
 
-    private final List<Conversor> conversors = new ArrayList<>();
+    protected final List<Conversor> conversors = new ArrayList<>();
+    private boolean converting;
+    private int actionBarTaskID;
 
     public Conversor getByName(String name) {
 

@@ -13,6 +13,7 @@ public final class TimedPlayerDAO {
 
     private static final String TABLE = "onlinetime_players";
     @Inject private SQLExecutor sqlExecutor;
+    @Inject private String duplicateEntry;
 
     public void createTable() {
 
@@ -47,15 +48,15 @@ public final class TimedPlayerDAO {
     public void insertOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "INSERT INTO " + TABLE + " VALUES(?,?,?) ON DUPLICATE KEY UPDATE time = ?, collectedRewards = ?;",
+                "INSERT INTO " + TABLE + " VALUES(?,?,?) " + duplicateEntry + "  time = ?, collectedRewards = ?",
                 statment -> {
-                    statment.set(1, timedPlayer.getName());
-
-                    statment.set(2, timedPlayer.getTimeInServer());
-                    statment.set(4, timedPlayer.getTimeInServer());
-
                     String rewards = String.join(",", timedPlayer.getCollectedRewards());
+
+                    statment.set(1, timedPlayer.getName());
+                    statment.set(2, timedPlayer.getTimeInServer());
                     statment.set(3, rewards);
+
+                    statment.set(4, timedPlayer.getTimeInServer());
                     statment.set(5, rewards);
 
                 }

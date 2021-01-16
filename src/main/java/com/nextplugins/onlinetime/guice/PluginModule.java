@@ -35,6 +35,9 @@ public class PluginModule extends AbstractModule {
         bind(SQLExecutor.class)
                 .toInstance(new SQLExecutor(nextOnlineTime.getSqlConnector()));
 
+        bind(String.class)
+                .toInstance(nextOnlineTime.getDuplicateEntry());
+
     }
 
     public Injector createInjector() {

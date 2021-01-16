@@ -9,6 +9,7 @@ import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.utils.ActionBarUtils;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
@@ -17,9 +18,11 @@ import me.saiintbrisson.minecraft.command.command.Context;
 import me.saiintbrisson.minecraft.command.target.CommandTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +34,6 @@ public class OnlineTimeCommand {
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
-
-    private boolean converting;
 
     @Command(
             name = "tempo",
@@ -79,7 +80,7 @@ public class OnlineTimeCommand {
     @Command(
             name = "tempo.enviar",
             target = CommandTarget.PLAYER,
-            permission = "onlinetime.sendtime"
+            permission = "nextonlinetime.sendtime"
     )
     public void sendTimeCommand(Context<Player> context,
                                 Player target,
@@ -111,7 +112,7 @@ public class OnlineTimeCommand {
         TimedPlayer timedTarget = this.timedPlayerManager.getByName(target.getName());
 
         timedTarget.addTime(timeInMillis);
-        timedPlayer.setTimeInServer(timedPlayer.getTimeInServer() - timeInMillis);
+        timedPlayer.removeTime(timeInMillis);
 
         context.sendMessage(MessageValue.get(MessageValue::sendedTime)
                 .replace("%time%", TimeUtils.formatTime(timeInMillis))
@@ -133,7 +134,7 @@ public class OnlineTimeCommand {
     public void onConversorCommand(Context<CommandSender> context,
                                    String conversor) {
 
-        if (converting) {
+        if (this.conversorManager.isConverting()) {
 
             context.sendMessage(ColorUtils.colored(
                     "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
@@ -167,24 +168,72 @@ public class OnlineTimeCommand {
         ));
 
         long initial = System.currentTimeMillis();
-        converting = true;
+        this.conversorManager.setConverting(true);
+
+        Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
+        if (timedPlayers == null) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&cOcorreu um erro, veja se configurou corretamente o conversor."
+            ));
+            return;
+
+        }
+
+        AtomicInteger converted = new AtomicInteger();
 
         Bukkit.getScheduler().runTaskAsynchronously(
                 NextOnlineTime.getInstance(),
                 () -> {
 
-                    Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
-                    timedPlayers.forEach(this.timedPlayerManager.getTimedPlayerDAO()::insertOne);
+                    for (TimedPlayer timedPlayer : timedPlayers) {
+
+                        this.timedPlayerManager.getTimedPlayerDAO().insertOne(timedPlayer);
+                        converted.incrementAndGet();
+
+                    }
 
                     context.sendMessage(ColorUtils.colored(
                             "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "&a.",
                             "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
                     ));
 
-                    converting = false;
+                    this.conversorManager.setConverting(false);
+
+                    int actionBarTaskID = this.conversorManager.getActionBarTaskID();
+                    if (actionBarTaskID != 0) Bukkit.getScheduler().cancelTask(actionBarTaskID);
 
                 }
         );
+
+        if (context.getSender() instanceof ConsoleCommandSender) return;
+
+        Player sender = (Player) context.getSender();
+        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(NextOnlineTime.getInstance(), () -> {
+
+            if (!sender.isOnline()) return;
+            if (!this.conversorManager.isConverting()) {
+
+                return;
+
+            }
+
+            String format = ColorUtils.colored(String.format(
+                    "&b&LNextOnlineTime &a> &eConvertido &a%s &ede &a%s &edados em &6%s",
+                    converted,
+                    timedPlayers.size(),
+                    TimeUtils.formatTime(System.currentTimeMillis() - initial)
+            ));
+
+            ActionBarUtils.sendActionBar(
+                    sender,
+                    format
+            );
+
+
+        }, 0L, 20L).getTaskId();
+
+        this.conversorManager.setActionBarTaskID(taskID);
 
     }
 

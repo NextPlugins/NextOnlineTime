@@ -38,6 +38,12 @@ public final class NextOnlineTime extends JavaPlugin {
     private Injector injector;
     private SQLConnector sqlConnector;
 
+    /**
+     * For duplicates keys, mysql uses: ON DUPLICATE KEY UPDATE ...
+     * but, sqlite use: ON CONFLICT(column) DO UPDATE SET ...
+     */
+    private String duplicateEntry;
+
     private Configuration messagesConfig;
     private Configuration rewardsConfig;
     private Configuration conversorsConfig;
@@ -91,7 +97,12 @@ public final class NextOnlineTime extends JavaPlugin {
                         MessageValue.get(MessageValue::incorrectUsage)
                 );
 
-                pluginManager.registerEvents(new UserConnectListener(this.timedPlayerManager), this);
+                UserConnectListener userConnectListener = new UserConnectListener(
+                        this.timedPlayerManager,
+                        this.conversorManager
+                );
+
+                pluginManager.registerEvents(userConnectListener, this);
 
                 this.getLogger().info("Registered commands and events successfully");
 
@@ -115,6 +126,13 @@ public final class NextOnlineTime extends JavaPlugin {
             }
 
         });
+
+    }
+
+    @Override
+    public void onDisable() {
+
+        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
 
     }
 
@@ -154,13 +172,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
-    @Override
-    public void onDisable() {
-
-        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
-
-    }
-
     private SQLConnector configureSqlProvider(ConfigurationSection section) {
 
         SQLConnector connector;
@@ -176,6 +187,8 @@ public final class NextOnlineTime extends JavaPlugin {
                     .build()
                     .connect();
 
+            this.duplicateEntry = "ON DUPLICATE KEY UPDATE";
+
         } else {
 
             ConfigurationSection sqliteSection = section.getConfigurationSection("connection.sqlite");
@@ -184,6 +197,8 @@ public final class NextOnlineTime extends JavaPlugin {
                     .file(new File(sqliteSection.getString("file")))
                     .build()
                     .connect();
+
+            this.duplicateEntry = "ON CONFLICT(name) DO UPDATE SET";
 
         }
 
