@@ -9,7 +9,6 @@
 #                          Servidor de Suporte                         #
 #                         discord.gg/JtTN7E6A2q                        #
 
-
 connection:
   mysql:
     enable: false
@@ -19,6 +18,9 @@ connection:
     database: "test"
   sqlite:
     file: "plugins/NextOnlineTime/online-time.sql"
+
+# O plugin possui suporte para placeholders
+# Placeholder: {placeholderapi_onlinetime_time} ou {onlinetime_time}
 
 # De quanto em quantos minutos irá atualizar o tempo dos jogadores
 # Recomendado: 5 minutos

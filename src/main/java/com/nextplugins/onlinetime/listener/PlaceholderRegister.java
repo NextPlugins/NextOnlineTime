@@ -1,0 +1,62 @@
+package com.nextplugins.onlinetime.listener;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.nextplugins.onlinetime.NextOnlineTime;
+import com.nextplugins.onlinetime.api.player.TimedPlayer;
+import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.TimeUtils;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.entity.Player;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * @author Yuhtin
+ * Github: https://github.com/Yuhtin
+ */
+
+@Singleton
+public final class PlaceholderRegister extends PlaceholderExpansion {
+
+    @Inject private NextOnlineTime plugin;
+    @Inject private TimedPlayerManager timedPlayerManager;
+
+    @Override
+    public String getName() {
+        return this.plugin.getName();
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "onlinetime";
+    }
+
+    @Override
+    public List<String> getPlaceholders() {
+        return Collections.singletonList("time");
+    }
+
+    @Override
+    public String getAuthor() {
+        return StringUtils.join(this.plugin.getDescription().getAuthors(), ",");
+    }
+
+    @Override
+    public String getVersion() {
+        return this.plugin.getDescription().getVersion();
+    }
+
+    @Override
+    public String onPlaceholderRequest(Player player, String params) {
+
+        if (!params.equalsIgnoreCase("time")) return ColorUtils.colored("&cParametro inválido");
+
+        TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+        return TimeUtils.formatOne(timedPlayer.getTimeInServer());
+
+    }
+}

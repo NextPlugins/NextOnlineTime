@@ -33,7 +33,6 @@ public class OnlineTimeCommand {
 
     private static final String CONVERSION_FORMAT = "&b&L%s &a> &eConvertido &a%s &ede &a%s &edados em &6%s";
 
-    @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
 
@@ -215,11 +214,6 @@ public class OnlineTimeCommand {
         int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(NextOnlineTime.getInstance(), () -> {
 
             if (!sender.isOnline()) return;
-            if (!this.conversorManager.isConverting()) {
-
-                return;
-
-            }
 
             String format = ColorUtils.colored(String.format(CONVERSION_FORMAT,
                     pluginConversor.getConversorName(),
@@ -230,7 +224,7 @@ public class OnlineTimeCommand {
 
             ActionBarUtils.sendActionBar(
                     sender,
-                    format
+                    ColorUtils.colored(format)
             );
 
 

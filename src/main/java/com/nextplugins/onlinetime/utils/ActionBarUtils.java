@@ -47,8 +47,6 @@ public class ActionBarUtils {
 
     public static void sendActionBar(Player player, String message) {
 
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
         Class<?> chatSerializer = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0];
         Class<?> chatComponent = getNMSClass("IChatBaseComponent");
         Class<?> packetActionbar = getNMSClass("PacketPlayOutChat");

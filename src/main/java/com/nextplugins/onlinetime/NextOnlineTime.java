@@ -13,6 +13,7 @@ import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
+import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
@@ -21,6 +22,7 @@ import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import me.bristermitten.pdm.PluginDependencyManager;
+import me.clip.placeholderapi.PlaceholderAPI;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bstats.bukkit.Metrics;
@@ -36,6 +38,11 @@ import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class NextOnlineTime extends JavaPlugin {
+
+    /**
+     * Metrics plugin id (used for statistics)
+     */
+    private static final int PLUGIN_ID = 10042;
 
     private Injector injector;
     private SQLConnector sqlConnector;
@@ -53,6 +60,7 @@ public final class NextOnlineTime extends JavaPlugin {
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
+    @Inject private PlaceholderRegister placeholderRegister;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
@@ -115,6 +123,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
                 registerTimeUpdaterTask();
 
+                configurePlaceholder(pluginManager);
                 configureBStats();
 
                 loadConversors();
@@ -210,6 +219,15 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
+    private void configurePlaceholder(PluginManager pluginManager) {
+
+        if (!pluginManager.isPluginEnabled("PlaceholderAPI")) return;
+
+        PlaceholderAPI.registerExpansion(this.placeholderRegister);
+        this.getLogger().info("Bind with PlaceholderAPI successfully");
+
+    }
+
     private void registerTimeUpdaterTask() {
 
         BukkitScheduler scheduler = Bukkit.getScheduler();
@@ -245,13 +263,11 @@ public final class NextOnlineTime extends JavaPlugin {
     }
 
     private void configureBStats() {
-        if (FeatureValue.get(FeatureValue::useBStats)) {
-            int pluginId = 10042;
-            new Metrics(this, pluginId);
-            getLogger().info("Integração com o bStats configurada com sucesso.");
-        } else {
-            getLogger().info("Você desabilitou o uso do bStats, portanto, não utilizaremos dele.");
-        }
+        if (!FeatureValue.get(FeatureValue::useBStats)) return;
+
+        new Metrics(this, PLUGIN_ID);
+        this.getLogger().info("Enabled bStats successfully, statistics enabled");
+
     }
 
 }

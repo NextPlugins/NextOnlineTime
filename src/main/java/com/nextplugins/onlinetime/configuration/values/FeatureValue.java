@@ -18,6 +18,7 @@ public final class FeatureValue {
 
     private final Configuration configuration = NextOnlineTime.getInstance().getConfig();
 
+    private final boolean type = configuration.getBoolean("type");
     private final boolean useBStats = configuration.getBoolean("bStats.enabled");
 
     public static <T> T get(Function<FeatureValue, T> supplier) {

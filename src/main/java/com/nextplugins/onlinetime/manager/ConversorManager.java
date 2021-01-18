@@ -3,8 +3,6 @@ package com.nextplugins.onlinetime.manager;
 import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;

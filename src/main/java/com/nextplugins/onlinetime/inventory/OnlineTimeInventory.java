@@ -12,6 +12,7 @@ import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
+import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
@@ -112,78 +113,8 @@ public class OnlineTimeInventory extends PagedInventory {
 
             if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) continue;
 
-            List<String> replacedLore = new ArrayList<>();
-            for (String line : MessageValue.get(MessageValue::rewardLore)) {
-
-                if (line.contains("%reward_description%")) replacedLore.addAll(reward.getDescription());
-                else {
-
-                    replacedLore.add(line
-                            .replace("%time%", TimeUtils.formatTime(reward.getTime()))
-                            .replace("%collect_message%", rewardStatus.getMessage())
-                    );
-
-                }
-
-            }
-
-            items.add(() -> InventoryItem.of(
-                    new ItemBuilder(reward.getIcon())
-                            .name(reward.getColoredName())
-                            .setLore(replacedLore)
-                            .wrap()
-                    ).defaultCallback(callback -> {
-
-                        if (!rewardStatus.isCanCollect()) {
-
-                            player.sendMessage(rewardStatus.getMessage());
-                            return;
-
-                        }
-
-                        int avaliableSpaces = 0;
-                        for (ItemStack content : player.getInventory().getContents()) {
-
-                            if (content != null && content.getType() != Material.AIR) continue;
-                            ++avaliableSpaces;
-
-                        }
-
-                        if (avaliableSpaces < reward.getCommands().size()) {
-
-                            player.sendMessage(MessageValue.get(MessageValue::noSpace)
-                                    .replace("%spaces%", String.valueOf(reward.getCommands().size() - avaliableSpaces))
-                            );
-                            return;
-
-                        }
-
-                        for (String command : reward.getCommands()) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
-                        }
-
-                        player.sendMessage(
-                                MessageValue.get(MessageValue::collectedReward)
-                                        .replace("%reward%", reward.getColoredName())
-                        );
-
-                        timedPlayer.getCollectedRewards().add(name);
-
-                        if (NextOnlineTime.getInstance().getConfig().getBoolean("type")) {
-
-                            timedPlayer.removeTime(reward.getTime());
-
-                            player.sendMessage(MessageValue.get(MessageValue::usedTime)
-                                    .replace("%time%", TimeUtils.formatTime(reward.getTime()))
-                            );
-
-                        }
-
-                        callback.updateInventory();
-
-                    })
-            );
-
+            List<String> replacedLore = rewardLore(reward, rewardStatus, MessageValue.get(MessageValue::rewardLore));
+            items.add(() -> rewardInventoryItem(reward, rewardStatus, replacedLore));
 
         }
 
@@ -196,6 +127,70 @@ public class OnlineTimeInventory extends PagedInventory {
 
         super.update(viewer, editor);
         configureInventory(viewer, viewer.getEditor());
+
+    }
+
+    private InventoryItem rewardInventoryItem(Reward reward,
+                                              RewardStatus rewardStatus,
+                                              List<String> lore) {
+
+        return InventoryItem.of(
+                new ItemBuilder(reward.getIcon())
+                        .name(reward.getColoredName())
+                        .setLore(lore)
+                        .wrap()
+        ).defaultCallback(callback -> {
+
+            Player player = callback.getPlayer();
+            if (!rewardStatus.isCanCollect()) {
+
+                player.sendMessage(rewardStatus.getMessage());
+                return;
+
+            }
+
+            int avaliableSpaces = 0;
+            for (ItemStack content : player.getInventory().getContents()) {
+
+                if (content != null && content.getType() != Material.AIR) continue;
+                ++avaliableSpaces;
+
+            }
+
+            if (avaliableSpaces < reward.getCommands().size()) {
+
+                player.sendMessage(MessageValue.get(MessageValue::noSpace)
+                        .replace("%spaces%", String.valueOf(reward.getCommands().size() - avaliableSpaces))
+                );
+                return;
+
+            }
+
+            for (String command : reward.getCommands()) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+            }
+
+            player.sendMessage(
+                    MessageValue.get(MessageValue::collectedReward)
+                            .replace("%reward%", reward.getColoredName())
+            );
+
+            TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+            timedPlayer.getCollectedRewards().add(reward.getName());
+
+            if (FeatureValue.get(FeatureValue::type)) {
+
+                timedPlayer.removeTime(reward.getTime());
+
+                player.sendMessage(MessageValue.get(MessageValue::usedTime)
+                        .replace("%time%", TimeUtils.formatTime(reward.getTime()))
+                );
+
+            }
+
+            callback.updateInventory();
+
+        });
 
     }
 
@@ -220,6 +215,27 @@ public class OnlineTimeInventory extends PagedInventory {
                     event.updateInventory();
 
                 });
+    }
+
+    private List<String> rewardLore(Reward reward, RewardStatus rewardStatus, List<String> list) {
+
+        List<String> lore = new ArrayList<>();
+        for (String line : list) {
+
+            if (line.contains("%reward_description%")) lore.addAll(reward.getDescription());
+            else {
+
+                lore.add(line
+                        .replace("%time%", TimeUtils.formatTime(reward.getTime()))
+                        .replace("%collect_message%", rewardStatus.getMessage())
+                );
+
+            }
+
+        }
+
+        return lore;
+
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {

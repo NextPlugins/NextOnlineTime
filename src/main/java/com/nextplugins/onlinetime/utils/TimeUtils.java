@@ -79,6 +79,23 @@ public enum TimeUtils {
         return s.isEmpty() ? "alguns instantes" : s;
     }
 
+    public static String formatOne(long time) {
+
+        if (time == 0) return "0s";
+
+        long days = TimeUnit.MILLISECONDS.toDays(time);
+        long hours = TimeUnit.MILLISECONDS.toHours(time) - (days * 24);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - (TimeUnit.MILLISECONDS.toHours(time) * 60);
+        long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
+
+        if (days > 0) return days + " " + (days == 1 ? "dia" : "dias");
+        if (hours > 0) return hours + " " + (hours == 1 ? "hora" : "horas");
+        if (minutes > 0) return minutes + " " + (minutes == 1 ? "minuto" : "minutos");
+        if (second > 0) return second + " " + (second == 1 ? "segundo" : "segundos");
+        return "0s";
+
+    }
+
     public static TimeUtils fromFormats(String format) {
         return Arrays.stream(values())
                 .filter(type -> Arrays.asList(type.getFormats()).contains(format.toLowerCase()))
