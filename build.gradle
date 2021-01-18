@@ -28,7 +28,7 @@ repositories {
 dependencies {
 
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.4'
+    compileOnly 'me.clip:placeholderapi:2.10.9'
 
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
@@ -51,6 +51,7 @@ bukkit {
     main = 'com.nextplugins.onlinetime.NextOnlineTime'
     authors = ['Henry_Fabio', 'Eike', 'Gabriel Santos', 'Yuhtin']
     website = 'https://github.com/NextPlugins'
+    softDepend = ['PlaceholderAPI']
 }
 
 shadowJar {

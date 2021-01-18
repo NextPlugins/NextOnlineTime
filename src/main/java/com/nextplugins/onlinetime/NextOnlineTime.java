@@ -223,7 +223,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         if (!pluginManager.isPluginEnabled("PlaceholderAPI")) return;
 
-        PlaceholderAPI.registerExpansion(this.placeholderRegister);
+        this.placeholderRegister.register();
         this.getLogger().info("Bind with PlaceholderAPI successfully");
 
     }
