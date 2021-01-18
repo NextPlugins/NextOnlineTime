@@ -10,6 +10,7 @@ import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConve
 import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
+import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import me.bristermitten.pdm.PluginDependencyManager;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -112,6 +114,8 @@ public final class NextOnlineTime extends JavaPlugin {
                 this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
                 registerTimeUpdaterTask();
+
+                configureBStats();
 
                 loadConversors();
                 this.getLogger().info("Loaded info of conversors successfully");
@@ -239,4 +243,15 @@ public final class NextOnlineTime extends JavaPlugin {
         return timeUnit;
 
     }
+
+    private void configureBStats() {
+        if (FeatureValue.get(FeatureValue::useBStats)) {
+            int pluginId = 10042;
+            new Metrics(this, pluginId);
+            getLogger().info("Integração com o bStats configurada com sucesso.");
+        } else {
+            getLogger().info("Você desabilitou o uso do bStats, portanto, não utilizaremos dele.");
+        }
+    }
+
 }

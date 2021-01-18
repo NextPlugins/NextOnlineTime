@@ -33,3 +33,7 @@ timeFormat: MINUTES
 # true - Quando pegar uma recompensa, o tempo dela é retirado da quantidade de tempo do jogador
 # Exemplo: Caso o jogador tenha 1 hora de tempo online e pega uma recompensa de 20 minutos, ele passará a ter 40 minutos
 type: false
+
+# Ative ou desative o uso do bStats (apenas serve para coletar algumas informações sobre o uso do plugin como quantidade de pessoas usando, servidores e etc...)
+bStats:
+  enabled: true
