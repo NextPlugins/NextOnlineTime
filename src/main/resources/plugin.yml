@@ -1,5 +1,0 @@
-name: NextOnlineTime
-version: ${project.version}
-main: com.nextplugins.onlinetime.NextOnlineTime
-authors: [ "Yuhtin", "Henry Fabio", "Eike", "Gabriel Santos" ]
-website: "https://github.com/NextPlugins"

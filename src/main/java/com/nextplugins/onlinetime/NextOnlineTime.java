@@ -22,7 +22,6 @@ import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import me.bristermitten.pdm.PluginDependencyManager;
-import me.clip.placeholderapi.PlaceholderAPI;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bstats.bukkit.Metrics;
@@ -60,7 +59,6 @@ public final class NextOnlineTime extends JavaPlugin {
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
-    @Inject private PlaceholderRegister placeholderRegister;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
@@ -223,7 +221,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         if (!pluginManager.isPluginEnabled("PlaceholderAPI")) return;
 
-        this.placeholderRegister.register();
+        PlaceholderRegister.of(this).register();
         this.getLogger().info("Bind with PlaceholderAPI successfully");
 
     }

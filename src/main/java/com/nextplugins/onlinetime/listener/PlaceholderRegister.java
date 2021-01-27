@@ -7,6 +7,7 @@ import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
+import lombok.AllArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
@@ -19,11 +20,10 @@ import java.util.List;
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
+@AllArgsConstructor(staticName = "of")
 public final class PlaceholderRegister extends PlaceholderExpansion {
 
-    @Inject private NextOnlineTime plugin;
-    @Inject private TimedPlayerManager timedPlayerManager;
+    private final NextOnlineTime plugin;
 
     @Override
     public String getName() {
@@ -55,7 +55,7 @@ public final class PlaceholderRegister extends PlaceholderExpansion {
 
         if (!params.equalsIgnoreCase("time")) return ColorUtils.colored("&cParametro inválido");
 
-        TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+        TimedPlayer timedPlayer = this.plugin.getTimedPlayerManager().getByName(player.getName());
         return TimeUtils.formatOne(timedPlayer.getTimeInServer());
 
     }
