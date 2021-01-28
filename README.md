@@ -1,5 +1,7 @@
 # NextOnlineTime
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/352b53ae062b44e580e6e9fb0646a8cf)](https://app.codacy.com/gh/NextPlugins/NextOnlineTime?utm_source=github.com&utm_medium=referral&utm_content=NextPlugins/NextOnlineTime&utm_campaign=Badge_Grade)
+
 Um simples sistema de registro de tempo online de cada jogador no servidor, podendo criar recompensas por um tempo mínimo, com menus, top jogadores online,
 filtro de recompensas, e com uma [API](https://github.com/NextPlugins/NextOnlineTime/blob/dev/src/main/java/com/nextplugins/onlinetime/api/NextOnlineTimeAPI.java) para desenvolvedores.
 Veja o vídeo mostrando todo o sistema [aqui](https://www.youtube.com/watch?v=jMhaaaxmgME) 
