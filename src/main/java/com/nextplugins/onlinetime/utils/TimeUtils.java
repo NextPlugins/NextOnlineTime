@@ -31,13 +31,13 @@ public enum TimeUtils {
         long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
 
         StringBuilder sb = new StringBuilder();
-        if (days > 0) sb.append(days).append("dia");
-        if (hours > 0) sb.append(hours).append("horas");
-        if (minutes > 0) sb.append(minutes).append("minutos");
-        if (second > 0) sb.append(second).append("segundos");
+        if (days > 0) sb.append(plural(days, "dia"));
+        if (hours > 0) sb.append(plural(hours, "hora"));
+        if (minutes > 0) sb.append(plural(minutes, "minuto"));
+        if (second > 0) sb.append(plural(second, "segundo"));
 
         String s = sb.toString();
-        return s.isEmpty() ? "0s" : s;
+        return s.isEmpty() ? "alguns instantes" : s;
     }
 
     public static Long getTime(String string) {
@@ -67,13 +67,34 @@ public enum TimeUtils {
         long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
 
         StringBuilder sb = new StringBuilder();
-        if (days > 0) sb.append(days).append(days == 1 ? " dia" : " dias");
-        if (hours > 0)
-            sb.append(days > 0 ? (minutes > 0 ? ", " : " e ") : "").append(hours).append(hours == 1 ? " hora" : " horas");
-        if (minutes > 0)
-            sb.append(days > 0 || hours > 0 ? (second > 0 ? ", " : " e ") : "").append(minutes).append(minutes == 1 ? " minuto" : " minutos");
-        if (second > 0)
-            sb.append(days > 0 || hours > 0 || minutes > 0 ? " e " : (sb.length() > 0 ? ", " : "")).append(second).append(second == 1 ? " segundo" : " segundos");
+
+        boolean hasDays = days > 0;
+        boolean hasHours = hours > 0;
+        boolean hasMinutes = minutes > 0;
+        boolean hasSeconds = second > 0;
+
+        if (hasDays) {
+
+            sb.append(plural(days, "dia"));
+            if (hasHours) sb.append(hasMinutes ? ", " : "e ");
+
+        }
+
+        if (hasHours) {
+
+            sb.append(plural(hours, "hora"));
+            if (hasMinutes) sb.append(hasSeconds ? ", " : "e ");
+
+        }
+
+        if (hasMinutes) {
+
+            sb.append(plural(minutes, "minuto"));
+            if (hasSeconds) sb.append("e ");
+
+        }
+
+        if (hasSeconds) sb.append(plural(second, "segundo"));
 
         String s = sb.toString();
         return s.isEmpty() ? "alguns instantes" : s;
@@ -88,10 +109,10 @@ public enum TimeUtils {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - (TimeUnit.MILLISECONDS.toHours(time) * 60);
         long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
 
-        if (days > 0) return days + " " + (days == 1 ? "dia" : "dias");
-        if (hours > 0) return hours + " " + (hours == 1 ? "hora" : "horas");
-        if (minutes > 0) return minutes + " " + (minutes == 1 ? "minuto" : "minutos");
-        if (second > 0) return second + " " + (second == 1 ? "segundo" : "segundos");
+        if (days > 0) return plural(days, "dia");
+        if (hours > 0) return plural(hours, "hora");
+        if (minutes > 0) return plural(minutes, "minuto");
+        if (second > 0) return plural(second, "segundo");
         return "0s";
 
     }
@@ -101,6 +122,10 @@ public enum TimeUtils {
                 .filter(type -> Arrays.asList(type.getFormats()).contains(format.toLowerCase()))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static String plural(long quantity, String message) {
+        return quantity + " " + message + (quantity == 1 ? "" : "s");
     }
 
     public long getMillis() {
