@@ -1,15 +1,12 @@
 package com.nextplugins.onlinetime.command;
 
 import com.google.inject.Inject;
-import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
 import com.nextplugins.onlinetime.manager.ConversorManager;
-import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import com.nextplugins.onlinetime.utils.ActionBarUtils;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
@@ -18,11 +15,9 @@ import me.saiintbrisson.minecraft.command.command.Context;
 import me.saiintbrisson.minecraft.command.target.CommandTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -30,8 +25,6 @@ import java.util.stream.Collectors;
  * Github: https://github.com/Yuhtin
  */
 public class OnlineTimeCommand {
-
-    private static final String CONVERSION_FORMAT = "&b&L%s &a> &eConvertido &a%s &ede &a%s &edados em &6%s";
 
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
@@ -58,11 +51,19 @@ public class OnlineTimeCommand {
     public void viewTimeCommand(Context<Player> context,
                                 @Optional Player target) {
 
-        if (target == null) target = context.getSender();
+        String name = target == null ? context.getSender().getName() : target.getName();
+
+        TimedPlayer timedPlayer = this.timedPlayerManager.getPlayers().getOrDefault(name, null);
+        if (timedPlayer == null) {
+
+            context.sendMessage(MessageValue.get(MessageValue::offlinePlayer));
+            return;
+
+        }
 
         context.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
-                .replace("%target%", target.getName())
-                .replace("%time%", TimeUtils.formatTime(this.timedPlayerManager.getByName(target.getName()).getTimeInServer()))
+                .replace("%target%", name)
+                .replace("%time%", TimeUtils.formatTime(timedPlayer.getTimeInServer()))
         );
 
     }
@@ -135,34 +136,8 @@ public class OnlineTimeCommand {
     public void onConversorCommand(Context<CommandSender> context,
                                    String conversor) {
 
-        if (this.conversorManager.isConverting()) {
-
-            context.sendMessage(ColorUtils.colored(
-                    "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
-            ));
-            return;
-
-        }
-
-        int maxPlayers = context.getSender() instanceof Player ? 1 : 0;
-        if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
-
-            context.sendMessage(ColorUtils.colored(
-                    "&cEsta função só pode ser usada com apenas você online."
-            ));
-            return;
-
-        }
-
-        Conversor pluginConversor = this.conversorManager.getByName(conversor);
-        if (pluginConversor == null) {
-
-            context.sendMessage(ColorUtils.colored(
-                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.avaliableConversors()
-            ));
-            return;
-
-        }
+        Conversor pluginConversor = checkConversorAvaility(context, conversor);
+        if (pluginConversor == null) return;
 
         context.sendMessage(ColorUtils.colored(
                 "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
@@ -181,56 +156,46 @@ public class OnlineTimeCommand {
 
         }
 
-        AtomicInteger converted = new AtomicInteger();
-
-        Bukkit.getScheduler().runTaskAsynchronously(
-                NextOnlineTime.getInstance(),
-                () -> {
-
-                    for (TimedPlayer timedPlayer : timedPlayers) {
-
-                        this.timedPlayerManager.getTimedPlayerDAO().insertOne(timedPlayer);
-                        converted.incrementAndGet();
-
-                    }
-
-                    context.sendMessage(ColorUtils.colored(
-                            "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "&a.",
-                            "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
-                    ));
-
-                    this.conversorManager.setConverting(false);
-
-                    int actionBarTaskID = this.conversorManager.getActionBarTaskID();
-                    if (actionBarTaskID != 0) Bukkit.getScheduler().cancelTask(actionBarTaskID);
-
-                }
+        this.conversorManager.startConversion(
+                context.getSender(),
+                timedPlayers,
+                pluginConversor.getConversorName(),
+                initial
         );
 
-        if (context.getSender() instanceof ConsoleCommandSender) return;
+    }
 
-        Player sender = (Player) context.getSender();
+    private Conversor checkConversorAvaility(Context<CommandSender> context, String conversor) {
 
-        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(NextOnlineTime.getInstance(), () -> {
+        if (this.conversorManager.isConverting()) {
 
-            if (!sender.isOnline()) return;
+            context.sendMessage(ColorUtils.colored(
+                    "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
+            ));
+            return null;
 
-            String format = ColorUtils.colored(String.format(CONVERSION_FORMAT,
-                    pluginConversor.getConversorName(),
-                    converted,
-                    timedPlayers.size(),
-                    TimeUtils.formatTime(System.currentTimeMillis() - initial)
+        }
+
+        int maxPlayers = context.getSender() instanceof Player ? 1 : 0;
+        if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&cEsta função só pode ser usada com apenas você online."
+            ));
+            return null;
+
+        }
+
+        Conversor pluginConversor = this.conversorManager.getByName(conversor);
+        if (pluginConversor == null) {
+
+            context.sendMessage(ColorUtils.colored(
+                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.avaliableConversors()
             ));
 
-            ActionBarUtils.sendActionBar(
-                    sender,
-                    ColorUtils.colored(format)
-            );
+        }
 
-
-        }, 0L, 20L).getTaskId();
-
-        this.conversorManager.setActionBarTaskID(taskID);
+        return pluginConversor;
 
     }
 

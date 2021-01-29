@@ -1,10 +1,7 @@
 package com.nextplugins.onlinetime.listener;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
-import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.AllArgsConstructor;

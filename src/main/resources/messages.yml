@@ -8,6 +8,7 @@ command-help:
 
 incorrect-usage: '&cUtilize /{usage}.'
 cant-send-for-you: '&cVocê não pode enviar tempo para si mesmo.'
+offline-player: '&cEste jogador não está online.'
 
 time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."

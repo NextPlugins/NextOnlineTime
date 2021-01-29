@@ -30,8 +30,9 @@ public final class MessageValue {
     private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
 
     private final String incorrectUsage = message("incorrect-usage");
-
     private final String cantSendForYou = message("cant-send-for-you");
+    private final String offlinePlayer = message("offline-player");
+
     private final String timeOfTarget = message("time-of-target");
     private final String usedTime = message("used-time");
     private final String collectedReward = message("collected-reward");
