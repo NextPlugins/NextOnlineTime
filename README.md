@@ -12,10 +12,10 @@ Suporta conversão de outros plugins parecidos como AtlasTempoOnline e OnlineTim
 |Comando               |Descrição           |Permissão             |
 |----------------------|--------------------|----------------------|
 |/tempo                |Exibe todos os sub-comandos do plugin|`Nenhuma`|
-|/tempo ver [player]   |Exibe o tempo online de um jogador, caso não insira nenhum, mostrará o seu|`Nenhuma`|
+|/tempo ver            |Exibe o tempo online de um jogador, caso não insira nenhum, mostrará o seu|`Nenhuma`|
 |/tempo menu           |Menu do sistema, mostrando as recompensas, top jogadores, opção de filtro e seu tempo online|`Nenhuma`
-|/tempo enviar <jogador> <tempo>|Enviar tempo online a um jogador|`nextonlinetime.sendtime`|
-|/conversion <plugin>  |Converte os dados do plugin selecionado|`nextonlinetime.admin`|
+|/tempo enviar         |Enviar tempo online a um jogador|`nextonlinetime.sendtime`|
+|/conversion           |Converte os dados do plugin selecionado|`nextonlinetime.admin`|
 
 ## Download
 
@@ -30,11 +30,11 @@ mensagens, conversores e outras opções.
 O plugin não precisa de nenhuma dependência. As dependências de desenvolvimento são automaticamente baixadas por causa da tecnologia `PDM`
 
 ### Tecnologias usadas
-- [Google Guice](https://github.com/google/guice) - Fornece suporte para injeção de dependência usando anotações.
-- [PDM](https://github.com/knightzmc/pdm) - Baixa as dependências de desenvolvimento assim que o plugin é ligado pela primeira vez.
+-   [Google Guice](https://github.com/google/guice) - Fornece suporte para injeção de dependência usando anotações.
+-   [PDM](https://github.com/knightzmc/pdm) - Baixa as dependências de desenvolvimento assim que o plugin é ligado pela primeira vez.
 
 **APIs e Frameworks**
 
-- [command-framework](https://github.com/SaiintBrisson/command-framework) - Framework para criação e gerenciamento de comandos.
-- [inventory-api](https://github.com/HenryFabio/inventory-api) - API para criação e o gerenciamento de inventários customizados.
-- [sql-provider](https://github.com/henryfabio/sql-provider) - Provê a conexão com o banco de dados.
+-   [command-framework](https://github.com/SaiintBrisson/command-framework) - Framework para criação e gerenciamento de comandos.
+-   [inventory-api](https://github.com/HenryFabio/inventory-api) - API para criação e o gerenciamento de inventários customizados.
+-   [sql-provider](https://github.com/henryfabio/sql-provider) - Provê a conexão com o banco de dados.
