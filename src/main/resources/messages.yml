@@ -1,3 +1,9 @@
+check-message:
+  - ''
+  - '&fDigite a quantiade de tempo que quer transferir em cheque'
+  - '&eFormato: &f1d1h1m1s'
+  - ''
+
 command-help:
   - '&6&LTEMPO ONLINE &fAjuda'
   - ''
@@ -14,6 +20,9 @@ time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
 used-time: '&aVocê utlizou &f%time% &apara receber a recompensa.'
 no-space: '&cVocê precisa ter mais %spaces% no inventário.'
+check-created: '&aCheque de tempo criado com sucesso.'
+check-no-time: '&cAcabou o tempo para criar o cheque.'
+check-activated: '&aVocê ativou um cheque com &f%time%&a.'
 
 invalid-time: '&cO tempo inserido é inválido, formato válido, 1d3h2m, 25s, 1w, 3w2d (3 semanas, 2 dias).'
 no-time: '&cVocê não tem esta quantidade de tempo online.'

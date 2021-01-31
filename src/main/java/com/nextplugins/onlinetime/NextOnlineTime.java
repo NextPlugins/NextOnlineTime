@@ -13,11 +13,14 @@ import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
+import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
+import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
@@ -56,12 +59,15 @@ public final class NextOnlineTime extends JavaPlugin {
     private Configuration rewardsConfig;
     private Configuration conversorsConfig;
 
+    @Inject private CheckManager checkManager;
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
+
+    @Inject private ItemParser itemParser;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -105,11 +111,14 @@ public final class NextOnlineTime extends JavaPlugin {
                         MessageValue.get(MessageValue::incorrectUsage)
                 );
 
+                CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
+
                 UserConnectListener userConnectListener = new UserConnectListener(
                         this.timedPlayerManager,
                         this.conversorManager
                 );
 
+                pluginManager.registerEvents(checkUseListener, this);
                 pluginManager.registerEvents(userConnectListener, this);
 
                 this.getLogger().info("Registered commands and events successfully");
@@ -125,6 +134,7 @@ public final class NextOnlineTime extends JavaPlugin {
                 configureBStats();
 
                 loadConversors();
+                loadCheckItem();
                 this.getLogger().info("Loaded info of conversors successfully");
 
             } catch (Exception exception) {
@@ -137,6 +147,14 @@ public final class NextOnlineTime extends JavaPlugin {
             }
 
         });
+
+    }
+
+    private void loadCheckItem() {
+
+        this.checkManager.setCheckItem(this.itemParser.parseSection(
+                getConfig().getConfigurationSection("checkItem")
+        ));
 
     }
 

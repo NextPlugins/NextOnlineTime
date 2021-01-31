@@ -14,6 +14,7 @@ import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
+import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.models.enums.RewardStatus;
@@ -38,10 +39,12 @@ public class OnlineTimeInventory extends PagedInventory {
 
     private final Map<String, Integer> playerRewardFilter = new HashMap<>();
 
+    @Inject private CheckManager checkManager;
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
 
     public OnlineTimeInventory() {
+
         super(
                 "online-time.main",
                 "Seu tempo no servidor",
@@ -68,12 +71,36 @@ public class OnlineTimeInventory extends PagedInventory {
         Player player = viewer.getPlayer();
         TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
 
+        int integer = FeatureValue.get(FeatureValue::check);
+        if (integer >= 0) {
+
+            List<String> lore = new ArrayList<>();
+
+            lore.add("&fCrie um cheque com uma quantidade de tempo");
+            if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
+
+            editor.setItem(0, InventoryItem.of(
+                    new ItemBuilder("MrSnowDK")
+                            .name("&6Cheque de Tempo")
+                            .setLore(lore)
+                            .wrap()
+                    ).defaultCallback(callback -> {
+
+                        player.closeInventory();
+                        player.sendMessage(MessageValue.get(MessageValue::checkMessage).toArray(new String[]{}));
+                        this.checkManager.sendCheckRequisition(player);
+
+                    })
+            );
+
+        }
+
         editor.setItem(48, InventoryItem.of(
                 new ItemBuilder(viewer.getPlayer().getName())
                         .name("&a" + viewer.getPlayer().getName())
                         .setLore(
-                                "&7Confira seu progresso abaixo:",
-                                "&7Total de tempo online: &f" + TimeUtils.formatTime(timedPlayer.getTimeInServer())
+                                "&fConfira seu progresso abaixo:",
+                                "&fTotal de tempo online: &e" + TimeUtils.formatTime(timedPlayer.getTimeInServer())
                         )
                         .wrap()
                 )
@@ -84,7 +111,7 @@ public class OnlineTimeInventory extends PagedInventory {
         editor.setItem(50, InventoryItem.of(
                 new ItemBuilder(Material.GOLD_INGOT)
                         .name("&6TOP Online")
-                        .setLore("&7Clique para ver os top jogadores", "&7onlines no servidor")
+                        .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
                         .wrap()
                 ).defaultCallback(callback -> {
 

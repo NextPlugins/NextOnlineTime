@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ItemBuilder {
 
@@ -56,7 +57,12 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setLore(List<String> lore) {
-        return changeItemMeta(it -> it.setLore(lore));
+        return changeItemMeta(it -> it.setLore(
+                lore
+                .stream()
+                .map(ColorUtils::colored)
+                .collect(Collectors.toList()))
+        );
     }
 
     public ItemBuilder addLore(List<String> lore) {

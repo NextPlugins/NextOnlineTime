@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.nextplugins'
-version '1.0.3'
+version '1.0.4'
 
 tasks.build.dependsOn('pdm', 'shadowJar')
 
@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
     implementation 'org.bstats:bstats-bukkit:1.8'
+    implementation 'de.tr7zw:item-nbt-api-plugin:2.7.1'
 
     pdm "com.github.SaiintBrisson:command-framework:1.1.0"
 
@@ -58,7 +59,8 @@ shadowJar {
     archiveName("${project.name}-${project.version}.jar")
     relocate 'com.henryfabio.minecraft.inventoryapi', 'com.nextplugins.onlinetime.libs.inventoryapi'
     relocate 'com.henryfabio.sqlprovider', 'com.nextplugins.onlinetime.libs.sqlprovider'
-    relocate('org.bstats', 'com.nextplugins.onlinetime.libs.bstats')
+    relocate 'org.bstats', 'com.nextplugins.onlinetime.libs.bstats'
+    relocate 'de.tr7zw', 'com.nextplugins.onlinetime.libs.nbtapi'
 }
 
 compileJava {

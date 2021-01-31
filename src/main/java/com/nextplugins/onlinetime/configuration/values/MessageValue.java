@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.function.Function;
@@ -26,6 +27,7 @@ public final class MessageValue {
 
     private final Configuration configuration = NextOnlineTime.getInstance().getMessagesConfig();
 
+    private final List<String> checkMessage = messageList("check-message");
     private final List<String> helpMessage = messageList("command-help");
     private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
 
@@ -37,6 +39,9 @@ public final class MessageValue {
     private final String usedTime = message("used-time");
     private final String collectedReward = message("collected-reward");
     private final String noSpace = message("no-space");
+    private final String checkSucess = message("check-created");
+    private final String checkNoTime = message("check-no-time");
+    private final String checkActivated = message("check-activated");
 
     private final String invalidTime = message("invalid-time");
     private final String noTime = message("no-time");

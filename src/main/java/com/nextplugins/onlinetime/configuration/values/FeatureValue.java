@@ -20,6 +20,7 @@ public final class FeatureValue {
 
     private final boolean type = configuration.getBoolean("type");
     private final boolean useBStats = configuration.getBoolean("bStats.enabled");
+    private final int check = configuration.getInt("checkTax");
 
     public static <T> T get(Function<FeatureValue, T> supplier) {
         return supplier.apply(FeatureValue.instance);
