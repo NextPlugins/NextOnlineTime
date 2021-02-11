@@ -1,15 +1,15 @@
 check-message:
   - ''
-  - '&fDigite a quantiade de tempo que quer transferir em cheque'
+  - '&fDigite a quantia de tempo que deseja transferir em cheque'
   - '&eFormato: &f1d1h1m1s'
   - ''
 
 command-help:
-  - '&6&LTEMPO ONLINE &fAjuda'
+  - '&6&lTEMPO ONLINE &fAjuda'
   - ''
-  - ' &e/%label% ver [jogador] &7| &fVer o tempo online de tal jogador'
-  - ' &e/%label% menu &7| &fAbrir o menu de recompensas e top players'
-  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador' # permissão: nextonlinetime.sendtime
+  - ' &e/%label% ver <jogador> &7| &fVer o tempo online de um jogador específico.'
+  - ' &e/%label% menu &7| &fAbrir o menu de recompensas.'
+  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador.' # permissão: nextonlinetime.sendtime
   - ''
 
 incorrect-usage: '&cUtilize /{usage}.'
@@ -18,7 +18,7 @@ offline-player: '&cEste jogador não está online.'
 
 time-of-target: '&aO jogador &f%target% &apossui &f%time% &ano servidor.'
 collected-reward: "&aYEAH! Você coletou a recompensa &f'%reward%&f' &acom sucesso."
-used-time: '&aVocê utlizou &f%time% &apara receber a recompensa.'
+used-time: '&aVocê utilizou &f%time% &apara receber a recompensa.'
 no-space: '&cVocê precisa ter mais %spaces% no inventário.'
 check-created: '&aCheque de tempo criado com sucesso.'
 check-no-time: '&cAcabou o tempo para criar o cheque.'
