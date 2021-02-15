@@ -15,13 +15,13 @@ import javax.inject.Singleton;
 @Singleton
 public class InventoryRegistry {
 
-    private final OnlineTimeInventory mainInventory = new OnlineTimeInventory();
-    private final TopOnlineTimeInventory topInventory = new TopOnlineTimeInventory();
+    private OnlineTimeInventory mainInventory;
+    private TopOnlineTimeInventory topInventory;
 
     public void init() {
 
-        this.mainInventory.init();
-        this.topInventory.init();
+        this.mainInventory = new OnlineTimeInventory().init();
+        this.topInventory = new TopOnlineTimeInventory().init();
 
     }
 

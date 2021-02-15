@@ -8,7 +8,6 @@ import com.nextplugins.onlinetime.parser.RewardParser;
 import lombok.Getter;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Yuhtin

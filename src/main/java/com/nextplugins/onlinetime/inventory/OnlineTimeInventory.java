@@ -15,10 +15,10 @@ import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.CheckManager;
-import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.models.enums.RewardStatus;
+import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
@@ -115,7 +115,10 @@ public class OnlineTimeInventory extends PagedInventory {
                         .name("&6TOP Online")
                         .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
                         .wrap()
-                ).defaultCallback(callback -> this.inventoryRegistry.getTopInventory().openInventory(callback.getPlayer()))
+                ).defaultCallback(callback -> this.inventoryRegistry
+                        .getTopInventory()
+                        .openInventory(callback.getPlayer())
+                )
         );
 
     }

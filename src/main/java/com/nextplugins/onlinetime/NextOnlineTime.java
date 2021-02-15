@@ -120,7 +120,6 @@ public final class NextOnlineTime extends JavaPlugin {
                 this.checkManager.init();
                 this.inventoryRegistry.init();
 
-
                 configurePlaceholder(pluginManager);
                 configureBStats();
 

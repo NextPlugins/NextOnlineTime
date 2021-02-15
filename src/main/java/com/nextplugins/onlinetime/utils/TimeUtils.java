@@ -76,21 +76,21 @@ public enum TimeUtils {
         if (hasDays) {
 
             sb.append(plural(days, "dia"));
-            if (hasHours) sb.append(hasMinutes ? ", " : "e ");
+            if (hasHours) sb.append(hasMinutes ? ", " : " e ");
 
         }
 
         if (hasHours) {
 
             sb.append(plural(hours, "hora"));
-            if (hasMinutes) sb.append(hasSeconds ? ", " : "e ");
+            if (hasMinutes) sb.append(hasSeconds ? ", " : " e ");
 
         }
 
         if (hasMinutes) {
 
             sb.append(plural(minutes, "minuto"));
-            if (hasSeconds) sb.append("e ");
+            if (hasSeconds) sb.append(" e ");
 
         }
 
