@@ -15,6 +15,7 @@ import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.CheckManager;
+import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.models.enums.RewardStatus;
@@ -42,6 +43,7 @@ public class OnlineTimeInventory extends PagedInventory {
     @Inject private CheckManager checkManager;
     @Inject private RewardManager rewardManager;
     @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private InventoryRegistry inventoryRegistry;
 
     public OnlineTimeInventory() {
 
@@ -113,12 +115,7 @@ public class OnlineTimeInventory extends PagedInventory {
                         .name("&6TOP Online")
                         .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
                         .wrap()
-                ).defaultCallback(callback -> {
-
-                    TopOnlineTimeInventory topOnlineTimeInventory = new TopOnlineTimeInventory().init();
-                    topOnlineTimeInventory.openInventory(player);
-
-                })
+                ).defaultCallback(callback -> this.inventoryRegistry.getTopInventory().openInventory(callback.getPlayer()))
         );
 
     }
@@ -133,11 +130,9 @@ public class OnlineTimeInventory extends PagedInventory {
 
         int rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
 
-        for (String name : rewardManager.getRewards().keySet()) {
+        for (Reward reward : rewardManager.getRewards().values()) {
 
-            Reward reward = rewardManager.getByName(name);
             RewardStatus rewardStatus = timedPlayer.canCollect(reward);
-
             if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) continue;
 
             List<String> replacedLore = rewardLore(reward, rewardStatus, MessageValue.get(MessageValue::rewardLore));

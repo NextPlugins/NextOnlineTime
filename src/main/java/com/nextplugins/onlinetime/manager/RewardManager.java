@@ -3,11 +3,12 @@ package com.nextplugins.onlinetime.manager;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.reward.Reward;
+import com.nextplugins.onlinetime.models.comparators.RewardComparator;
 import com.nextplugins.onlinetime.parser.RewardParser;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Yuhtin
@@ -19,10 +20,15 @@ public class RewardManager {
 
     @Inject private RewardParser rewardParser;
 
-    @Getter private final Map<String, Reward> rewards = new HashMap<>();
+    @Getter private final LinkedHashMap<String, Reward> rewards = new LinkedHashMap<>();
 
     public void loadRewards() {
-        this.rewardParser.parseFromConfig().forEach(this::addReward);
+
+        this.rewardParser.parseFromConfig()
+                .stream()
+                .sorted(new RewardComparator())
+                .forEach(this::addReward);
+
     }
 
     public void addReward(Reward reward) {

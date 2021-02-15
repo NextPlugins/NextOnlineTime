@@ -82,7 +82,7 @@ public class ConversorManager {
 
                     for (TimedPlayer timedPlayer : timedPlayers) {
 
-                        this.timedPlayerDAO.insertOne(timedPlayer);
+                        this.timedPlayerDAO.saveOne(timedPlayer);
                         converted.incrementAndGet();
 
                     }

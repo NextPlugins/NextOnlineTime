@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
-import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
 import com.nextplugins.onlinetime.manager.ConversorManager;
+import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
@@ -28,6 +28,7 @@ public class OnlineTimeCommand {
 
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
+    @Inject private InventoryRegistry inventoryRegistry;
 
     @Command(
             name = "tempo",
@@ -73,10 +74,7 @@ public class OnlineTimeCommand {
             target = CommandTarget.PLAYER
     )
     public void openInventoryCommand(Context<Player> context) {
-
-        OnlineTimeInventory onlineTimeInventory = new OnlineTimeInventory().init();
-        onlineTimeInventory.openInventory(context.getSender());
-
+        this.inventoryRegistry.getMainInventory().openInventory(context.getSender());
     }
 
     @Command(

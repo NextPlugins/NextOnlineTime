@@ -14,7 +14,6 @@ public final class TimedPlayerDAO {
     private static final String TABLE = "onlinetime_players";
 
     @Inject private SQLExecutor sqlExecutor;
-    @Inject private String duplicateEntry;
 
     public void createTable() {
 
@@ -40,33 +39,9 @@ public final class TimedPlayerDAO {
 
         return this.sqlExecutor.resultManyQuery(
                 "SELECT * FROM " + TABLE + " " + preferences,
-                simpleStatement -> {
+                statement -> {
                 },
                 TimedPlayerAdapter.class
-        );
-
-    }
-
-    public void insertOne(TimedPlayer timedPlayer) {
-
-        this.sqlExecutor.updateQuery(
-                String.format(duplicateEntry, TABLE),
-                statment -> {
-
-                    String rewards = String.join(",", timedPlayer.getCollectedRewards());
-
-                    statment.set(1, timedPlayer.getName());
-                    statment.set(2, timedPlayer.getTimeInServer());
-                    statment.set(3, rewards);
-
-                    if (duplicateEntry.contains("ON")) {
-
-                        statment.set(4, timedPlayer.getTimeInServer());
-                        statment.set(5, rewards);
-
-                    }
-
-                }
         );
 
     }
@@ -74,11 +49,13 @@ public final class TimedPlayerDAO {
     public void saveOne(TimedPlayer timedPlayer) {
 
         this.sqlExecutor.updateQuery(
-                "UPDATE " + TABLE + " SET time = ?, collectedRewards = ? WHERE name = ?",
-                statment -> {
-                    statment.set(1, timedPlayer.getTimeInServer());
-                    statment.set(2, String.join(",", timedPlayer.getCollectedRewards()));
-                    statment.set(3, timedPlayer.getName());
+                String.format("REPLACE INTO %s VALUES(?,?,?)", TABLE),
+                statement -> {
+
+                    statement.set(1, timedPlayer.getName());
+                    statement.set(2, timedPlayer.getTimeInServer());
+                    statement.set(3, String.join(",", timedPlayer.getCollectedRewards()));
+
                 }
         );
 

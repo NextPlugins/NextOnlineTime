@@ -21,6 +21,7 @@ import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.parser.ItemParser;
+import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
@@ -49,20 +50,15 @@ public final class NextOnlineTime extends JavaPlugin {
     private Injector injector;
     private SQLConnector sqlConnector;
 
-    /**
-     * For duplicates keys, mysql uses: ON DUPLICATE KEY UPDATE ...
-     * but, sqlite use: ON CONFLICT(column) DO UPDATE SET ...
-     */
-    private String duplicateEntry;
-
     private Configuration messagesConfig;
     private Configuration rewardsConfig;
     private Configuration conversorsConfig;
 
     @Inject private CheckManager checkManager;
     @Inject private RewardManager rewardManager;
-    @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private InventoryRegistry inventoryRegistry;
     @Inject private ConversorManager conversorManager;
+    @Inject private TimedPlayerManager timedPlayerManager;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
@@ -94,12 +90,9 @@ public final class NextOnlineTime extends JavaPlugin {
                 InventoryManager.enable(this);
 
                 this.sqlConnector = configureSqlProvider(this.getConfig());
-                this.getLogger().info("Connection with sql successfully");
 
                 this.injector = PluginModule.from(this).createInjector();
                 this.injector.injectMembers(this);
-
-                this.getLogger().info("Guice injection successfully");
 
                 BukkitFrame bukkitFrame = new BukkitFrame(this);
                 bukkitFrame.registerCommands(
@@ -121,21 +114,22 @@ public final class NextOnlineTime extends JavaPlugin {
                 pluginManager.registerEvents(checkUseListener, this);
                 pluginManager.registerEvents(userConnectListener, this);
 
-                this.getLogger().info("Registered commands and events successfully");
-
                 this.rewardManager.loadRewards();
-                this.getLogger().info("Loaded all rewards");
-
                 this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
-                registerTimeUpdaterTask();
+                this.checkManager.init();
+                this.inventoryRegistry.init();
+
 
                 configurePlaceholder(pluginManager);
                 configureBStats();
 
                 loadConversors();
                 loadCheckItem();
-                this.getLogger().info("Loaded info of conversors successfully");
+
+                registerTopUpdaterTask();
+
+                this.getLogger().info("Plugin loaded successfully");
 
             } catch (Exception exception) {
 
@@ -216,8 +210,6 @@ public final class NextOnlineTime extends JavaPlugin {
                     .build()
                     .connect();
 
-            this.duplicateEntry = "INSERT INTO %s VALUES(?,?,?) ON DUPLICATE KEY UPDATE time = ?, collectedRewards = ?";
-
         } else {
 
             ConfigurationSection sqliteSection = section.getConfigurationSection("connection.sqlite");
@@ -226,8 +218,6 @@ public final class NextOnlineTime extends JavaPlugin {
                     .file(new File(sqliteSection.getString("file")))
                     .build()
                     .connect();
-
-            this.duplicateEntry = "INSERT OR REPLACE INTO %s VALUES(?,?,?)";
 
         }
 
@@ -244,7 +234,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
-    private void registerTimeUpdaterTask() {
+    private void registerTopUpdaterTask() {
 
         BukkitScheduler scheduler = Bukkit.getScheduler();
 
@@ -281,7 +271,11 @@ public final class NextOnlineTime extends JavaPlugin {
     private void configureBStats() {
         if (!FeatureValue.get(FeatureValue::useBStats)) return;
 
-        new Metrics(this, PLUGIN_ID);
+        Metrics metrics = new Metrics(this, PLUGIN_ID);
+        metrics.addCustomChart(new Metrics.SingleLineChart("total_rewards_registered",
+                () -> this.rewardManager.getRewards().size())
+        );
+
         this.getLogger().info("Enabled bStats successfully, statistics enabled");
 
     }

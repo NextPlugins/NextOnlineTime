@@ -35,7 +35,7 @@ public class TimedPlayerManager {
                         .name(name)
                         .build();
 
-                this.timedPlayerDAO.insertOne(timedPlayer);
+                this.timedPlayerDAO.saveOne(timedPlayer);
 
             }
 
