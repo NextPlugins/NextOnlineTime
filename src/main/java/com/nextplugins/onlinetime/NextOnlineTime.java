@@ -14,12 +14,14 @@ import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
+import com.nextplugins.onlinetime.listener.InteractNPCListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.manager.NPCManager;
 import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
@@ -30,8 +32,8 @@ import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -50,15 +52,17 @@ public final class NextOnlineTime extends JavaPlugin {
     private Injector injector;
     private SQLConnector sqlConnector;
 
-    private Configuration messagesConfig;
-    private Configuration rewardsConfig;
-    private Configuration conversorsConfig;
+    private FileConfiguration messagesConfig;
+    private FileConfiguration rewardsConfig;
+    private FileConfiguration conversorsConfig;
+    private FileConfiguration npcConfig;
 
     @Inject private CheckManager checkManager;
     @Inject private RewardManager rewardManager;
     @Inject private InventoryRegistry inventoryRegistry;
     @Inject private ConversorManager conversorManager;
     @Inject private TimedPlayerManager timedPlayerManager;
+    @Inject private NPCManager npcManager;
 
     @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
@@ -76,6 +80,7 @@ public final class NextOnlineTime extends JavaPlugin {
         this.messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
         this.rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
         this.conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
+        this.npcConfig = ConfigurationManager.of("npc.yml").saveDefault().load();
 
     }
 
@@ -105,6 +110,7 @@ public final class NextOnlineTime extends JavaPlugin {
                 );
 
                 CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
+                InteractNPCListener interactNPCListener = new InteractNPCListener(this.npcManager);
 
                 UserConnectListener userConnectListener = new UserConnectListener(
                         this.timedPlayerManager,
@@ -112,6 +118,7 @@ public final class NextOnlineTime extends JavaPlugin {
                 );
 
                 pluginManager.registerEvents(checkUseListener, this);
+                pluginManager.registerEvents(interactNPCListener, this);
                 pluginManager.registerEvents(userConnectListener, this);
 
                 this.rewardManager.loadRewards();
@@ -119,6 +126,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
                 this.checkManager.init();
                 this.inventoryRegistry.init();
+                this.npcManager.init();
 
                 configurePlaceholder(pluginManager);
                 configureBStats();
@@ -143,18 +151,19 @@ public final class NextOnlineTime extends JavaPlugin {
 
     }
 
+    @Override
+    public void onDisable() {
+
+        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
+        this.npcManager.despawn();
+
+    }
+
     private void loadCheckItem() {
 
         this.checkManager.setCheckItem(this.itemParser.parseSection(
                 getConfig().getConfigurationSection("checkItem")
         ));
-
-    }
-
-    @Override
-    public void onDisable() {
-
-        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
 
     }
 

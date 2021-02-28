@@ -38,6 +38,7 @@ public class ItemParser {
             }
 
             if (section.contains("name")) itemBuilder.name(ColorUtils.colored(section.getString("name")));
+            if (section.contains("glow") && section.getBoolean("glow")) itemBuilder.glow();
 
             if (section.contains("description")) {
 

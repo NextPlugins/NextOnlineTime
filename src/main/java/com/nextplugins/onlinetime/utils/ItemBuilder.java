@@ -1,6 +1,8 @@
 package com.nextplugins.onlinetime.utils;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -45,6 +47,16 @@ public class ItemBuilder {
 
     public ItemBuilder changeItem(Consumer<ItemStack> consumer) {
         consumer.accept(item);
+        return this;
+    }
+
+    public ItemBuilder glow() {
+
+        changeItemMeta(meta -> {
+            meta.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        });
+
         return this;
     }
 

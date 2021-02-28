@@ -12,6 +12,16 @@ command-help:
   - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador.' # permissão: nextonlinetime.sendtime
   - ''
 
+command-help-admin:
+  - '&6&lTEMPO ONLINE &fAjuda'
+  - ''
+  - ' &e/%label% ver <jogador> &7| &fVer o tempo online de um jogador específico.'
+  - ' &e/%label% menu &7| &fAbrir o menu de recompensas.'
+  - ' &e/%label% enviar <jogador> <tempo> &7| &fEnviar tempo de jogo à algum jogador.' # permissão: nextonlinetime.sendtime
+  - ' &e/%label% setnpc &7| &fSetar a posição do npc de tempo online' # permissão: nextonlinetime.admin
+  - ' &e/%label% delnpc &7| &fDeletar o npc de tempo online' # permissão: nextonlinetime.admin
+  - ''
+
 incorrect-usage: '&cUtilize /{usage}.'
 cant-send-for-you: '&cVocê não pode enviar tempo para si mesmo.'
 offline-player: '&cEste jogador não está online.'
