@@ -32,10 +32,8 @@ public class NPCManager {
 
     public static boolean isEnabled;
 
-    @Getter
-    private NPC npc;
-    @Getter
-    private Hologram hologram;
+    @Getter private NPC npc;
+    @Getter private Hologram hologram;
 
     public void init() {
 
