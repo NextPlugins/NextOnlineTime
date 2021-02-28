@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.nextplugins'
-version '1.0.5'
+version '1.1.0'
 
 tasks.build.dependsOn('pdm', 'shadowJar')
 
@@ -20,7 +20,7 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 
     maven { url = 'https://repo.codemc.org/repository/maven-public' }
-    maven { url = 'http://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = 'https://repo.citizensnpcs.co/' }
 
     maven { url = 'https://jitpack.io/' }
 }
@@ -28,7 +28,9 @@ repositories {
 dependencies {
 
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
-    compileOnly 'me.clip:placeholderapi:2.10.9'
+    compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
+    compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
+    compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
@@ -52,7 +54,10 @@ bukkit {
     main = 'com.nextplugins.onlinetime.NextOnlineTime'
     authors = ['Henry_Fabio', 'Eike', 'Gabriel Santos', 'Yuhtin']
     website = 'https://github.com/NextPlugins'
-    softDepend = ['PlaceholderAPI']
+    version = "${project.version}"
+    apiVersion = '1.12.2'
+    load = 'POSTWORLD'
+    softDepend = ['PlaceholderAPI', 'Citizens', 'HolographicDisplays']
 }
 
 shadowJar {

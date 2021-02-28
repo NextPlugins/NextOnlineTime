@@ -28,6 +28,7 @@ public final class MessageValue {
 
     private final List<String> checkMessage = messageList("check-message");
     private final List<String> helpMessage = messageList("command-help");
+    private final List<String> helpMessageAdmin = messageList("command-help-admin");
     private final List<String> rewardLore = messageList("rewardInfo.reward-lore");
 
     private final String incorrectUsage = message("incorrect-usage");

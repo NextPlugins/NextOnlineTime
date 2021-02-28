@@ -3,10 +3,13 @@ package com.nextplugins.onlinetime.command;
 import com.google.inject.Inject;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
+import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.ConversorManager;
-import com.nextplugins.onlinetime.registry.InventoryRegistry;
+import com.nextplugins.onlinetime.manager.NPCManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.parser.LocationParser;
+import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
@@ -14,9 +17,12 @@ import me.saiintbrisson.minecraft.command.annotation.Optional;
 import me.saiintbrisson.minecraft.command.command.Context;
 import me.saiintbrisson.minecraft.command.target.CommandTarget;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +35,7 @@ public class OnlineTimeCommand {
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
     @Inject private InventoryRegistry inventoryRegistry;
+    @Inject private NPCManager npcManager;
 
     @Command(
             name = "tempo",
@@ -36,9 +43,13 @@ public class OnlineTimeCommand {
             target = CommandTarget.PLAYER
     )
     public void timeCommand(Context<Player> context) {
+
+        List<String> message = context.getSender().hasPermission("nextonlinetime.admin")
+                ? MessageValue.get(MessageValue::helpMessageAdmin)
+                : MessageValue.get(MessageValue::helpMessage);
+
         context.getSender().sendMessage(
-                MessageValue.get(MessageValue::helpMessage)
-                        .stream()
+                message.stream()
                         .map(line -> line.replace("%label%", context.getLabel()))
                         .collect(Collectors.toList())
                         .toArray(new String[]{})
@@ -47,7 +58,8 @@ public class OnlineTimeCommand {
 
     @Command(
             name = "tempo.ver",
-            target = CommandTarget.PLAYER
+            target = CommandTarget.PLAYER,
+            usage = "/tempo ver [jogador]"
     )
     public void viewTimeCommand(Context<Player> context,
                                 @Optional Player target) {
@@ -80,7 +92,8 @@ public class OnlineTimeCommand {
     @Command(
             name = "tempo.enviar",
             target = CommandTarget.PLAYER,
-            permission = "nextonlinetime.sendtime"
+            permission = "nextonlinetime.sendtime",
+            usage = "/tempo enviar {jogador} {tempo}"
     )
     public void sendTimeCommand(Context<Player> context,
                                 Player target,
@@ -123,6 +136,57 @@ public class OnlineTimeCommand {
                 .replace("%time%", TimeUtils.formatTime(timeInMillis))
                 .replace("%sender%", context.getSender().getName())
         );
+
+    }
+
+    @Command(
+            name = "tempo.setnpc",
+            permission = "nextonlinetime.admin",
+            target = CommandTarget.PLAYER
+    )
+    public void onSetNpcCommand(Context<Player> context) {
+
+        Location location = context.getSender().getLocation();
+        ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
+
+        FileConfiguration config = configManager.load();
+        config.set("position", LocationParser.serialize(location));
+
+        try {
+
+            config.save(configManager.getFile());
+
+            this.npcManager.spawnDefault(location);
+            context.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
+
+        }catch (Exception exception) {
+            context.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc."));
+        }
+
+    }
+
+    @Command(
+            name = "tempo.delnpc",
+            permission = "nextonlinetime.admin",
+            target = CommandTarget.PLAYER
+    )
+    public void onDelNpcCommand(Context<Player> context) {
+
+        ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
+
+        FileConfiguration config = configManager.load();
+        config.set("position", "");
+
+        try {
+
+            config.save(configManager.getFile());
+
+            this.npcManager.despawn();
+            context.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
+
+        }catch (Exception exception) {
+            context.sendMessage(ColorUtils.colored("&cNão foi possível deletar o npc."));
+        }
 
     }
 
