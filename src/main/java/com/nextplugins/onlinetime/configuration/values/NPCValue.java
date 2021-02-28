@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.configuration.values;
 
 import com.nextplugins.onlinetime.NextOnlineTime;
-import com.nextplugins.onlinetime.parser.LocationParser;
+import com.nextplugins.onlinetime.utils.LocationUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +37,7 @@ public final class NPCValue {
 
     private final boolean lookCLose = configuration.getBoolean("lookclose");
 
-    private final Location position = LocationParser.deserialize(configuration.getString("position"));
+    private final Location position = LocationUtils.deserialize(configuration.getString("position"));
 
     public static <T> T get(Function<NPCValue, T> supplier) {
         return supplier.apply(NPCValue.instance);

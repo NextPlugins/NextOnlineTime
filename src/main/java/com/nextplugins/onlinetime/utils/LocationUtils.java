@@ -1,9 +1,9 @@
-package com.nextplugins.onlinetime.parser;
+package com.nextplugins.onlinetime.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public final class LocationParser {
+public final class LocationUtils {
 
     public static Location deserialize(String data) {
 

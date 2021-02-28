@@ -8,7 +8,7 @@ import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.NPCManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import com.nextplugins.onlinetime.parser.LocationParser;
+import com.nextplugins.onlinetime.utils.LocationUtils;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
@@ -150,7 +150,7 @@ public class OnlineTimeCommand {
         ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
 
         FileConfiguration config = configManager.load();
-        config.set("position", LocationParser.serialize(location));
+        config.set("position", LocationUtils.serialize(location));
 
         try {
 
