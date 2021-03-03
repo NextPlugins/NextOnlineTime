@@ -277,7 +277,6 @@ public final class NextOnlineTime extends JavaPlugin {
     }
 
     private void configureBStats() {
-        if (!FeatureValue.get(FeatureValue::useBStats)) return;
 
         Metrics metrics = new Metrics(this, PLUGIN_ID);
         metrics.addCustomChart(new Metrics.SingleLineChart("total_rewards_registered",

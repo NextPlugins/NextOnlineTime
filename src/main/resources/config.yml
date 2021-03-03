@@ -36,10 +36,6 @@ timeFormat: MINUTES
 # Exemplo: Caso o jogador tenha 1 hora de tempo online e pega uma recompensa de 20 minutos, ele passará a ter 40 minutos
 type: false
 
-# Ative ou desative o uso do bStats (apenas serve para coletar algumas informações sobre o uso do plugin como quantidade de pessoas usando, servidores e etc...)
-bStats:
-  enabled: true
-
 # Taxa na criação de cheques
 # Para desabilitar o sistema de cheque, coloque -1
 # O valor de exemplo abaixo siginifica 10% de taxa, caso ele coloque 10 horas, o cheque só terá 9 horas
