@@ -32,7 +32,7 @@ public class NPCManager {
 
     public static boolean isEnabled;
 
-    @Getter private NPC npc;
+    @Getter private NPC NPC;
     @Getter private Hologram hologram;
 
     public void init() {
@@ -105,7 +105,7 @@ public class NPCManager {
 
         }
 
-        this.npc = npc;
+        this.NPC = npc;
 
         // hologram implementation
         if (hologramMessage.isEmpty()) return true;
@@ -130,9 +130,9 @@ public class NPCManager {
      */
     public void despawn() {
 
-        if (npc == null || hologram == null) return;
+        if (NPC == null || hologram == null) return;
 
-        npc.destroy();
+        NPC.destroy();
         hologram.delete();
 
     }

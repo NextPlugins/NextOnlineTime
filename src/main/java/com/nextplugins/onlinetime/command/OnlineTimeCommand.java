@@ -39,7 +39,7 @@ public class OnlineTimeCommand {
 
     @Command(
             name = "tempo",
-            aliases = {"tempoonline", "time"},
+            aliases = {"tempoonline"},
             target = CommandTarget.PLAYER
     )
     public void timeCommand(Context<Player> context) {
