@@ -23,11 +23,13 @@ Você pode encontrar o plugin pronto para baixar [**aqui**](https://github.com/N
 build no plugin com suas alterações.
 
 ## Configuração
-O plugin conta com quatro arquivos de configuração `config.yml`, `conversors.yml`, `messages.yml` e `rewards.yml`, em que você pode configurar o sql, recompensas, modo de funcionamento,
+O plugin conta com quatro arquivos de configuração `config.yml`, `conversors.yml`, `messages.yml`, `npc.yml` e `rewards.yml`, em que você pode configurar o sql, recompensas, modo de funcionamento,
 mensagens, conversores e outras opções.
 
 ## Dependências
 O plugin não precisa de nenhuma dependência. As dependências de desenvolvimento são automaticamente baixadas por causa da tecnologia `PDM`
+
+Caso queira usar o sistema de **NPC** os plugins `Citizens` e `HolographicDisplays` serão necessários
 
 ### Tecnologias usadas
 -   [Google Guice](https://github.com/google/guice) - Fornece suporte para injeção de dependência usando anotações.
