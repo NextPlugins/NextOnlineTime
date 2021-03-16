@@ -23,7 +23,7 @@ Você pode encontrar o plugin pronto para baixar [**aqui**](https://github.com/N
 build no plugin com suas alterações.
 
 ## Configuração
-O plugin conta com quatro arquivos de configuração `config.yml`, `conversors.yml`, `messages.yml`, `npc.yml` e `rewards.yml`, em que você pode configurar o sql, recompensas, modo de funcionamento,
+O plugin conta com cinco arquivos de configuração `config.yml`, `conversors.yml`, `messages.yml`, `npc.yml` e `rewards.yml`, em que você pode configurar o sql, recompensas, modo de funcionamento,
 mensagens, conversores e outras opções.
 
 ## Dependências
