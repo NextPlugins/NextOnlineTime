@@ -6,11 +6,12 @@ import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.ConversorManager;
-import com.nextplugins.onlinetime.manager.NPCManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import com.nextplugins.onlinetime.utils.LocationUtils;
+import com.nextplugins.onlinetime.npc.manager.NPCManager;
+import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.LocationUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import me.saiintbrisson.minecraft.command.annotation.Command;
 import me.saiintbrisson.minecraft.command.annotation.Optional;
@@ -156,11 +157,13 @@ public class OnlineTimeCommand {
 
             config.save(configManager.getFile());
 
-            this.npcManager.spawnDefault(location);
+            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+            runnable.spawnDefault(location);
+
             context.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
 
         }catch (Exception exception) {
-            context.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc."));
+            context.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
         }
 
     }
@@ -181,7 +184,9 @@ public class OnlineTimeCommand {
 
             config.save(configManager.getFile());
 
-            this.npcManager.despawn();
+            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+            runnable.despawn();
+
             context.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
 
         }catch (Exception exception) {

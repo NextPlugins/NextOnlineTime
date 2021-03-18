@@ -10,18 +10,15 @@ import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConve
 import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
-import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.InteractNPCListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
-import com.nextplugins.onlinetime.manager.CheckManager;
-import com.nextplugins.onlinetime.manager.ConversorManager;
-import com.nextplugins.onlinetime.manager.RewardManager;
-import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import com.nextplugins.onlinetime.manager.NPCManager;
+import com.nextplugins.onlinetime.manager.*;
+import com.nextplugins.onlinetime.npc.manager.NPCManager;
+import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
@@ -110,7 +107,6 @@ public final class NextOnlineTime extends JavaPlugin {
                 );
 
                 CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
-                InteractNPCListener interactNPCListener = new InteractNPCListener(this.npcManager);
 
                 UserConnectListener userConnectListener = new UserConnectListener(
                         this.timedPlayerManager,
@@ -118,7 +114,6 @@ public final class NextOnlineTime extends JavaPlugin {
                 );
 
                 pluginManager.registerEvents(checkUseListener, this);
-                pluginManager.registerEvents(interactNPCListener, this);
                 pluginManager.registerEvents(userConnectListener, this);
 
                 this.rewardManager.loadRewards();
@@ -155,7 +150,13 @@ public final class NextOnlineTime extends JavaPlugin {
     public void onDisable() {
 
         Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
-        this.npcManager.despawn();
+
+        if (this.npcManager.isEnabled()) {
+
+            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+            runnable.despawn();
+
+        }
 
     }
 

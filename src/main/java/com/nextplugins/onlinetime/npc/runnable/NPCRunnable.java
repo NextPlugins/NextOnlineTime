@@ -1,10 +1,10 @@
-package com.nextplugins.onlinetime.manager;
+package com.nextplugins.onlinetime.npc.runnable;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.configuration.values.NPCValue;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
@@ -12,9 +12,8 @@ import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.Plugin;
 
-import javax.inject.Singleton;
 import java.util.List;
 
 /**
@@ -22,34 +21,16 @@ import java.util.List;
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
-public class NPCManager {
-
-    protected final NextOnlineTime plugin = NextOnlineTime.getInstance();
-    protected final PluginManager MANAGER = Bukkit.getPluginManager();
-    protected final String CITIZENS = "Citizens";
-    protected final String HOLOGRAPHIC_DISPLAYS = "HolographicDisplays";
-
-    public static boolean isEnabled;
+@RequiredArgsConstructor
+public class NPCRunnable implements Runnable {
 
     @Getter private NPC NPC;
     @Getter private Hologram hologram;
 
-    public void init() {
+    private final Plugin plugin;
 
-        if (!MANAGER.isPluginEnabled(CITIZENS) || !MANAGER.isPluginEnabled(HOLOGRAPHIC_DISPLAYS)) {
-
-            plugin.getLogger().warning(
-                    String.format("Dependências não encontradas (%s, %s) O NPC não será usado.",
-                            CITIZENS,
-                            HOLOGRAPHIC_DISPLAYS
-                    )
-            );
-
-            isEnabled = false;
-            return;
-
-        }
+    @Override
+    public void run() {
 
         Location location = NPCValue.get(NPCValue::position);
         if (location == null) return;
@@ -57,7 +38,6 @@ public class NPCManager {
         spawnDefault(location);
 
     }
-
 
     /**
      * Default spawn of npc & hologram
