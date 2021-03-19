@@ -31,6 +31,12 @@ O plugin não precisa de nenhuma dependência. As dependências de desenvolvimen
 
 Caso queira usar o sistema de **NPC** os plugins `Citizens` e `HolographicDisplays` serão necessários
 
+## Placeholders
+
+O plugin conta com uma placeholder para o jogador visualizar resumidamente o tempo que ele passou no servidor.
+
+{placeholderapi_onlinetime_time}
+
 ### Tecnologias usadas
 -   [Google Guice](https://github.com/google/guice) - Fornece suporte para injeção de dependência usando anotações.
 -   [PDM](https://github.com/knightzmc/pdm) - Baixa as dependências de desenvolvimento assim que o plugin é ligado pela primeira vez.
