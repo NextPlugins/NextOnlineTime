@@ -264,7 +264,7 @@ public class OnlineTimeInventory extends PagedInventory {
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {
-        return currentFilter == loopFilter ? " &b➤" : "&8";
+        return currentFilter == loopFilter ? " &b▶" : "&8";
     }
 
 }
