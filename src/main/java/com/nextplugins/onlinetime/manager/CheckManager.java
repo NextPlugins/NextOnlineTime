@@ -48,7 +48,7 @@ public class CheckManager {
 
             Player player = event.getPlayer();
 
-            long timeInMillis = TimeUtils.getTime(event.getMessage());
+            long timeInMillis = TimeUtils.unformat(event.getMessage());
             if (timeInMillis < 1) {
 
                 player.sendMessage(MessageValue.get(MessageValue::invalidTime));
@@ -74,7 +74,7 @@ public class CheckManager {
             timedPlayer.removeTime(timeInMillis);
             timeInMillis *= 1 - (FeatureValue.get(FeatureValue::check) / 100);
 
-            String time = TimeUtils.formatTime(timeInMillis);
+            String time = TimeUtils.format(timeInMillis);
 
             ItemStack check = checkItem.clone();
             ItemMeta itemMeta = check.getItemMeta();

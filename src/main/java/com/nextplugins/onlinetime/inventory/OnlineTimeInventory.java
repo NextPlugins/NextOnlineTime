@@ -102,7 +102,7 @@ public class OnlineTimeInventory extends PagedInventory {
                         .name("&a" + viewer.getPlayer().getName())
                         .setLore(
                                 "&fConfira seu progresso abaixo:",
-                                "&fTotal de tempo online: &e" + TimeUtils.formatTime(timedPlayer.getTimeInServer())
+                                "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())
                         )
                         .wrap()
                 )
@@ -208,7 +208,7 @@ public class OnlineTimeInventory extends PagedInventory {
                 timedPlayer.removeTime(reward.getTime());
 
                 player.sendMessage(MessageValue.get(MessageValue::usedTime)
-                        .replace("%time%", TimeUtils.formatTime(reward.getTime()))
+                        .replace("%time%", TimeUtils.format(reward.getTime()))
                 );
 
             }
@@ -251,7 +251,7 @@ public class OnlineTimeInventory extends PagedInventory {
             else {
 
                 lore.add(line
-                        .replace("%time%", TimeUtils.formatTime(reward.getTime()))
+                        .replace("%time%", TimeUtils.format(reward.getTime()))
                         .replace("%collect_message%", rewardStatus.getMessage())
                 );
 

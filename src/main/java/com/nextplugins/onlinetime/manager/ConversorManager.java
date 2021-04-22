@@ -88,7 +88,7 @@ public class ConversorManager {
                     }
 
                     if (sender != null) sender.sendMessage(ColorUtils.colored(
-                            "&aConversão terminada em &2" + TimeUtils.formatTime(System.currentTimeMillis() - initial) + "&a.",
+                            "&aConversão terminada em &2" + TimeUtils.format(System.currentTimeMillis() - initial) + "&a.",
                             "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
                     ));
 
@@ -110,7 +110,7 @@ public class ConversorManager {
                     conversorName,
                     converted,
                     timedPlayers.size(),
-                    TimeUtils.formatTime(System.currentTimeMillis() - initial)
+                    TimeUtils.format(System.currentTimeMillis() - initial)
             ));
 
             ActionBarUtils.sendActionBar(

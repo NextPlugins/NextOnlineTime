@@ -77,7 +77,7 @@ public class OnlineTimeCommand {
 
         context.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
                 .replace("%target%", name)
-                .replace("%time%", TimeUtils.formatTime(timedPlayer.getTimeInServer()))
+                .replace("%time%", TimeUtils.format(timedPlayer.getTimeInServer()))
         );
 
     }
@@ -107,7 +107,7 @@ public class OnlineTimeCommand {
 
         }
 
-        long timeInMillis = TimeUtils.getTime(time);
+        long timeInMillis = TimeUtils.unformat(time);
         if (timeInMillis < 1) {
 
             context.sendMessage(MessageValue.get(MessageValue::invalidTime));
@@ -129,12 +129,12 @@ public class OnlineTimeCommand {
         timedPlayer.removeTime(timeInMillis);
 
         context.sendMessage(MessageValue.get(MessageValue::sendedTime)
-                .replace("%time%", TimeUtils.formatTime(timeInMillis))
+                .replace("%time%", TimeUtils.format(timeInMillis))
                 .replace("%target%", target.getName())
         );
 
         target.sendMessage(MessageValue.get(MessageValue::receivedTime)
-                .replace("%time%", TimeUtils.formatTime(timeInMillis))
+                .replace("%time%", TimeUtils.format(timeInMillis))
                 .replace("%sender%", context.getSender().getName())
         );
 

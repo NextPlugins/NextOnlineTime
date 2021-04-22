@@ -43,7 +43,7 @@ public class TopOnlineTimeInventory extends SimpleInventory {
                 .name("&6Próxima Atualização")
                 .setLore(
                         "&7O top tempo será atualizado em",
-                        "&f" + TimeUtils.formatTime(this.topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
+                        "&f" + TimeUtils.format(this.topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
                 )
                 .wrap()));
 
@@ -59,7 +59,7 @@ public class TopOnlineTimeInventory extends SimpleInventory {
 
             editor.setItem(slot, InventoryItem.of(new ItemBuilder(name)
                     .name("&a" + name + " &7#" + position)
-                    .setLore("&7Total de tempo: &f" + TimeUtils.formatTime(time))
+                    .setLore("&7Total de tempo: &f" + TimeUtils.format(time))
                     .wrap()));
 
             ++slot;
