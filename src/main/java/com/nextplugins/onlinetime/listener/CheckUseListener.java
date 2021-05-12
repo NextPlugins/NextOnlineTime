@@ -3,7 +3,7 @@ package com.nextplugins.onlinetime.listener;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.utils.TimeUtils;
-import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
