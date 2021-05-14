@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.nextplugins'
-version '1.1.2'
+version '1.2.0'
 
 tasks.build.dependsOn('pdm', 'shadowJar')
 
@@ -32,12 +32,13 @@ dependencies {
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
-    implementation 'com.github.HenryFabio:inventory-api:2.0.3'
-    implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
-    implementation 'org.bstats:bstats-bukkit:1.8'
-    implementation 'de.tr7zw:item-nbt-api:2.7.1'
+    pdm 'com.github.HenryFabio:inventory-api:2.0.3'
+    pdm 'com.github.HenryFabio:sql-provider:9561f20fd2'
+    pdm 'org.bstats:bstats-bukkit:1.8'
+    pdm 'de.tr7zw:item-nbt-api:2.7.1'
 
-    pdm "com.github.SaiintBrisson:command-framework:1.1.0"
+    pdm 'com.github.SaiintBrisson.command-framework:bukkit:1.2.0'
+    pdm 'com.github.SaiintBrisson.command-framework:shared:1.2.0'
 
     pdm "com.google.inject:guice:4.0"
     pdm "javax.inject:javax.inject:1"
@@ -62,10 +63,6 @@ bukkit {
 
 shadowJar {
     archiveName("${project.name}-${project.version}.jar")
-    relocate 'com.henryfabio.minecraft.inventoryapi', 'com.nextplugins.onlinetime.libs.inventoryapi'
-    relocate 'com.henryfabio.sqlprovider', 'com.nextplugins.onlinetime.libs.sqlprovider'
-    relocate 'org.bstats', 'com.nextplugins.onlinetime.libs.bstats'
-    relocate 'de.tr7zw', 'com.nextplugins.onlinetime.libs.nbtapi'
 }
 
 compileJava {

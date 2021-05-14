@@ -1,5 +1,6 @@
 package com.nextplugins.onlinetime;
 
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.henryfabio.minecraft.inventoryapi.manager.InventoryManager;
@@ -13,10 +14,12 @@ import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
-import com.nextplugins.onlinetime.listener.InteractNPCListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
-import com.nextplugins.onlinetime.manager.*;
+import com.nextplugins.onlinetime.manager.CheckManager;
+import com.nextplugins.onlinetime.manager.ConversorManager;
+import com.nextplugins.onlinetime.manager.RewardManager;
+import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
@@ -24,6 +27,7 @@ import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
+import lombok.val;
 import me.bristermitten.pdm.PluginDependencyManager;
 import me.saiintbrisson.bukkit.command.BukkitFrame;
 import me.saiintbrisson.minecraft.command.message.MessageType;
@@ -37,6 +41,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 @Getter
 public final class NextOnlineTime extends JavaPlugin {
@@ -61,7 +66,8 @@ public final class NextOnlineTime extends JavaPlugin {
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private NPCManager npcManager;
 
-    @Inject private TopTimedPlayerTask topTimedPlayerTask;
+    @Inject
+    private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
 
     @Inject private ItemParser itemParser;
@@ -84,65 +90,78 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        PluginDependencyManager.of(this).loadAllDependencies().thenRun(() -> {
+        getLogger().info("Baixando e carregando dependências necessárias...");
 
-            PluginManager pluginManager = Bukkit.getPluginManager();
-            try {
+        val downloadTime = Stopwatch.createStarted();
 
-                InventoryManager.enable(this);
+        PluginDependencyManager.of(this)
+                .loadAllDependencies()
+                .exceptionally(throwable -> {
 
-                this.sqlConnector = configureSqlProvider(this.getConfig());
+                    throwable.printStackTrace();
 
-                this.injector = PluginModule.from(this).createInjector();
-                this.injector.injectMembers(this);
+                    getLogger().severe("Ocorreu um erro durante a inicialização do plugin!");
+                    Bukkit.getPluginManager().disablePlugin(this);
 
-                BukkitFrame bukkitFrame = new BukkitFrame(this);
-                bukkitFrame.registerCommands(
-                        this.injector.getInstance(OnlineTimeCommand.class)
-                );
+                    return null;
 
-                bukkitFrame.getMessageHolder().setMessage(
-                        MessageType.INCORRECT_USAGE,
-                        MessageValue.get(MessageValue::incorrectUsage)
-                );
+                })
+                .join();
 
-                CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
+        downloadTime.stop();
 
-                UserConnectListener userConnectListener = new UserConnectListener(
-                        this.timedPlayerManager,
-                        this.conversorManager
-                );
+        getLogger().log(Level.INFO, "Dependências carregadas com sucesso! ({0})", downloadTime);
+        getLogger().info("Iniciando carregamento do plugin.");
 
-                pluginManager.registerEvents(checkUseListener, this);
-                pluginManager.registerEvents(userConnectListener, this);
+        val loadTime = Stopwatch.createStarted();
 
-                this.rewardManager.loadRewards();
-                this.timedPlayerManager.getTimedPlayerDAO().createTable();
 
-                this.checkManager.init();
-                this.inventoryRegistry.init();
-                this.npcManager.init();
+        PluginManager pluginManager = Bukkit.getPluginManager();
 
-                configurePlaceholder(pluginManager);
-                configureBStats();
+        InventoryManager.enable(this);
 
-                loadConversors();
-                loadCheckItem();
+        this.sqlConnector = configureSqlProvider(this.getConfig());
 
-                registerTopUpdaterTask();
+        this.injector = PluginModule.from(this).createInjector();
+        this.injector.injectMembers(this);
 
-                this.getLogger().info("Plugin loaded successfully");
+        BukkitFrame bukkitFrame = new BukkitFrame(this);
+        bukkitFrame.registerCommands(
+                this.injector.getInstance(OnlineTimeCommand.class)
+        );
 
-            } catch (Exception exception) {
+        bukkitFrame.getMessageHolder().setMessage(
+                MessageType.INCORRECT_USAGE,
+                MessageValue.get(MessageValue::incorrectUsage)
+        );
 
-                exception.printStackTrace();
-                this.getLogger().severe("A error occurred on plugin startup, turning off");
+        CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
 
-                pluginManager.disablePlugin(this);
+        UserConnectListener userConnectListener = new UserConnectListener(
+                this.timedPlayerManager,
+                this.conversorManager
+        );
 
-            }
+        pluginManager.registerEvents(checkUseListener, this);
+        pluginManager.registerEvents(userConnectListener, this);
 
-        });
+        this.rewardManager.loadRewards();
+        this.timedPlayerManager.getTimedPlayerDAO().createTable();
+
+        this.checkManager.init();
+        this.inventoryRegistry.init();
+        this.npcManager.init();
+
+        configurePlaceholder(pluginManager);
+        configureBStats();
+
+        loadConversors();
+        loadCheckItem();
+
+        registerTopUpdaterTask();
+
+        loadTime.stop();
+        getLogger().log(Level.INFO, "Plugin inicializado com sucesso. ({0})", loadTime);
 
     }
 
