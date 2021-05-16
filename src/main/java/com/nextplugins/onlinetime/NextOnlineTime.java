@@ -66,8 +66,7 @@ public final class NextOnlineTime extends JavaPlugin {
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private NPCManager npcManager;
 
-    @Inject
-    private TopTimedPlayerTask topTimedPlayerTask;
+    @Inject private TopTimedPlayerTask topTimedPlayerTask;
     @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
 
     @Inject private ItemParser itemParser;
@@ -79,11 +78,11 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onLoad() {
 
-        this.saveDefaultConfig();
-        this.messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
-        this.rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
-        this.conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
-        this.npcConfig = ConfigurationManager.of("npc.yml").saveDefault().load();
+        saveDefaultConfig();
+        messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
+        rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
+        conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
+        npcConfig = ConfigurationManager.of("npc.yml").saveDefault().load();
 
     }
 
@@ -114,20 +113,18 @@ public final class NextOnlineTime extends JavaPlugin {
         getLogger().info("Iniciando carregamento do plugin.");
 
         val loadTime = Stopwatch.createStarted();
-
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
+        val pluginManager = Bukkit.getPluginManager();
 
         InventoryManager.enable(this);
 
-        this.sqlConnector = configureSqlProvider(this.getConfig());
+        sqlConnector = configureSqlProvider(getConfig());
 
-        this.injector = PluginModule.from(this).createInjector();
-        this.injector.injectMembers(this);
+        injector = PluginModule.from(this).createInjector();
+        injector.injectMembers(this);
 
         BukkitFrame bukkitFrame = new BukkitFrame(this);
         bukkitFrame.registerCommands(
-                this.injector.getInstance(OnlineTimeCommand.class)
+                injector.getInstance(OnlineTimeCommand.class)
         );
 
         bukkitFrame.getMessageHolder().setMessage(
@@ -135,22 +132,22 @@ public final class NextOnlineTime extends JavaPlugin {
                 MessageValue.get(MessageValue::incorrectUsage)
         );
 
-        CheckUseListener checkUseListener = new CheckUseListener(this.timedPlayerManager);
+        CheckUseListener checkUseListener = new CheckUseListener(timedPlayerManager);
 
         UserConnectListener userConnectListener = new UserConnectListener(
-                this.timedPlayerManager,
-                this.conversorManager
+                timedPlayerManager,
+                conversorManager
         );
 
         pluginManager.registerEvents(checkUseListener, this);
         pluginManager.registerEvents(userConnectListener, this);
 
-        this.rewardManager.loadRewards();
-        this.timedPlayerManager.getTimedPlayerDAO().createTable();
+        rewardManager.loadRewards();
+        timedPlayerManager.getTimedPlayerDAO().createTable();
 
-        this.checkManager.init();
-        this.inventoryRegistry.init();
-        this.npcManager.init();
+        checkManager.init();
+        inventoryRegistry.init();
+        npcManager.init();
 
         configurePlaceholder(pluginManager);
         configureBStats();
@@ -168,11 +165,11 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onDisable() {
 
-        Bukkit.getOnlinePlayers().forEach(this.timedPlayerManager::purge);
+        Bukkit.getOnlinePlayers().forEach(timedPlayerManager::purge);
 
-        if (this.npcManager.isEnabled()) {
+        if (npcManager.isEnabled()) {
 
-            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+            NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
             runnable.despawn();
 
         }
@@ -181,7 +178,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private void loadCheckItem() {
 
-        this.checkManager.setCheckItem(this.itemParser.parseSection(
+        checkManager.setCheckItem(itemParser.parseSection(
                 getConfig().getConfigurationSection("checkItem")
         ));
 
@@ -193,7 +190,7 @@ public final class NextOnlineTime extends JavaPlugin {
         if (conversorsConfig.getBoolean(atlasConversor + ".use")) {
 
             ConfigurationSection section = conversorsConfig.getConfigurationSection(atlasConversor);
-            SQLConnector connector = this.configureSqlProvider(section);
+            SQLConnector connector = configureSqlProvider(section);
 
             AtlasOnlineTimeConversor conversor = new AtlasOnlineTimeConversor(
                     atlasConversor,
@@ -201,7 +198,7 @@ public final class NextOnlineTime extends JavaPlugin {
                     connector
             );
 
-            this.conversorManager.registerConversor(conversor);
+            conversorManager.registerConversor(conversor);
 
         }
 
@@ -209,7 +206,7 @@ public final class NextOnlineTime extends JavaPlugin {
         if (conversorsConfig.getBoolean(onlineTimePlusConversor + ".use")) {
 
             ConfigurationSection section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
-            SQLConnector connector = this.configureSqlProvider(section);
+            SQLConnector connector = configureSqlProvider(section);
 
             OnlineTimePlusConversor conversor = new OnlineTimePlusConversor(
                     onlineTimePlusConversor,
@@ -217,7 +214,7 @@ public final class NextOnlineTime extends JavaPlugin {
                     connector
             );
 
-            this.conversorManager.registerConversor(conversor);
+            conversorManager.registerConversor(conversor);
 
         }
 
@@ -258,7 +255,7 @@ public final class NextOnlineTime extends JavaPlugin {
         if (!pluginManager.isPluginEnabled("PlaceholderAPI")) return;
 
         PlaceholderRegister.of(this).register();
-        this.getLogger().info("Bind with PlaceholderAPI successfully");
+        getLogger().info("Bind with PlaceholderAPI successfully");
 
     }
 
@@ -266,23 +263,22 @@ public final class NextOnlineTime extends JavaPlugin {
 
         BukkitScheduler scheduler = Bukkit.getScheduler();
 
-        int updaterTime = this.getConfig().getInt("updaterTime");
-        TimeUnit timeFormat = this.parseTime(this.getConfig().getString("timeFormat"));
+        int updaterTime = getConfig().getInt("updaterTime");
+        TimeUnit timeFormat = parseTime(getConfig().getString("timeFormat"));
 
         long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
         scheduler.runTaskTimerAsynchronously(
                 this,
-                this.updatePlayerTimeTask,
+                updatePlayerTimeTask,
                 updateTimeInTicks,
                 updateTimeInTicks
         );
 
         scheduler.runTaskTimerAsynchronously(
                 this,
-                this.topTimedPlayerTask,
-                0,
-                30 * 60 * 20L
+                topTimedPlayerTask,
+                0, 30 * 60 * 20L
         );
 
     }
@@ -300,10 +296,10 @@ public final class NextOnlineTime extends JavaPlugin {
 
         Metrics metrics = new Metrics(this, PLUGIN_ID);
         metrics.addCustomChart(new Metrics.SingleLineChart("total_rewards_registered",
-                () -> this.rewardManager.getRewards().size())
+                () -> rewardManager.getRewards().size())
         );
 
-        this.getLogger().info("Enabled bStats successfully, statistics enabled");
+        getLogger().info("Enabled bStats successfully, statistics enabled");
 
     }
 

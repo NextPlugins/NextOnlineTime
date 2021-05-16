@@ -5,9 +5,9 @@ import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.nextplugins.onlinetime.configuration.values.NPCValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.api.npc.NPCRegistry;
 import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -68,17 +68,17 @@ public class NPCRunnable implements Runnable {
         // prevent duplicate npc / holograms
         despawn();
 
-        NPCRegistry registry = CitizensAPI.getNPCRegistry();
+        val registry = CitizensAPI.getNPCRegistry();
 
         // npc implementation
-        NPC npc = registry.createNPC(EntityType.PLAYER, npcName);
+        val npc = registry.createNPC(EntityType.PLAYER, npcName);
         npc.data().set(NPC.PLAYER_SKIN_UUID_METADATA, Bukkit.getOfflinePlayer(skinNick).getName());
         npc.setProtected(true);
         npc.spawn(location);
 
         if (NPCValue.get(NPCValue::lookCLose)) {
 
-            LookClose lookClose = new LookClose();
+            val lookClose = new LookClose();
             lookClose.lookClose(true);
 
             npc.addTrait(lookClose);
@@ -90,7 +90,7 @@ public class NPCRunnable implements Runnable {
         // hologram implementation
         if (hologramMessage.isEmpty()) return true;
 
-        Hologram hologram = HologramsAPI.createHologram(this.plugin, location.clone().add(0, hologramAddition, 0));
+        val hologram = HologramsAPI.createHologram(this.plugin, location.clone().add(0, hologramAddition, 0));
 
         for (int i = 0; i < hologramMessage.size(); i++) {
 
