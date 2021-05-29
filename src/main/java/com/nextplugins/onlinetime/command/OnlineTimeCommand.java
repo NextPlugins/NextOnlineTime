@@ -13,257 +13,282 @@ import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.LocationUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
-import me.saiintbrisson.minecraft.command.annotation.Command;
-import me.saiintbrisson.minecraft.command.annotation.Optional;
-import me.saiintbrisson.minecraft.command.command.Context;
-import me.saiintbrisson.minecraft.command.target.CommandTarget;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
-public class OnlineTimeCommand {
+public final class OnlineTimeCommand implements CommandExecutor {
 
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private ConversorManager conversorManager;
     @Inject private InventoryRegistry inventoryRegistry;
     @Inject private NPCManager npcManager;
 
-    @Command(
-            name = "tempo",
-            aliases = {"tempoonline"},
-            target = CommandTarget.PLAYER
-    )
-    public void timeCommand(Context<Player> context) {
-
-        List<String> message = context.getSender().hasPermission("nextonlinetime.admin")
-                ? MessageValue.get(MessageValue::helpMessageAdmin)
-                : MessageValue.get(MessageValue::helpMessage);
-
-        context.getSender().sendMessage(
-                message.stream()
-                        .map(line -> line.replace("%label%", context.getLabel()))
-                        .collect(Collectors.toList())
-                        .toArray(new String[]{})
-        );
-    }
-
-    @Command(
-            name = "tempo.ver",
-            target = CommandTarget.PLAYER,
-            usage = "/tempo ver [jogador]"
-    )
-    public void viewTimeCommand(Context<Player> context,
-                                @Optional Player target) {
-
-        String name = target == null ? context.getSender().getName() : target.getName();
-
-        TimedPlayer timedPlayer = this.timedPlayerManager.getPlayers().getOrDefault(name, null);
-        if (timedPlayer == null) {
-
-            context.sendMessage(MessageValue.get(MessageValue::offlinePlayer));
-            return;
-
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Este comando apenas pode ser executado por jogadores.");
+            return true;
         }
 
-        context.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
-                .replace("%target%", name)
-                .replace("%time%", TimeUtils.format(timedPlayer.getTimeInServer()))
-        );
+        Player player = (Player) sender;
 
-    }
+        if (args.length == 0) {
+            List<String> messages = sender.hasPermission("nextonlinetime.admin")
+                    ? MessageValue.get(MessageValue::helpMessageAdmin)
+                    : MessageValue.get(MessageValue::helpMessage);
 
-    @Command(
-            name = "tempo.menu",
-            target = CommandTarget.PLAYER
-    )
-    public void openInventoryCommand(Context<Player> context) {
-        this.inventoryRegistry.getMainInventory().openInventory(context.getSender());
-    }
+            for (String message : messages) {
+                player.sendMessage(message.replace("%label%", "tempo"));
+            }
 
-    @Command(
-            name = "tempo.enviar",
-            target = CommandTarget.PLAYER,
-            permission = "nextonlinetime.sendtime",
-            usage = "/tempo enviar {jogador} {tempo}"
-    )
-    public void sendTimeCommand(Context<Player> context,
-                                Player target,
-                                String time) {
-
-        if (context.getSender() == target) {
-
-            context.sendMessage(MessageValue.get(MessageValue::cantSendForYou));
-            return;
-
+            return true;
         }
 
-        long timeInMillis = TimeUtils.unformat(time);
-        if (timeInMillis < 1) {
+        String subCommand = args[0];
 
-            context.sendMessage(MessageValue.get(MessageValue::invalidTime));
-            return;
+        // see
 
+        if (subCommand.equalsIgnoreCase("ver")) {
+            Player target = null;
+
+            try {
+                target = Bukkit.getPlayer(args[1]);
+            } catch (Throwable ignored) {}
+
+            String name = target == null ? player.getName() : target.getName();
+
+            TimedPlayer timedPlayer = this.timedPlayerManager.getPlayers().getOrDefault(name, null);
+            if (timedPlayer == null) {
+                player.sendMessage(MessageValue.get(MessageValue::offlinePlayer));
+                return true;
+            }
+
+            player.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
+                    .replace("%target%", name)
+                    .replace("%time%", TimeUtils.format(timedPlayer.getTimeInServer()))
+            );
+
+            return true;
         }
 
-        TimedPlayer timedPlayer = this.timedPlayerManager.getByName(context.getSender().getName());
-        if (timedPlayer.getTimeInServer() < timeInMillis) {
+        // menu
 
-            context.sendMessage(MessageValue.get(MessageValue::noTime));
-            return;
-
+        if (subCommand.equalsIgnoreCase("menu")) {
+            this.inventoryRegistry.getMainInventory().openInventory(player);
+            return true;
         }
 
-        TimedPlayer timedTarget = this.timedPlayerManager.getByName(target.getName());
+        // send
 
-        timedTarget.addTime(timeInMillis);
-        timedPlayer.removeTime(timeInMillis);
+        if (subCommand.equalsIgnoreCase("enviar")) {
+            if (!player.hasPermission("nextonlinetime.sendtime")) {
+                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
+                return true;
+            }
 
-        context.sendMessage(MessageValue.get(MessageValue::sendedTime)
-                .replace("%time%", TimeUtils.format(timeInMillis))
-                .replace("%target%", target.getName())
-        );
+            if (args.length < 2) {
+                player.sendMessage(ChatColor.RED + "Você deve especificar um jogador alvo.");
+                return true;
+            }
 
-        target.sendMessage(MessageValue.get(MessageValue::receivedTime)
-                .replace("%time%", TimeUtils.format(timeInMillis))
-                .replace("%sender%", context.getSender().getName())
-        );
+            Player target;
 
-    }
+            try {
+                target = Bukkit.getPlayer(args[1]);
+            } catch (Throwable ignored) {
+                player.sendMessage(ChatColor.RED + "O jogador alvo é invalido.");
+                return true;
+            }
 
-    @Command(
-            name = "tempo.setnpc",
-            permission = "nextonlinetime.admin",
-            target = CommandTarget.PLAYER
-    )
-    public void onSetNpcCommand(Context<Player> context) {
+            if (args.length < 3) {
+                player.sendMessage(ChatColor.RED + "Você deve especificar um jogador alvo.");
+                return true;
+            }
 
-        Location location = context.getSender().getLocation();
-        ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
+            String time;
 
-        FileConfiguration config = configManager.load();
-        config.set("position", LocationUtils.serialize(location));
+            try {
+                time = args[2];
+            } catch (Throwable ignored) {
+                player.sendMessage(ChatColor.RED + "Você deve especificar uma quantia de tempo válida.");
+                return true;
+            }
 
-        try {
 
-            config.save(configManager.getFile());
 
-            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
-            runnable.spawnDefault(location);
+            if (player == target) {
+                player.sendMessage(MessageValue.get(MessageValue::cantSendForYou));
+                return true;
+            }
 
-            context.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
+            long timeInMillis = TimeUtils.unformat(time);
+            if (timeInMillis < 1) {
+                player.sendMessage(MessageValue.get(MessageValue::invalidTime));
+                return true;
+            }
 
-        }catch (Exception exception) {
-            context.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
+            TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+            if (timedPlayer.getTimeInServer() < timeInMillis) {
+                player.sendMessage(MessageValue.get(MessageValue::noTime));
+                return true;
+            }
+
+            TimedPlayer timedTarget = this.timedPlayerManager.getByName(target.getName());
+
+            timedTarget.addTime(timeInMillis);
+            timedPlayer.removeTime(timeInMillis);
+
+            player.sendMessage(MessageValue.get(MessageValue::sendedTime)
+                    .replace("%time%", TimeUtils.format(timeInMillis))
+                    .replace("%target%", target.getName())
+            );
+
+            target.sendMessage(MessageValue.get(MessageValue::receivedTime)
+                    .replace("%time%", TimeUtils.format(timeInMillis))
+                    .replace("%sender%", player.getName())
+            );
+
+            return true;
         }
 
-    }
+        // set npc
 
-    @Command(
-            name = "tempo.delnpc",
-            permission = "nextonlinetime.admin",
-            target = CommandTarget.PLAYER
-    )
-    public void onDelNpcCommand(Context<Player> context) {
+        if (subCommand.equalsIgnoreCase("setnpc")) {
+            if (!player.hasPermission("nextonlinetime.admin")) {
+                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
+                return true;
+            }
 
-        ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
+            Location location = player.getLocation();
+            ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
 
-        FileConfiguration config = configManager.load();
-        config.set("position", "");
+            FileConfiguration config = configManager.load();
+            config.set("position", LocationUtils.serialize(location));
 
-        try {
+            try {
 
-            config.save(configManager.getFile());
+                config.save(configManager.getFile());
 
-            NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
-            runnable.despawn();
+                NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+                runnable.spawnDefault(location);
 
-            context.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
+                player.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
 
-        }catch (Exception exception) {
-            context.sendMessage(ColorUtils.colored("&cNão foi possível deletar o npc."));
+            } catch (Exception exception) {
+                player.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
+            }
+
+            return true;
         }
 
-    }
+        // delete npc
 
-    @Command(
-            name = "conversor",
-            permission = "nextonlinetime.admin",
-            target = CommandTarget.ALL
-    )
-    public void onConversorCommand(Context<CommandSender> context,
-                                   String conversor) {
+        if (subCommand.equalsIgnoreCase("delnpc")) {
+            if (!player.hasPermission("nextonlinetime.admin")) {
+                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
+                return true;
+            }
 
-        Conversor pluginConversor = checkConversorAvaility(context, conversor);
-        if (pluginConversor == null) return;
+            ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
 
-        context.sendMessage(ColorUtils.colored(
-                "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
-        ));
+            FileConfiguration config = configManager.load();
+            config.set("position", "");
 
-        long initial = System.currentTimeMillis();
-        this.conversorManager.setConverting(true);
+            try {
 
-        Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
-        if (timedPlayers == null) {
+                config.save(configManager.getFile());
 
-            context.sendMessage(ColorUtils.colored(
-                    "&cOcorreu um erro, veja se configurou corretamente o conversor."
+                NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+                runnable.despawn();
+
+                player.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
+
+            } catch (Exception exception) {
+                player.sendMessage(ColorUtils.colored("&cNão foi possível deletar o npc."));
+            }
+
+            return true;
+        }
+
+        // conversor
+
+        if (subCommand.equalsIgnoreCase("conversor")) {
+            if (!player.hasPermission("nextonlinetime.admin")) {
+                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
+                return true;
+            }
+
+            final String conversor = args[1];
+
+            Conversor pluginConversor = checkConversor(sender, conversor);
+
+            if (pluginConversor == null) return true;
+
+            player.sendMessage(ColorUtils.colored(
+                    "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
             ));
-            return;
 
+            long initial = System.currentTimeMillis();
+            this.conversorManager.setConverting(true);
+
+            Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
+            if (timedPlayers == null) {
+
+                player.sendMessage(ColorUtils.colored(
+                        "&cOcorreu um erro, veja se configurou corretamente o conversor."
+                ));
+                return true;
+
+            }
+
+            this.conversorManager.startConversion(
+                    player,
+                    timedPlayers,
+                    pluginConversor.getConversorName(),
+                    initial
+            );
         }
 
-        this.conversorManager.startConversion(
-                context.getSender(),
-                timedPlayers,
-                pluginConversor.getConversorName(),
-                initial
-        );
-
+        return false;
     }
 
-    private Conversor checkConversorAvaility(Context<CommandSender> context, String conversor) {
-
+    private Conversor checkConversor(CommandSender sender, String conversor) {
         if (this.conversorManager.isConverting()) {
-
-            context.sendMessage(ColorUtils.colored(
+            sender.sendMessage(ColorUtils.colored(
                     "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
             ));
             return null;
-
         }
 
-        int maxPlayers = context.getSender() instanceof Player ? 1 : 0;
+        final int maxPlayers = sender instanceof Player ? 1 : 0;
         if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
-
-            context.sendMessage(ColorUtils.colored(
+            sender.sendMessage(ColorUtils.colored(
                     "&cEsta função só pode ser usada com apenas você online."
             ));
             return null;
-
         }
 
         Conversor pluginConversor = this.conversorManager.getByName(conversor);
         if (pluginConversor == null) {
-
-            context.sendMessage(ColorUtils.colored(
-                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.avaliableConversors()
+            sender.sendMessage(ColorUtils.colored(
+                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.availableConversors()
             ));
-
         }
 
         return pluginConversor;
-
     }
 
 }

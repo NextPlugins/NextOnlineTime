@@ -11,7 +11,6 @@ import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConve
 import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
-import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.guice.PluginModule;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
@@ -29,8 +28,6 @@ import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import lombok.val;
 import me.bristermitten.pdm.PluginDependencyManager;
-import me.saiintbrisson.bukkit.command.BukkitFrame;
-import me.saiintbrisson.minecraft.command.message.MessageType;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -122,15 +119,7 @@ public final class NextOnlineTime extends JavaPlugin {
         injector = PluginModule.from(this).createInjector();
         injector.injectMembers(this);
 
-        BukkitFrame bukkitFrame = new BukkitFrame(this);
-        bukkitFrame.registerCommands(
-                injector.getInstance(OnlineTimeCommand.class)
-        );
-
-        bukkitFrame.getMessageHolder().setMessage(
-                MessageType.INCORRECT_USAGE,
-                MessageValue.get(MessageValue::incorrectUsage)
-        );
+        getCommand("tempo").setExecutor(injector.getInstance(OnlineTimeCommand.class));
 
         CheckUseListener checkUseListener = new CheckUseListener(timedPlayerManager);
 

@@ -49,7 +49,7 @@ public class ConversorManager {
 
     }
 
-    public List<String> avaliableConversors() {
+    public List<String> availableConversors() {
 
         return conversors.stream()
                 .map(Conversor::getConversorName)

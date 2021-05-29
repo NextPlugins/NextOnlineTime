@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.nextplugins'
-version '1.2.0'
+version '1.2.1'
 
 tasks.build.dependsOn('pdm', 'shadowJar')
 
@@ -32,13 +32,11 @@ dependencies {
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
+    implementation 'org.bstats:bstats-bukkit:1.8'
+
     pdm 'com.github.HenryFabio:inventory-api:2.0.3'
     pdm 'com.github.HenryFabio:sql-provider:9561f20fd2'
-    pdm 'org.bstats:bstats-bukkit:1.8'
     pdm 'de.tr7zw:item-nbt-api:2.7.1'
-
-    pdm 'com.github.SaiintBrisson.command-framework:bukkit:1.2.0'
-    pdm 'com.github.SaiintBrisson.command-framework:shared:1.2.0'
 
     pdm "com.google.inject:guice:4.0"
     pdm "javax.inject:javax.inject:1"
@@ -59,10 +57,17 @@ bukkit {
     apiVersion = '1.12.2'
     load = 'POSTWORLD'
     softDepend = ['PlaceholderAPI', 'Citizens', 'HolographicDisplays']
+
+    commands {
+        tempo {
+            aliases = ['tempoonline']
+        }
+    }
 }
 
 shadowJar {
     archiveName("${project.name}-${project.version}.jar")
+    relocate 'org.bstats', 'com.nextplugins.cash.libs.bstats'
 }
 
 compileJava {
