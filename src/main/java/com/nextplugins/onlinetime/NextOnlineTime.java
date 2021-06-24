@@ -91,18 +91,18 @@ public final class NextOnlineTime extends JavaPlugin {
         val downloadTime = Stopwatch.createStarted();
 
         PluginDependencyManager.of(this)
-                .loadAllDependencies()
-                .exceptionally(throwable -> {
+            .loadAllDependencies()
+            .exceptionally(throwable -> {
 
-                    throwable.printStackTrace();
+                throwable.printStackTrace();
 
-                    getLogger().severe("Ocorreu um erro durante a inicialização do plugin!");
-                    Bukkit.getPluginManager().disablePlugin(this);
+                getLogger().severe("Ocorreu um erro durante a inicialização do plugin!");
+                Bukkit.getPluginManager().disablePlugin(this);
 
-                    return null;
+                return null;
 
-                })
-                .join();
+            })
+            .join();
 
         downloadTime.stop();
 
@@ -124,8 +124,8 @@ public final class NextOnlineTime extends JavaPlugin {
         CheckUseListener checkUseListener = new CheckUseListener(timedPlayerManager);
 
         UserConnectListener userConnectListener = new UserConnectListener(
-                timedPlayerManager,
-                conversorManager
+            timedPlayerManager,
+            conversorManager
         );
 
         pluginManager.registerEvents(checkUseListener, this);
@@ -168,7 +168,7 @@ public final class NextOnlineTime extends JavaPlugin {
     private void loadCheckItem() {
 
         checkManager.setCheckItem(itemParser.parseSection(
-                getConfig().getConfigurationSection("checkItem")
+            getConfig().getConfigurationSection("checkItem")
         ));
 
     }
@@ -182,9 +182,9 @@ public final class NextOnlineTime extends JavaPlugin {
             SQLConnector connector = configureSqlProvider(section);
 
             AtlasOnlineTimeConversor conversor = new AtlasOnlineTimeConversor(
-                    atlasConversor,
-                    section.getString("connection.table"),
-                    connector
+                atlasConversor,
+                section.getString("connection.table"),
+                connector
             );
 
             conversorManager.registerConversor(conversor);
@@ -198,9 +198,9 @@ public final class NextOnlineTime extends JavaPlugin {
             SQLConnector connector = configureSqlProvider(section);
 
             OnlineTimePlusConversor conversor = new OnlineTimePlusConversor(
-                    onlineTimePlusConversor,
-                    section.getString("connection.table"),
-                    connector
+                onlineTimePlusConversor,
+                section.getString("connection.table"),
+                connector
             );
 
             conversorManager.registerConversor(conversor);
@@ -217,21 +217,21 @@ public final class NextOnlineTime extends JavaPlugin {
             ConfigurationSection mysqlSection = section.getConfigurationSection("connection.mysql");
 
             connector = MySQLDatabaseType.builder()
-                    .address(mysqlSection.getString("address"))
-                    .username(mysqlSection.getString("username"))
-                    .password(mysqlSection.getString("password"))
-                    .database(mysqlSection.getString("database"))
-                    .build()
-                    .connect();
+                .address(mysqlSection.getString("address"))
+                .username(mysqlSection.getString("username"))
+                .password(mysqlSection.getString("password"))
+                .database(mysqlSection.getString("database"))
+                .build()
+                .connect();
 
         } else {
 
             ConfigurationSection sqliteSection = section.getConfigurationSection("connection.sqlite");
 
             connector = SQLiteDatabaseType.builder()
-                    .file(new File(sqliteSection.getString("file")))
-                    .build()
-                    .connect();
+                .file(new File(sqliteSection.getString("file")))
+                .build()
+                .connect();
 
         }
 
@@ -258,16 +258,16 @@ public final class NextOnlineTime extends JavaPlugin {
         long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
         scheduler.runTaskTimerAsynchronously(
-                this,
-                updatePlayerTimeTask,
-                updateTimeInTicks,
-                updateTimeInTicks
+            this,
+            updatePlayerTimeTask,
+            updateTimeInTicks,
+            updateTimeInTicks
         );
 
         scheduler.runTaskTimerAsynchronously(
-                this,
-                topTimedPlayerTask,
-                0, 30 * 60 * 20L
+            this,
+            topTimedPlayerTask,
+            0, 30 * 60 * 20L
         );
 
     }
@@ -283,11 +283,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private void configureBStats() {
 
-        Metrics metrics = new Metrics(this, PLUGIN_ID);
-        metrics.addCustomChart(new Metrics.SingleLineChart("total_rewards_registered",
-                () -> rewardManager.getRewards().size())
-        );
-
+        new Metrics(this, PLUGIN_ID);
         getLogger().info("Enabled bStats successfully, statistics enabled");
 
     }
