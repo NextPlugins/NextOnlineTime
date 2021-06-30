@@ -67,7 +67,7 @@ bukkit {
 
 shadowJar {
     archiveName("${project.name}-${project.version}.jar")
-    relocate 'org.bstats', 'com.nextplugins.cash.libs.bstats'
+    relocate 'org.bstats', 'com.nextplugins.onlinetime.libs.bstats'
 }
 
 compileJava {
