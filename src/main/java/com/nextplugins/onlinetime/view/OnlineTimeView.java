@@ -1,4 +1,4 @@
-package com.nextplugins.onlinetime.inventory;
+package com.nextplugins.onlinetime.view;
 
 import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
-public class OnlineTimeInventory extends PagedInventory {
+public class OnlineTimeView extends PagedInventory {
 
     private final Map<String, Integer> playerRewardFilter = new HashMap<>();
 
@@ -45,7 +45,7 @@ public class OnlineTimeInventory extends PagedInventory {
     @Inject private TimedPlayerManager timedPlayerManager;
     @Inject private InventoryRegistry inventoryRegistry;
 
-    public OnlineTimeInventory() {
+    public OnlineTimeView() {
 
         super(
                 "online-time.main",
@@ -81,7 +81,7 @@ public class OnlineTimeInventory extends PagedInventory {
             lore.add("&fCrie um cheque com uma quantidade de tempo");
             if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
 
-            editor.setItem(0, InventoryItem.of(
+            editor.setItem(4, InventoryItem.of(
                     new ItemBuilder("MrSnowDK")
                             .name("&6Cheque de Tempo")
                             .setLore(lore)

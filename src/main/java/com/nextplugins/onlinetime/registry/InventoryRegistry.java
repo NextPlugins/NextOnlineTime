@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.registry;
 
-import com.nextplugins.onlinetime.inventory.OnlineTimeInventory;
-import com.nextplugins.onlinetime.inventory.TopOnlineTimeInventory;
+import com.nextplugins.onlinetime.view.OnlineTimeView;
+import com.nextplugins.onlinetime.view.TopOnlineTimeView;
 import lombok.Getter;
 
 import javax.inject.Singleton;
@@ -15,13 +15,13 @@ import javax.inject.Singleton;
 @Singleton
 public class InventoryRegistry {
 
-    private OnlineTimeInventory mainInventory;
-    private TopOnlineTimeInventory topInventory;
+    private OnlineTimeView mainInventory;
+    private TopOnlineTimeView topInventory;
 
     public void init() {
 
-        this.mainInventory = new OnlineTimeInventory().init();
-        this.topInventory = new TopOnlineTimeInventory().init();
+        this.mainInventory = new OnlineTimeView().init();
+        this.topInventory = new TopOnlineTimeView().init();
 
     }
 

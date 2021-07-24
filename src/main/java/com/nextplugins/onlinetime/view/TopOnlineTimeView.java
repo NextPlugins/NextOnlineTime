@@ -1,4 +1,4 @@
-package com.nextplugins.onlinetime.inventory;
+package com.nextplugins.onlinetime.view;
 
 import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
@@ -18,11 +18,11 @@ import org.bukkit.Material;
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
-public class TopOnlineTimeInventory extends SimpleInventory {
+public class TopOnlineTimeView extends SimpleInventory {
 
     @Inject private TopTimedPlayerManager topTimedPlayerManager;
 
-    public TopOnlineTimeInventory() {
+    public TopOnlineTimeView() {
 
         super(
                 "online-time.top",

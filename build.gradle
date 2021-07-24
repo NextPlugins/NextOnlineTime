@@ -38,10 +38,10 @@ dependencies {
     pdm 'com.github.HenryFabio:sql-provider:9561f20fd2'
     pdm 'de.tr7zw:item-nbt-api:2.7.1'
 
-    pdm "com.google.inject:guice:4.0"
-    pdm "javax.inject:javax.inject:1"
-    pdm "aopalliance:aopalliance:1.0"
-    pdm "org.ow2.asm:asm:8.0.1"
+    implementation "com.google.inject:guice:4.0"
+    implementation "javax.inject:javax.inject:1"
+    implementation "aopalliance:aopalliance:1.0"
+    implementation "org.ow2.asm:asm:8.0.1"
 
     def lombok = "org.projectlombok:lombok:1.18.16"
     compileOnly lombok
