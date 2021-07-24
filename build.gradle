@@ -1,7 +1,6 @@
 plugins {
     id 'java'
 
-    id 'me.bristermitten.pdm' version '0.0.30'
     id 'com.github.johnrengelman.shadow' version '5.0.0'
 
     id 'net.minecrell.plugin-yml.bukkit' version '0.3.0'
@@ -10,11 +9,10 @@ plugins {
 group 'com.nextplugins'
 version '1.2.1'
 
-tasks.build.dependsOn('pdm', 'shadowJar')
+tasks.build.dependsOn('shadowJar')
 
 repositories {
     mavenCentral()
-    jcenter()
 
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
@@ -32,11 +30,9 @@ dependencies {
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
-    implementation 'org.bstats:bstats-bukkit:1.8'
-
-    pdm 'com.github.HenryFabio:inventory-api:2.0.3'
-    pdm 'com.github.HenryFabio:sql-provider:9561f20fd2'
-    pdm 'de.tr7zw:item-nbt-api:2.7.1'
+    implementation 'com.github.HenryFabio:inventory-api:2.0.3'
+    implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
+    implementation 'de.tr7zw:item-nbt-api:2.8.0'
 
     implementation "com.google.inject:guice:4.0"
     implementation "javax.inject:javax.inject:1"
@@ -67,7 +63,19 @@ bukkit {
 
 shadowJar {
     archiveName("${project.name}-${project.version}.jar")
-    relocate 'org.bstats', 'com.nextplugins.onlinetime.libs.bstats'
+
+    relocate 'com.henryfabio.minecraft.inventoryapi', 'com.nextplugins.onlinetime.libs.inventoryapi'
+
+    relocate 'com.henryfabio.sqlprovider', 'com.nextplugins.onlinetime.libs.sqlprovider'
+    relocate 'com.zaxxer.hikari', 'com.nextplugins.onlinetime.libs.hikari'
+
+    relocate 'de.tr7zw.changeme.nbtapi', 'com.nextplugins.onlinetime.libs.nbtapi'
+    relocate 'de.tr7zw.annotations', 'com.nextplugins.onlinetime.libs.annotations'
+
+    relocate 'com.google.common', 'com.nextplugins.onlinetime.libs.guice.common'
+    relocate 'com.google.inject', 'com.nextplugins.onlinetime.libs.guice.inject'
+    relocate 'com.google.thirdparty', 'com.nextplugins.onlinetime.libs.guice.thirdparty'
+    relocate 'javax.inject', 'com.nextplugins.onlinetime.libs.guice.inject.javax'
 }
 
 compileJava {

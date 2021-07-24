@@ -9,6 +9,7 @@ import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
 import com.henryfabio.sqlprovider.connector.type.impl.SQLiteDatabaseType;
 import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConversor;
 import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
+import com.nextplugins.onlinetime.api.metric.MetricProvider;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.guice.PluginModule;
@@ -27,8 +28,6 @@ import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import lombok.val;
-import me.bristermitten.pdm.PluginDependencyManager;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -86,27 +85,6 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        getLogger().info("Baixando e carregando dependências necessárias...");
-
-        val downloadTime = Stopwatch.createStarted();
-
-        PluginDependencyManager.of(this)
-            .loadAllDependencies()
-            .exceptionally(throwable -> {
-
-                throwable.printStackTrace();
-
-                getLogger().severe("Ocorreu um erro durante a inicialização do plugin!");
-                Bukkit.getPluginManager().disablePlugin(this);
-
-                return null;
-
-            })
-            .join();
-
-        downloadTime.stop();
-
-        getLogger().log(Level.INFO, "Dependências carregadas com sucesso! ({0})", downloadTime);
         getLogger().info("Iniciando carregamento do plugin.");
 
         val loadTime = Stopwatch.createStarted();
@@ -139,12 +117,13 @@ public final class NextOnlineTime extends JavaPlugin {
         npcManager.init();
 
         configurePlaceholder(pluginManager);
-        configureBStats();
 
         loadConversors();
         loadCheckItem();
 
         registerTopUpdaterTask();
+
+        MetricProvider.of(this).register();
 
         loadTime.stop();
         getLogger().log(Level.INFO, "Plugin inicializado com sucesso. ({0})", loadTime);
@@ -278,13 +257,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
         if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
         return timeUnit;
-
-    }
-
-    private void configureBStats() {
-
-        new Metrics(this, PLUGIN_ID);
-        getLogger().info("Enabled bStats successfully, statistics enabled");
 
     }
 
