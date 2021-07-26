@@ -34,10 +34,7 @@ dependencies {
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
     implementation 'de.tr7zw:item-nbt-api:2.8.0'
 
-    implementation "com.google.inject:guice:4.0"
-    implementation "javax.inject:javax.inject:1"
-    implementation "aopalliance:aopalliance:1.0"
-    implementation "org.ow2.asm:asm:8.0.1"
+    implementation "com.google.inject:guice:5.0.1"
 
     def lombok = "org.projectlombok:lombok:1.18.16"
     compileOnly lombok
@@ -50,7 +47,6 @@ bukkit {
     authors = ['Henry_Fabio', 'Eike', 'Gabriel Santos', 'Yuhtin']
     website = 'https://github.com/NextPlugins'
     version = "${project.version}"
-    apiVersion = '1.12.2'
     load = 'POSTWORLD'
     softDepend = ['PlaceholderAPI', 'Citizens', 'HolographicDisplays']
 
