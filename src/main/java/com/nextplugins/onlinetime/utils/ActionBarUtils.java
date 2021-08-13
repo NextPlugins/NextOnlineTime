@@ -1,11 +1,11 @@
 package com.nextplugins.onlinetime.utils;
 
-import java.lang.reflect.Constructor;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Constructor;
 
 /**
  * @author Yuhtin

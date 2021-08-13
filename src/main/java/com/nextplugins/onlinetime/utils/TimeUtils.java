@@ -9,41 +9,33 @@ import java.util.regex.Pattern;
 
 public enum TimeUtils {
 
-    DAY(86400000, "days","day","d","dia", "dias"),
+    DAY(86400000, "days", "day", "d", "dia", "dias"),
     HOUR(3600000, "hours", "hour", "h", "hora", "horas"),
     MINUTE(60000, "minutes", "minute", "m", "minuto", "minutos"),
     SECOND(1000, "seconds", "second", "s", "segundo", "segundos");
 
+    private static final Pattern PATTERN = Pattern.compile("(\\d+)(\\s+)?([a-zA-Z]+)");
     private final long millis;
     private final List<String> formats;
-
-    private static final Pattern PATTERN = Pattern.compile("(\\d+)(\\s+)?([a-zA-Z]+)");
 
     TimeUtils(long millis, String... formats) {
         this.millis = millis;
         this.formats = Arrays.asList(formats);
     }
 
-    public long getMillis() {
-        return millis;
-    }
-
-    public List<String> getFormats() {
-        return formats;
-    }
-
     public static long unformat(String string) {
         Matcher matcher = PATTERN.matcher(string.replaceAll(",| e", ""));
         long time = 0;
 
-        while(matcher.find()) {
+        while (matcher.find()) {
             try {
                 int value = Integer.parseInt(matcher.group(1));
                 TimeUtils type = fromFormats(matcher.group(3));
-                if(type != null) {
+                if (type != null) {
                     time += (value * type.getMillis());
                 }
-            }catch (Exception ignored){}
+            } catch (Exception ignored) {
+            }
         }
 
         return time;
@@ -61,15 +53,15 @@ public enum TimeUtils {
         String[] names = {"dia", "hora", "minuto", "segundo"};
 
         List<String> values = new ArrayList<>();
-        for(int index = 0; index < times.length; index++) {
+        for (int index = 0; index < times.length; index++) {
             long time = times[index];
-            if(time > 0) {
+            if (time > 0) {
                 String name = plural(times[index], names[index]);
                 values.add(name);
             }
         }
 
-        if(values.size() == 1) {
+        if (values.size() == 1) {
             return values.get(0);
         }
 
@@ -99,8 +91,16 @@ public enum TimeUtils {
 
     public static TimeUtils fromFormats(String format) {
         return Arrays.stream(values())
-                .filter(type -> type.getFormats().contains(format.toLowerCase()))
-                .findFirst()
-                .orElse(null);
+            .filter(type -> type.getFormats().contains(format.toLowerCase()))
+            .findFirst()
+            .orElse(null);
+    }
+
+    public long getMillis() {
+        return millis;
+    }
+
+    public List<String> getFormats() {
+        return formats;
     }
 }

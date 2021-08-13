@@ -22,16 +22,12 @@ public final class EventAwaiter<E extends Event> {
 
     private final Class<E> clazz;
     private final Plugin plugin;
-
+    private final AtomicBoolean finished;
     private Predicate<E> filter;
     private Consumer<E> action;
-
     private long expiringTime;
     private Runnable timeoutRunnable;
-
     private RegisteredListener listener;
-
-    private final AtomicBoolean finished;
 
     private EventAwaiter(Class<E> clazz, Plugin plugin) {
         this.clazz = clazz;
@@ -94,11 +90,11 @@ public final class EventAwaiter<E extends Event> {
     private void register(Consumer<Event> consumer) {
 
         this.listener = new RegisteredListener(
-                new EmptyListener(),
-                (listener, event) -> consumer.accept(event),
-                EventPriority.NORMAL,
-                plugin,
-                false
+            new EmptyListener(),
+            (listener, event) -> consumer.accept(event),
+            EventPriority.NORMAL,
+            plugin,
+            false
         );
 
         for (HandlerList handlerList : HandlerList.getHandlerLists()) {

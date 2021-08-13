@@ -24,10 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NPCRunnable implements Runnable {
 
+    private final Plugin plugin;
     @Getter private NPC NPC;
     @Getter private Hologram hologram;
-
-    private final Plugin plugin;
 
     @Override
     public void run() {
@@ -45,11 +44,11 @@ public class NPCRunnable implements Runnable {
     public void spawnDefault(Location location) {
 
         Bukkit.getScheduler().runTask(this.plugin, () -> spawn(
-                location,
-                NPCValue.get(NPCValue::npcName),
-                NPCValue.get(NPCValue::skinNick),
-                NPCValue.get(NPCValue::hologramMessage),
-                NPCValue.get(NPCValue::heightToAdd)
+            location,
+            NPCValue.get(NPCValue::npcName),
+            NPCValue.get(NPCValue::skinNick),
+            NPCValue.get(NPCValue::hologramMessage),
+            NPCValue.get(NPCValue::heightToAdd)
         ));
 
     }

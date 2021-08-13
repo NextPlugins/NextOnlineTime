@@ -19,6 +19,7 @@ public final class ConfigurationManager {
 
     /**
      * Create config
+     *
      * @return instance of class
      */
     public ConfigurationManager saveDefault() {

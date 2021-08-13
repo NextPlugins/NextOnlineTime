@@ -34,8 +34,8 @@ public class CheckUseListener implements Listener {
         this.timedPlayerManager.getByName(event.getPlayer().getName()).addTime(timeInCheck);
 
         event.getPlayer().sendMessage(
-                MessageValue.get(MessageValue::checkActivated)
-                        .replace("%time%", TimeUtils.format(timeInCheck))
+            MessageValue.get(MessageValue::checkActivated)
+                .replace("%time%", TimeUtils.format(timeInCheck))
         );
 
         event.getPlayer().setItemInHand(null);

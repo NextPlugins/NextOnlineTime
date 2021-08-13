@@ -19,9 +19,9 @@ public class OnlineTimePlusAdapter implements SQLResultAdapter<TimedPlayer> {
         int secconds = Integer.parseInt(resultSet.get("Segundos").toString());
 
         return TimedPlayer.builder()
-                .name(player)
-                .timeInServer(TimeUnit.SECONDS.toMillis(secconds))
-                .build();
+            .name(player)
+            .timeInServer(TimeUnit.SECONDS.toMillis(secconds))
+            .build();
 
     }
 

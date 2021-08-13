@@ -57,14 +57,14 @@ public final class NextOnlineTimeAPI {
      */
     public Set<Reward> getRewardsByMinTime(long millis) {
         return allCachedRewards().stream()
-                .filter(time -> time.getTime() >= millis)
-                .collect(Collectors.toSet());
+            .filter(time -> time.getTime() >= millis)
+            .collect(Collectors.toSet());
     }
 
     /**
      * Get player by filter
      * Can be used to search players with more x time
-     *
+     * <p>
      * WARNING:
      * Only from cache.
      * If you want to search with all players, access {@link com.nextplugins.onlinetime.dao.TimedPlayerDAO#selectAll(String)} in {@link TimedPlayerManager}
@@ -74,10 +74,10 @@ public final class NextOnlineTimeAPI {
      */
     public Optional<TimedPlayer> findPlayerByFilter(Predicate<TimedPlayer> filter) {
         return allCachedPlayers().stream()
-                .filter(filter)
-                .findAny();
+            .filter(filter)
+            .findAny();
     }
-    
+
     /**
      * Get copy of player cache
      *

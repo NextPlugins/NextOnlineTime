@@ -5,7 +5,7 @@ import com.nextplugins.onlinetime.models.comparators.RewardComparator;
 import com.nextplugins.onlinetime.parser.RewardParser;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.LinkedHashMap;
 
 /**
  * @author Yuhtin
@@ -20,9 +20,9 @@ public class RewardManager {
     public void loadRewards() {
 
         this.rewardParser.parseFromConfig()
-                .stream()
-                .sorted(new RewardComparator())
-                .forEach(this::addReward);
+            .stream()
+            .sorted(new RewardComparator())
+            .forEach(this::addReward);
 
     }
 

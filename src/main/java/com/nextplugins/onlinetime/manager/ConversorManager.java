@@ -29,28 +29,26 @@ import java.util.stream.Collectors;
 @Data
 public class ConversorManager {
 
-    private final TimedPlayerDAO timedPlayerDAO;
-
     private static final String CONVERSION_FORMAT = "&b&L%s &a> &eConvertido &a%s &ede &a%s &edados em &6%s";
-
     protected final List<Conversor> conversors = new ArrayList<>();
+    private final TimedPlayerDAO timedPlayerDAO;
     private boolean converting;
     private int actionBarTaskID;
 
     public Conversor getByName(String name) {
 
         return conversors.stream()
-                .filter(conversor -> conversor.getConversorName().equalsIgnoreCase(name))
-                .findAny()
-                .orElse(null);
+            .filter(conversor -> conversor.getConversorName().equalsIgnoreCase(name))
+            .findAny()
+            .orElse(null);
 
     }
 
     public List<String> availableConversors() {
 
         return conversors.stream()
-                .map(Conversor::getConversorName)
-                .collect(Collectors.toList());
+            .map(Conversor::getConversorName)
+            .collect(Collectors.toList());
 
     }
 
@@ -61,10 +59,10 @@ public class ConversorManager {
     /**
      * Save to database a {@link Set} of {@link TimedPlayer}
      *
-     * @param sender requested the conversion (can be null)
-     * @param timedPlayers to save
+     * @param sender        requested the conversion (can be null)
+     * @param timedPlayers  to save
      * @param conversorName name of conversor (can be null)
-     * @param initial time in milliseconds that the conversion was requested
+     * @param initial       time in milliseconds that the conversion was requested
      */
     public void startConversion(@Nullable CommandSender sender,
                                 @NotNull Set<TimedPlayer> timedPlayers,
@@ -74,25 +72,25 @@ public class ConversorManager {
         AtomicInteger converted = new AtomicInteger();
 
         Bukkit.getScheduler().runTaskAsynchronously(
-                NextOnlineTime.getInstance(),
-                () -> {
+            NextOnlineTime.getInstance(),
+            () -> {
 
-                    for (TimedPlayer timedPlayer : timedPlayers) {
+                for (TimedPlayer timedPlayer : timedPlayers) {
 
-                        this.timedPlayerDAO.saveOne(timedPlayer);
-                        converted.incrementAndGet();
-
-                    }
-
-                    if (sender != null) sender.sendMessage(ColorUtils.colored(
-                            "&aConversão terminada em &2" + TimeUtils.format(System.currentTimeMillis() - initial) + "&a.",
-                            "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
-                    ));
-
-                    this.converting = false;
-                    Bukkit.getScheduler().cancelTask(this.actionBarTaskID);
+                    this.timedPlayerDAO.saveOne(timedPlayer);
+                    converted.incrementAndGet();
 
                 }
+
+                if (sender != null) sender.sendMessage(ColorUtils.colored(
+                    "&aConversão terminada em &2" + TimeUtils.format(System.currentTimeMillis() - initial) + "&a.",
+                    "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
+                ));
+
+                this.converting = false;
+                Bukkit.getScheduler().cancelTask(this.actionBarTaskID);
+
+            }
         );
 
         if (sender == null || sender instanceof ConsoleCommandSender || conversorName == null) return;
@@ -104,15 +102,15 @@ public class ConversorManager {
             if (!player.isOnline()) return;
 
             String format = ColorUtils.colored(String.format(CONVERSION_FORMAT,
-                    conversorName,
-                    converted,
-                    timedPlayers.size(),
-                    TimeUtils.format(System.currentTimeMillis() - initial)
+                conversorName,
+                converted,
+                timedPlayers.size(),
+                TimeUtils.format(System.currentTimeMillis() - initial)
             ));
 
             ActionBarUtils.sendActionBar(
-                    player,
-                    ColorUtils.colored(format)
+                player,
+                ColorUtils.colored(format)
             );
 
 

@@ -28,10 +28,10 @@ public class NPCManager {
         if (!MANAGER.isPluginEnabled(CITIZENS) || !MANAGER.isPluginEnabled(HOLOGRAPHIC_DISPLAYS)) {
 
             plugin.getLogger().warning(
-                    String.format("Dependências não encontradas (%s, %s) O NPC não será usado.",
-                            CITIZENS,
-                            HOLOGRAPHIC_DISPLAYS
-                    )
+                String.format("Dependências não encontradas (%s, %s) O NPC não será usado.",
+                    CITIZENS,
+                    HOLOGRAPHIC_DISPLAYS
+                )
             );
 
             return;

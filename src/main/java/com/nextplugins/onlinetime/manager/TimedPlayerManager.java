@@ -33,8 +33,8 @@ public class TimedPlayerManager {
             if (timedPlayer == null) {
 
                 timedPlayer = TimedPlayer.builder()
-                        .name(name)
-                        .build();
+                    .name(name)
+                    .build();
 
                 timedPlayerDAO.saveOne(timedPlayer);
 

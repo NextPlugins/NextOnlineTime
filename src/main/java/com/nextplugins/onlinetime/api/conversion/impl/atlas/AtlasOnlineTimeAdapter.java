@@ -20,11 +20,11 @@ public class AtlasOnlineTimeAdapter implements SQLResultAdapter<TimedPlayer> {
         AtlasTimedPlayer atlasTimedPlayer = GSON.fromJson(resultSet.get("json").toString(), AtlasTimedPlayer.class);
 
         return TimedPlayer.builder()
-                .name(atlasTimedPlayer.getUser())
-                .timeInServer(atlasTimedPlayer.getTotalOnTime())
-                .lastUpdateTime(atlasTimedPlayer.getLoggedInTime())
-                .collectedRewards(atlasTimedPlayer.getPrizesCollecteds())
-                .build();
+            .name(atlasTimedPlayer.getUser())
+            .timeInServer(atlasTimedPlayer.getTotalOnTime())
+            .lastUpdateTime(atlasTimedPlayer.getLoggedInTime())
+            .collectedRewards(atlasTimedPlayer.getPrizesCollecteds())
+            .build();
 
     }
 

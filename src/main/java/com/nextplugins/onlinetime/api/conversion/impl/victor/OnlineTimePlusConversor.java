@@ -17,8 +17,8 @@ public class OnlineTimePlusConversor extends Conversor {
 
     public OnlineTimePlusConversor(String conversorName, String table, SQLConnector connector) {
         super(
-                conversorName,
-                new SQLExecutor(connector)
+            conversorName,
+            new SQLExecutor(connector)
         );
 
         this.table = table;
@@ -28,9 +28,10 @@ public class OnlineTimePlusConversor extends Conversor {
     public Set<TimedPlayer> lookupPlayers() {
 
         return getExecutor().resultManyQuery(
-                "SELECT * FROM " + table,
-                statement -> { },
-                OnlineTimePlusAdapter.class);
+            "SELECT * FROM " + table,
+            statement -> {
+            },
+            OnlineTimePlusAdapter.class);
 
     }
 

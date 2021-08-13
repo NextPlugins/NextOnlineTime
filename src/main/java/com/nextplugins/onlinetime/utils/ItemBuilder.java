@@ -31,13 +31,13 @@ public class ItemBuilder {
     public ItemBuilder(String name) {
 
         item = TypeUtil.convertFromLegacy("SKULL_ITEM", 3);
-        
+
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.setOwner(name);
 
         item.setItemMeta(meta);
     }
-    
+
     public ItemBuilder changeItemMeta(Consumer<ItemMeta> consumer) {
         ItemMeta itemMeta = item.getItemMeta();
         consumer.accept(itemMeta);
@@ -70,7 +70,7 @@ public class ItemBuilder {
 
     public ItemBuilder setLore(List<String> lore) {
         return changeItemMeta(it -> it.setLore(
-                lore
+            lore
                 .stream()
                 .map(ColorUtils::colored)
                 .collect(Collectors.toList()))

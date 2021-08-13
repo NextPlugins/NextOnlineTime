@@ -26,8 +26,8 @@ public final class ItemParser {
 
             else {
                 itemBuilder = new ItemBuilder(TypeUtil.convertFromLegacy(
-                        section.getString("material"),
-                        section.contains("data") ? (short) section.getInt("data") : 0)
+                    section.getString("material"),
+                    section.contains("data") ? (short) section.getInt("data") : 0)
                 );
             }
 

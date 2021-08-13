@@ -48,8 +48,8 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
         if (args.length == 0) {
             List<String> messages = sender.hasPermission("nextonlinetime.admin")
-                    ? MessageValue.get(MessageValue::helpMessageAdmin)
-                    : MessageValue.get(MessageValue::helpMessage);
+                ? MessageValue.get(MessageValue::helpMessageAdmin)
+                : MessageValue.get(MessageValue::helpMessage);
 
             for (String message : messages) {
                 player.sendMessage(message.replace("%label%", "tempo"));
@@ -67,7 +67,8 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
             try {
                 target = Bukkit.getPlayer(args[1]);
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) {
+            }
 
             String name = target == null ? player.getName() : target.getName();
 
@@ -78,8 +79,8 @@ public final class OnlineTimeCommand implements CommandExecutor {
             }
 
             player.sendMessage(MessageValue.get(MessageValue::timeOfTarget)
-                    .replace("%target%", name)
-                    .replace("%time%", TimeUtils.format(timedPlayer.getTimeInServer()))
+                .replace("%target%", name)
+                .replace("%time%", TimeUtils.format(timedPlayer.getTimeInServer()))
             );
 
             return true;
@@ -151,13 +152,13 @@ public final class OnlineTimeCommand implements CommandExecutor {
             timedPlayer.removeTime(timeInMillis);
 
             player.sendMessage(MessageValue.get(MessageValue::sendedTime)
-                    .replace("%time%", TimeUtils.format(timeInMillis))
-                    .replace("%target%", target.getName())
+                .replace("%time%", TimeUtils.format(timeInMillis))
+                .replace("%target%", target.getName())
             );
 
             target.sendMessage(MessageValue.get(MessageValue::receivedTime)
-                    .replace("%time%", TimeUtils.format(timeInMillis))
-                    .replace("%sender%", player.getName())
+                .replace("%time%", TimeUtils.format(timeInMillis))
+                .replace("%sender%", player.getName())
             );
 
             return true;
@@ -237,7 +238,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
             if (pluginConversor == null) return true;
 
             player.sendMessage(ColorUtils.colored(
-                    "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
+                "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
             ));
 
             long initial = System.currentTimeMillis();
@@ -247,17 +248,17 @@ public final class OnlineTimeCommand implements CommandExecutor {
             if (timedPlayers == null) {
 
                 player.sendMessage(ColorUtils.colored(
-                        "&cOcorreu um erro, veja se configurou corretamente o conversor."
+                    "&cOcorreu um erro, veja se configurou corretamente o conversor."
                 ));
                 return true;
 
             }
 
             conversorManager.startConversion(
-                    player,
-                    timedPlayers,
-                    pluginConversor.getConversorName(),
-                    initial
+                player,
+                timedPlayers,
+                pluginConversor.getConversorName(),
+                initial
             );
         }
 
@@ -267,7 +268,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
     private Conversor checkConversor(CommandSender sender, String conversor) {
         if (conversorManager.isConverting()) {
             sender.sendMessage(ColorUtils.colored(
-                    "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
+                "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
             ));
             return null;
         }
@@ -275,7 +276,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         final int maxPlayers = sender instanceof Player ? 1 : 0;
         if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
             sender.sendMessage(ColorUtils.colored(
-                    "&cEsta função só pode ser usada com apenas você online."
+                "&cEsta função só pode ser usada com apenas você online."
             ));
             return null;
         }
@@ -283,7 +284,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         Conversor pluginConversor = conversorManager.getByName(conversor);
         if (pluginConversor == null) {
             sender.sendMessage(ColorUtils.colored(
-                    "&cEste conversor é inválido, conversores válidos: " + conversorManager.availableConversors()
+                "&cEste conversor é inválido, conversores válidos: " + conversorManager.availableConversors()
             ));
         }
 

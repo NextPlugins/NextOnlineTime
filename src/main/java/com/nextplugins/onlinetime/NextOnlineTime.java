@@ -91,11 +91,11 @@ public final class NextOnlineTime extends JavaPlugin {
         timedPlayerDAO = new TimedPlayerDAO(new SQLExecutor(sqlConnector));
 
         npcManager = new NPCManager();
-        checkManager = new CheckManager();
         rewardManager = new RewardManager();
         inventoryRegistry = new InventoryRegistry();
         conversorManager = new ConversorManager(timedPlayerDAO);
         timedPlayerManager = new TimedPlayerManager(timedPlayerDAO);
+        checkManager = new CheckManager();
         topTimedPlayerManager = new TopTimedPlayerManager(timedPlayerDAO);
         updatePlayerTimeTask = new UpdatePlayerTimeTask(timedPlayerManager);
 
@@ -119,8 +119,8 @@ public final class NextOnlineTime extends JavaPlugin {
 
         val checkUseListener = new CheckUseListener(timedPlayerManager);
         val userConnectListener = new UserConnectListener(
-                timedPlayerManager,
-                conversorManager
+            timedPlayerManager,
+            conversorManager
         );
 
         pluginManager.registerEvents(checkUseListener, this);

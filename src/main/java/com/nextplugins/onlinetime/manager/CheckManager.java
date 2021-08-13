@@ -32,11 +32,11 @@ public class CheckManager {
     public void sendCheckRequisition(Player player) {
 
         EventAwaiter.newAwaiter(AsyncPlayerChatEvent.class, NextOnlineTime.getInstance())
-                .expiringAfter(1, TimeUnit.MINUTES)
-                .withTimeOutAction(() -> player.sendMessage(MessageValue.get(MessageValue::checkNoTime)))
-                .filter(event -> event.getPlayer().getName().equals(player.getName()))
-                .thenAccept(consumer)
-                .await(true);
+            .expiringAfter(1, TimeUnit.MINUTES)
+            .withTimeOutAction(() -> player.sendMessage(MessageValue.get(MessageValue::checkNoTime)))
+            .filter(event -> event.getPlayer().getName().equals(player.getName()))
+            .thenAccept(consumer)
+            .await(true);
 
     }
 
@@ -78,9 +78,9 @@ public class CheckManager {
             ItemMeta itemMeta = check.getItemMeta();
 
             itemMeta.setLore(itemMeta.getLore()
-                    .stream()
-                    .map(line -> line.replace("%time%", time))
-                    .collect(Collectors.toList())
+                .stream()
+                .map(line -> line.replace("%time%", time))
+                .collect(Collectors.toList())
             );
 
             check.setItemMeta(itemMeta);

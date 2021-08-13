@@ -17,10 +17,10 @@ import java.util.List;
 @Builder
 public class TimedPlayer {
 
+    @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
     private String name;
     private long lastUpdateTime;
     @Builder.Default private long timeInServer = 0;
-    @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
 
     public synchronized void addTime(long time) {
         this.timeInServer += time;

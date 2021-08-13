@@ -53,9 +53,9 @@ public final class NPCValue {
 
     private List<String> messageList(String key) {
         return configuration.getStringList(key)
-                .stream()
-                .map(this::colored)
-                .collect(Collectors.toList());
+            .stream()
+            .map(this::colored)
+            .collect(Collectors.toList());
     }
 
 }

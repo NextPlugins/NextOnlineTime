@@ -24,9 +24,9 @@ public final class TopOnlineTimeView extends SimpleInventory {
     public TopOnlineTimeView() {
 
         super(
-                "online-time.top",
-                "TOP Online",
-                4 * 9
+            "online-time.top",
+            "TOP Online",
+            4 * 9
         );
 
         topTimedPlayerManager = NextOnlineTime.getInstance().getTopTimedPlayerManager();
@@ -38,12 +38,12 @@ public final class TopOnlineTimeView extends SimpleInventory {
         editor.setItem(31, DefaultItem.BACK.toInventoryItem(viewer));
 
         editor.setItem(32, InventoryItem.of(new ItemBuilder(TypeUtil.convertFromLegacy("DOUBLE_PLANT", 0))
-                .name("&6Próxima Atualização")
-                .setLore(
-                        "&7O top tempo será atualizado em",
-                        "&f" + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
-                )
-                .wrap()));
+            .name("&6Próxima Atualização")
+            .setLore(
+                "&7O top tempo será atualizado em",
+                "&f" + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
+            )
+            .wrap()));
 
         int slot = 10;
         int position = 1;
@@ -56,9 +56,9 @@ public final class TopOnlineTimeView extends SimpleInventory {
             long time = this.topTimedPlayerManager.getTopPlayers().get(name);
 
             editor.setItem(slot, InventoryItem.of(new ItemBuilder(name)
-                    .name("&a" + name + " &7#" + position)
-                    .setLore("&7Total de tempo: &f" + TimeUtils.format(time))
-                    .wrap()));
+                .name("&a" + name + " &7#" + position)
+                .setLore("&7Total de tempo: &f" + TimeUtils.format(time))
+                .wrap()));
 
             ++slot;
             ++position;

@@ -13,9 +13,9 @@ public final class TimedPlayerAdapter implements SQLResultAdapter<TimedPlayer> {
         int timeInServer = resultSet.get("time");
 
         TimedPlayer timedPlayer = TimedPlayer.builder()
-                .name(userName)
-                .timeInServer(timeInServer)
-                .build();
+            .name(userName)
+            .timeInServer(timeInServer)
+            .build();
 
         String collectedRewards = resultSet.get("collectedRewards");
         if (collectedRewards.equalsIgnoreCase("")) return timedPlayer;
