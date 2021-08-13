@@ -50,7 +50,7 @@ public enum TimeUtils {
     }
 
     public static String format(long value) {
-        if (value == 0) return "0 segundos";
+        if (value <= 0) return "0 segundos";
 
         long days = TimeUnit.MILLISECONDS.toDays(value);
         long hours = TimeUnit.MILLISECONDS.toHours(value) - (days * 24);

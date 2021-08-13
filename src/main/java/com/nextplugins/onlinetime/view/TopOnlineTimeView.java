@@ -41,7 +41,7 @@ public final class TopOnlineTimeView extends SimpleInventory {
                 .name("&6Próxima Atualização")
                 .setLore(
                         "&7O top tempo será atualizado em",
-                        "&f" + TimeUtils.format(this.topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
+                        "&f" + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
                 )
                 .wrap()));
 

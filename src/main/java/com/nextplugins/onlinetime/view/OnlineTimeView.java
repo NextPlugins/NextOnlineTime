@@ -19,6 +19,7 @@ import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
 import com.nextplugins.onlinetime.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
+import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
@@ -121,7 +122,11 @@ public final class OnlineTimeView extends PagedInventory {
                                 .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
                                 .wrap()
                 ).defaultCallback(callback -> {
-                            topTimedPlayerManager.checkUpdate();
+                            if (topTimedPlayerManager.checkUpdate()) {
+                                callback.getPlayer().sendMessage(ColorUtils.colored("&aO ranking está atualizando, aguarde."));
+                                return;
+                            }
+
                             inventoryRegistry.getTopInventory().openInventory(callback.getPlayer());
                         }
                 )

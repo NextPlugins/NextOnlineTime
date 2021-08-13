@@ -27,14 +27,14 @@ public class TopTimedPlayerManager {
     }
 
     public boolean checkUpdate() {
-        if (nextUpdate <= System.currentTimeMillis()) return false;
+        if (nextUpdate < System.currentTimeMillis()) return false;
 
+        nextUpdate = Instant.now().plusMillis(TimeUnit.MINUTES.toMillis(30)).toEpochMilli();
         val timedPlayers = timedPlayerDAO.selectAll("ORDER BY time DESC LIMIT 10");
 
         topPlayers.clear();
         timedPlayers.forEach(this::addPlayer);
 
-        nextUpdate = Instant.now().plusMillis(TimeUnit.MINUTES.toMillis(30)).toEpochMilli();
         return true;
     }
 
