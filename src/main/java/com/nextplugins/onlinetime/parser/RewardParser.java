@@ -1,29 +1,23 @@
 package com.nextplugins.onlinetime.parser;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
-
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
 public class RewardParser {
 
-    @Inject @Named("main") private Logger logger;
-    @Inject @Named("rewards") private Configuration configuration;
-    @Inject private ItemParser itemParser;
+    private final Configuration configuration = NextOnlineTime.getInstance().getRewardsConfig();
+    private final ItemParser itemParser = new ItemParser();
 
     public Reward parseSection(ConfigurationSection section) {
 
@@ -40,7 +34,7 @@ public class RewardParser {
 
         } catch (Exception exception) {
 
-            this.logger.warning("Error on parse reward " + section.getName());
+            NextOnlineTime.getInstance().getLogger().warning("Error on parse reward " + section.getName());
             return null;
 
         }
@@ -64,11 +58,7 @@ public class RewardParser {
     }
 
     public List<Reward> parseFromConfig() {
-
-        return this.parseListSection(
-                configuration.getConfigurationSection("")
-        );
-
+        return parseListSection(configuration.getConfigurationSection(""));
     }
 
 }

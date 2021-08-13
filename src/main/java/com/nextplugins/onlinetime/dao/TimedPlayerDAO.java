@@ -1,23 +1,22 @@
 package com.nextplugins.onlinetime.dao;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.henryfabio.sqlprovider.executor.SQLExecutor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.adapter.TimedPlayerAdapter;
+import lombok.AllArgsConstructor;
 
 import java.util.Set;
 
-@Singleton
+@AllArgsConstructor
 public final class TimedPlayerDAO {
 
     private static final String TABLE = "onlinetime_players";
 
-    @Inject private SQLExecutor sqlExecutor;
+    private final SQLExecutor sqlExecutor;
 
     public void createTable() {
 
-        this.sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
+        sqlExecutor.updateQuery("CREATE TABLE IF NOT EXISTS " + TABLE + "(" +
                 "name VARCHAR(16) NOT NULL PRIMARY KEY UNIQUE," +
                 "time INTEGER(8)," +
                 "collectedRewards TEXT" +
@@ -27,7 +26,7 @@ public final class TimedPlayerDAO {
 
     public TimedPlayer selectOne(String name) {
 
-        return this.sqlExecutor.resultOneQuery(
+        return sqlExecutor.resultOneQuery(
                 "SELECT * FROM " + TABLE + " WHERE name = ?",
                 statment -> statment.set(1, name),
                 TimedPlayerAdapter.class
@@ -37,7 +36,7 @@ public final class TimedPlayerDAO {
 
     public Set<TimedPlayer> selectAll(String preferences) {
 
-        return this.sqlExecutor.resultManyQuery(
+        return sqlExecutor.resultManyQuery(
                 "SELECT * FROM " + TABLE + " " + preferences,
                 statement -> {
                 },
@@ -48,7 +47,7 @@ public final class TimedPlayerDAO {
 
     public void saveOne(TimedPlayer timedPlayer) {
 
-        this.sqlExecutor.updateQuery(
+        sqlExecutor.updateQuery(
                 String.format("REPLACE INTO %s VALUES(?,?,?)", TABLE),
                 statement -> {
 

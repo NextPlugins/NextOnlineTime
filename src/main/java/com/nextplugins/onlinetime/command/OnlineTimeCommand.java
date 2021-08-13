@@ -1,6 +1,6 @@
 package com.nextplugins.onlinetime.command;
 
-import com.google.inject.Inject;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
@@ -21,6 +21,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -31,13 +32,13 @@ import java.util.Set;
  */
 public final class OnlineTimeCommand implements CommandExecutor {
 
-    @Inject private TimedPlayerManager timedPlayerManager;
-    @Inject private ConversorManager conversorManager;
-    @Inject private InventoryRegistry inventoryRegistry;
-    @Inject private NPCManager npcManager;
+    private final TimedPlayerManager timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
+    private final ConversorManager conversorManager = NextOnlineTime.getInstance().getConversorManager();
+    private final InventoryRegistry inventoryRegistry = NextOnlineTime.getInstance().getInventoryRegistry();
+    private final NPCManager npcManager = NextOnlineTime.getInstance().getNpcManager();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage("Este comando apenas pode ser executado por jogadores.");
             return true;
@@ -70,7 +71,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
             String name = target == null ? player.getName() : target.getName();
 
-            TimedPlayer timedPlayer = this.timedPlayerManager.getPlayers().getOrDefault(name, null);
+            TimedPlayer timedPlayer = timedPlayerManager.getPlayers().getOrDefault(name, null);
             if (timedPlayer == null) {
                 player.sendMessage(MessageValue.get(MessageValue::offlinePlayer));
                 return true;
@@ -87,7 +88,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         // menu
 
         if (subCommand.equalsIgnoreCase("menu")) {
-            this.inventoryRegistry.getMainInventory().openInventory(player);
+            inventoryRegistry.getMainInventory().openInventory(player);
             return true;
         }
 
@@ -127,8 +128,6 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 return true;
             }
 
-
-
             if (player == target) {
                 player.sendMessage(MessageValue.get(MessageValue::cantSendForYou));
                 return true;
@@ -140,13 +139,13 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 return true;
             }
 
-            TimedPlayer timedPlayer = this.timedPlayerManager.getByName(player.getName());
+            TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
             if (timedPlayer.getTimeInServer() < timeInMillis) {
                 player.sendMessage(MessageValue.get(MessageValue::noTime));
                 return true;
             }
 
-            TimedPlayer timedTarget = this.timedPlayerManager.getByName(target.getName());
+            TimedPlayer timedTarget = timedPlayerManager.getByName(target.getName());
 
             timedTarget.addTime(timeInMillis);
             timedPlayer.removeTime(timeInMillis);
@@ -182,7 +181,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
                 config.save(configManager.getFile());
 
-                NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+                NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
                 runnable.spawnDefault(location);
 
                 player.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
@@ -211,7 +210,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
                 config.save(configManager.getFile());
 
-                NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
+                NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
                 runnable.despawn();
 
                 player.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
@@ -242,7 +241,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
             ));
 
             long initial = System.currentTimeMillis();
-            this.conversorManager.setConverting(true);
+            conversorManager.setConverting(true);
 
             Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
             if (timedPlayers == null) {
@@ -254,7 +253,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
             }
 
-            this.conversorManager.startConversion(
+            conversorManager.startConversion(
                     player,
                     timedPlayers,
                     pluginConversor.getConversorName(),
@@ -266,7 +265,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
     }
 
     private Conversor checkConversor(CommandSender sender, String conversor) {
-        if (this.conversorManager.isConverting()) {
+        if (conversorManager.isConverting()) {
             sender.sendMessage(ColorUtils.colored(
                     "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
             ));
@@ -281,10 +280,10 @@ public final class OnlineTimeCommand implements CommandExecutor {
             return null;
         }
 
-        Conversor pluginConversor = this.conversorManager.getByName(conversor);
+        Conversor pluginConversor = conversorManager.getByName(conversor);
         if (pluginConversor == null) {
             sender.sendMessage(ColorUtils.colored(
-                    "&cEste conversor é inválido, conversores válidos: " + this.conversorManager.availableConversors()
+                    "&cEste conversor é inválido, conversores válidos: " + conversorManager.availableConversors()
             ));
         }
 

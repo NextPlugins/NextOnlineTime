@@ -7,14 +7,14 @@ reward1:
     - '&fItens:'
     - ''
     - '&8- &72500 coins'
-    - '&8- &7Picareta de Diamante'
+    - '&8- &7Picareta de Ferro'
   time: 5 # in minutes
-  id: 388
+  material: IRON_PICKAXE
   glow: true
   data: 0
   commands:
     - 'coins add %player% 2500'
-    - 'give %player% diamond_pickaxe'
+    - 'give %player% iron_pickaxe'
 
 reward2:
   name: '&cPacote inicial 2'
@@ -27,7 +27,7 @@ reward2:
     - '&8- &75000 coins'
     - '&8- &7Picareta de Diamante'
   time: 15 # in minutes
-  id: 7
+  material: DIAMOND_PICKAXE
   data: 0
   commands:
     - 'coins add %player% 5000'

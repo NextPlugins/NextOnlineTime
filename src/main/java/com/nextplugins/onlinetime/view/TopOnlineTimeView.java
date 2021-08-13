@@ -1,6 +1,5 @@
 package com.nextplugins.onlinetime.view;
 
-import com.google.inject.Inject;
 import com.henryfabio.minecraft.inventoryapi.editor.InventoryEditor;
 import com.henryfabio.minecraft.inventoryapi.inventory.impl.simple.SimpleInventory;
 import com.henryfabio.minecraft.inventoryapi.item.InventoryItem;
@@ -12,15 +11,15 @@ import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
-import org.bukkit.Material;
+import com.nextplugins.onlinetime.utils.TypeUtil;
 
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
-public class TopOnlineTimeView extends SimpleInventory {
+public final class TopOnlineTimeView extends SimpleInventory {
 
-    @Inject private TopTimedPlayerManager topTimedPlayerManager;
+    private final TopTimedPlayerManager topTimedPlayerManager;
 
     public TopOnlineTimeView() {
 
@@ -30,8 +29,7 @@ public class TopOnlineTimeView extends SimpleInventory {
                 4 * 9
         );
 
-        NextOnlineTime.getInstance().getInjector().injectMembers(this);
-
+        topTimedPlayerManager = NextOnlineTime.getInstance().getTopTimedPlayerManager();
     }
 
     @Override
@@ -39,7 +37,7 @@ public class TopOnlineTimeView extends SimpleInventory {
 
         editor.setItem(31, DefaultItem.BACK.toInventoryItem(viewer));
 
-        editor.setItem(32, InventoryItem.of(new ItemBuilder(Material.DOUBLE_PLANT)
+        editor.setItem(32, InventoryItem.of(new ItemBuilder(TypeUtil.convertFromLegacy("DOUBLE_PLANT", 0))
                 .name("&6Próxima Atualização")
                 .setLore(
                         "&7O top tempo será atualizado em",

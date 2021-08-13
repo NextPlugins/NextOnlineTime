@@ -1,9 +1,8 @@
 package com.nextplugins.onlinetime.parser;
 
-import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
-import org.bukkit.Material;
+import com.nextplugins.onlinetime.utils.TypeUtil;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,8 +14,7 @@ import java.util.List;
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
-public class ItemParser {
+public final class ItemParser {
 
     public ItemStack parseSection(ConfigurationSection section) {
 
@@ -27,13 +25,9 @@ public class ItemParser {
             if (section.contains("head")) itemBuilder = new ItemBuilder(section.getString("head"));
 
             else {
-
-                itemBuilder = new ItemBuilder(
-                        section.contains("material")
-                                ? Material.valueOf(section.getString("material"))
-                                : Material.getMaterial(section.getInt("id")),
-                        1,
-                        section.contains("data") ? (short) section.getInt("data") : 0
+                itemBuilder = new ItemBuilder(TypeUtil.convertFromLegacy(
+                        section.getString("material"),
+                        section.contains("data") ? (short) section.getInt("data") : 0)
                 );
             }
 

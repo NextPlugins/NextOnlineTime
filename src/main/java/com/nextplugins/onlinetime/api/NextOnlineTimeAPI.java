@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.api;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
+import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.manager.RewardManager;
@@ -26,8 +26,8 @@ public final class NextOnlineTimeAPI {
 
     @Getter private static final NextOnlineTimeAPI instance = new NextOnlineTimeAPI();
 
-    @Inject private TimedPlayerManager timedPlayerManager;
-    @Inject private RewardManager rewardManager;
+    private final TimedPlayerManager timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
+    private final RewardManager rewardManager = NextOnlineTime.getInstance().getRewardManager();
 
     /**
      * Get player time and collected rewards
@@ -57,7 +57,7 @@ public final class NextOnlineTimeAPI {
      */
     public Set<Reward> getRewardsByMinTime(long millis) {
         return allCachedRewards().stream()
-                .filter($ -> $.getTime() >= millis)
+                .filter(time -> time.getTime() >= millis)
                 .collect(Collectors.toSet());
     }
 

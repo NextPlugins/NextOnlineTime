@@ -44,7 +44,7 @@ checkTax: 10
 # Item do cheque de tempo
 checkItem:
   name: '&3&LCHEQUE DE TEMPO'
-  id: 339
+  material: PAPER
   data: 0
   description:
     - '&fTempo: &b%time%'

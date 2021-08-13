@@ -1,7 +1,5 @@
 package com.nextplugins.onlinetime.manager;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
@@ -29,10 +27,9 @@ import java.util.stream.Collectors;
  */
 
 @Data
-@Singleton
 public class ConversorManager {
 
-    @Inject private TimedPlayerDAO timedPlayerDAO;
+    private final TimedPlayerDAO timedPlayerDAO;
 
     private static final String CONVERSION_FORMAT = "&b&L%s &a> &eConvertido &a%s &ede &a%s &edados em &6%s";
 

@@ -1,7 +1,5 @@
 package com.nextplugins.onlinetime.manager;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
@@ -24,11 +22,11 @@ import java.util.stream.Collectors;
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
 public class CheckManager {
 
+    private final TimedPlayerManager timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
+
     @Setter private ItemStack checkItem;
-    @Inject private TimedPlayerManager timedPlayerManager;
     private Consumer<AsyncPlayerChatEvent> consumer;
 
     public void sendCheckRequisition(Player player) {

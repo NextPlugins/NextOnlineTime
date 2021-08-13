@@ -7,14 +7,11 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 
-import javax.inject.Singleton;
-
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
 public class NPCManager {
 
     protected final NextOnlineTime plugin = NextOnlineTime.getInstance();

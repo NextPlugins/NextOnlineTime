@@ -1,30 +1,25 @@
 package com.nextplugins.onlinetime;
 
 import com.google.common.base.Stopwatch;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.henryfabio.minecraft.inventoryapi.manager.InventoryManager;
 import com.henryfabio.sqlprovider.connector.SQLConnector;
 import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
 import com.henryfabio.sqlprovider.connector.type.impl.SQLiteDatabaseType;
+import com.henryfabio.sqlprovider.executor.SQLExecutor;
 import com.nextplugins.onlinetime.api.conversion.impl.atlas.AtlasOnlineTimeConversor;
 import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConversor;
 import com.nextplugins.onlinetime.api.metric.MetricProvider;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
-import com.nextplugins.onlinetime.guice.PluginModule;
+import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
-import com.nextplugins.onlinetime.manager.CheckManager;
-import com.nextplugins.onlinetime.manager.ConversorManager;
-import com.nextplugins.onlinetime.manager.RewardManager;
-import com.nextplugins.onlinetime.manager.TimedPlayerManager;
+import com.nextplugins.onlinetime.manager.*;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
-import com.nextplugins.onlinetime.task.TopTimedPlayerTask;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import lombok.Getter;
 import lombok.val;
@@ -33,7 +28,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +41,6 @@ public final class NextOnlineTime extends JavaPlugin {
      */
     private static final int PLUGIN_ID = 10042;
 
-    private Injector injector;
     private SQLConnector sqlConnector;
 
     private FileConfiguration messagesConfig;
@@ -55,17 +48,19 @@ public final class NextOnlineTime extends JavaPlugin {
     private FileConfiguration conversorsConfig;
     private FileConfiguration npcConfig;
 
-    @Inject private CheckManager checkManager;
-    @Inject private RewardManager rewardManager;
-    @Inject private InventoryRegistry inventoryRegistry;
-    @Inject private ConversorManager conversorManager;
-    @Inject private TimedPlayerManager timedPlayerManager;
-    @Inject private NPCManager npcManager;
+    private TimedPlayerDAO timedPlayerDAO;
 
-    @Inject private TopTimedPlayerTask topTimedPlayerTask;
-    @Inject private UpdatePlayerTimeTask updatePlayerTimeTask;
+    private NPCManager npcManager;
+    private CheckManager checkManager;
+    private RewardManager rewardManager;
+    private InventoryRegistry inventoryRegistry;
+    private ConversorManager conversorManager;
+    private TimedPlayerManager timedPlayerManager;
+    private TopTimedPlayerManager topTimedPlayerManager;
 
-    @Inject private ItemParser itemParser;
+    private UpdatePlayerTimeTask updatePlayerTimeTask;
+
+    private ItemParser itemParser;
 
     public static NextOnlineTime getInstance() {
         return getPlugin(NextOnlineTime.class);
@@ -93,24 +88,21 @@ public final class NextOnlineTime extends JavaPlugin {
         InventoryManager.enable(this);
 
         sqlConnector = configureSqlProvider(getConfig());
+        timedPlayerDAO = new TimedPlayerDAO(new SQLExecutor(sqlConnector));
 
-        injector = PluginModule.from(this).createInjector();
-        injector.injectMembers(this);
+        npcManager = new NPCManager();
+        checkManager = new CheckManager();
+        rewardManager = new RewardManager();
+        inventoryRegistry = new InventoryRegistry();
+        conversorManager = new ConversorManager(timedPlayerDAO);
+        timedPlayerManager = new TimedPlayerManager(timedPlayerDAO);
+        topTimedPlayerManager = new TopTimedPlayerManager(timedPlayerDAO);
+        updatePlayerTimeTask = new UpdatePlayerTimeTask(timedPlayerManager);
 
-        getCommand("tempo").setExecutor(injector.getInstance(OnlineTimeCommand.class));
-
-        CheckUseListener checkUseListener = new CheckUseListener(timedPlayerManager);
-
-        UserConnectListener userConnectListener = new UserConnectListener(
-            timedPlayerManager,
-            conversorManager
-        );
-
-        pluginManager.registerEvents(checkUseListener, this);
-        pluginManager.registerEvents(userConnectListener, this);
+        itemParser = new ItemParser();
 
         rewardManager.loadRewards();
-        timedPlayerManager.getTimedPlayerDAO().createTable();
+        timedPlayerDAO.createTable();
 
         checkManager.init();
         inventoryRegistry.init();
@@ -122,6 +114,17 @@ public final class NextOnlineTime extends JavaPlugin {
         loadCheckItem();
 
         registerTopUpdaterTask();
+
+        getCommand("tempo").setExecutor(new OnlineTimeCommand());
+
+        val checkUseListener = new CheckUseListener(timedPlayerManager);
+        val userConnectListener = new UserConnectListener(
+                timedPlayerManager,
+                conversorManager
+        );
+
+        pluginManager.registerEvents(checkUseListener, this);
+        pluginManager.registerEvents(userConnectListener, this);
 
         MetricProvider.of(this).register();
 
@@ -154,13 +157,13 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private void loadConversors() {
 
-        String atlasConversor = "AtlasTempoOnline";
+        val atlasConversor = "AtlasTempoOnline";
         if (conversorsConfig.getBoolean(atlasConversor + ".use")) {
 
-            ConfigurationSection section = conversorsConfig.getConfigurationSection(atlasConversor);
-            SQLConnector connector = configureSqlProvider(section);
+            val section = conversorsConfig.getConfigurationSection(atlasConversor);
+            val connector = configureSqlProvider(section);
 
-            AtlasOnlineTimeConversor conversor = new AtlasOnlineTimeConversor(
+            val conversor = new AtlasOnlineTimeConversor(
                 atlasConversor,
                 section.getString("connection.table"),
                 connector
@@ -170,13 +173,13 @@ public final class NextOnlineTime extends JavaPlugin {
 
         }
 
-        String onlineTimePlusConversor = "OnlineTimePlus";
+        val onlineTimePlusConversor = "OnlineTimePlus";
         if (conversorsConfig.getBoolean(onlineTimePlusConversor + ".use")) {
 
-            ConfigurationSection section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
-            SQLConnector connector = configureSqlProvider(section);
+            val section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
+            val connector = configureSqlProvider(section);
 
-            OnlineTimePlusConversor conversor = new OnlineTimePlusConversor(
+            val conversor = new OnlineTimePlusConversor(
                 onlineTimePlusConversor,
                 section.getString("connection.table"),
                 connector
@@ -193,7 +196,7 @@ public final class NextOnlineTime extends JavaPlugin {
         SQLConnector connector;
         if (section.getBoolean("connection.mysql.enable")) {
 
-            ConfigurationSection mysqlSection = section.getConfigurationSection("connection.mysql");
+            val mysqlSection = section.getConfigurationSection("connection.mysql");
 
             connector = MySQLDatabaseType.builder()
                 .address(mysqlSection.getString("address"))
@@ -205,7 +208,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         } else {
 
-            ConfigurationSection sqliteSection = section.getConfigurationSection("connection.sqlite");
+            val sqliteSection = section.getConfigurationSection("connection.sqlite");
 
             connector = SQLiteDatabaseType.builder()
                 .file(new File(sqliteSection.getString("file")))
@@ -229,12 +232,12 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private void registerTopUpdaterTask() {
 
-        BukkitScheduler scheduler = Bukkit.getScheduler();
+        val scheduler = Bukkit.getScheduler();
 
-        int updaterTime = getConfig().getInt("updaterTime");
-        TimeUnit timeFormat = parseTime(getConfig().getString("timeFormat"));
+        val updaterTime = getConfig().getInt("updaterTime");
+        val timeFormat = parseTime(getConfig().getString("timeFormat"));
 
-        long updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
+        val updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
         scheduler.runTaskTimerAsynchronously(
             this,
@@ -243,17 +246,11 @@ public final class NextOnlineTime extends JavaPlugin {
             updateTimeInTicks
         );
 
-        scheduler.runTaskTimerAsynchronously(
-            this,
-            topTimedPlayerTask,
-            0, 30 * 60 * 20L
-        );
-
     }
 
     private TimeUnit parseTime(String string) {
 
-        TimeUnit timeUnit = TimeUnit.valueOf(string);
+        val timeUnit = TimeUnit.valueOf(string);
 
         if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
         return timeUnit;

@@ -1,10 +1,11 @@
 package com.nextplugins.onlinetime.manager;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
+import lombok.var;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -15,19 +16,19 @@ import java.util.Map;
  * Github: https://github.com/Yuhtin
  */
 
-@Singleton
+@AllArgsConstructor
 public class TimedPlayerManager {
 
-    @Getter @Inject private TimedPlayerDAO timedPlayerDAO;
+    private final TimedPlayerDAO timedPlayerDAO;
 
     @Getter private final Map<String, TimedPlayer> players = new HashMap<>();
 
     public TimedPlayer getByName(String name) {
 
-        TimedPlayer timedPlayer = this.players.getOrDefault(name, null);
+        var timedPlayer = players.getOrDefault(name, null);
         if (timedPlayer == null) {
 
-            timedPlayer = this.timedPlayerDAO.selectOne(name);
+            timedPlayer = timedPlayerDAO.selectOne(name);
 
             if (timedPlayer == null) {
 
@@ -35,12 +36,12 @@ public class TimedPlayerManager {
                         .name(name)
                         .build();
 
-                this.timedPlayerDAO.saveOne(timedPlayer);
+                timedPlayerDAO.saveOne(timedPlayer);
 
             }
 
             timedPlayer.setLastUpdateTime(System.currentTimeMillis());
-            this.players.put(name, timedPlayer);
+            players.put(name, timedPlayer);
 
         }
 
@@ -51,18 +52,18 @@ public class TimedPlayerManager {
 
     public void purge(Player player) {
 
-        TimedPlayer timedPlayer = this.players.getOrDefault(player.getName(), null);
+        val timedPlayer = players.getOrDefault(player.getName(), null);
         if (timedPlayer == null) return;
 
-        this.purge(timedPlayer);
-        this.players.remove(player.getName());
+        purge(timedPlayer);
+        players.remove(player.getName());
 
     }
 
     public void purge(TimedPlayer timedPlayer) {
 
         timedPlayer.addTime(System.currentTimeMillis() - timedPlayer.getLastUpdateTime());
-        this.timedPlayerDAO.saveOne(timedPlayer);
+        timedPlayerDAO.saveOne(timedPlayer);
 
     }
 
