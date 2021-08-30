@@ -5,7 +5,6 @@ import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import lombok.Data;
 import lombok.val;
 
-import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +26,12 @@ public class TopTimedPlayerManager {
     }
 
     public boolean checkUpdate() {
-        if (nextUpdate < System.currentTimeMillis()) return false;
+        if (nextUpdate > System.currentTimeMillis()) return false;
 
-        nextUpdate = Instant.now().plusMillis(TimeUnit.MINUTES.toMillis(30)).toEpochMilli();
-        val timedPlayers = timedPlayerDAO.selectAll("ORDER BY time DESC LIMIT 10");
-
+        nextUpdate = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30);
         topPlayers.clear();
+
+        val timedPlayers = timedPlayerDAO.selectAll("ORDER BY time DESC LIMIT 10");
         timedPlayers.forEach(this::addPlayer);
 
         return true;
