@@ -6,10 +6,8 @@ import com.henryfabio.minecraft.inventoryapi.item.InventoryItem;
 import com.henryfabio.minecraft.inventoryapi.item.supplier.InventoryItemSupplier;
 import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.border.Border;
-import com.henryfabio.minecraft.inventoryapi.viewer.configuration.impl.ViewerConfigurationImpl;
 import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
-import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
@@ -22,10 +20,10 @@ import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
+import lombok.val;
+import lombok.var;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +64,7 @@ public final class OnlineTimeView extends PagedInventory {
     @Override
     protected void configureViewer(PagedViewer viewer) {
 
-        ViewerConfigurationImpl.Paged pagedViewer = viewer.getConfiguration();
+        val pagedViewer = viewer.getConfiguration();
 
         pagedViewer.itemPageLimit(21);
         pagedViewer.border(Border.of(1, 1, 2, 1));
@@ -76,13 +74,13 @@ public final class OnlineTimeView extends PagedInventory {
     @Override
     protected void configureInventory(Viewer viewer, InventoryEditor editor) {
 
-        Player player = viewer.getPlayer();
-        TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
+        val player = viewer.getPlayer();
+        val timedPlayer = timedPlayerManager.getByName(player.getName());
 
-        int integer = FeatureValue.get(FeatureValue::check);
+        val integer = FeatureValue.get(FeatureValue::check);
         if (integer >= 0) {
 
-            List<String> lore = new ArrayList<>();
+            val lore = new ArrayList<String>();
 
             lore.add("&fCrie um cheque com uma quantidade de tempo");
             if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
@@ -137,20 +135,21 @@ public final class OnlineTimeView extends PagedInventory {
     @Override
     protected List<InventoryItemSupplier> createPageItems(PagedViewer viewer) {
 
-        List<InventoryItemSupplier> items = new ArrayList<>();
+        val items = new ArrayList<InventoryItemSupplier>();
 
-        Player player = viewer.getPlayer();
-        TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
+        val player = viewer.getPlayer();
+        val timedPlayer = timedPlayerManager.getByName(player.getName());
 
-        int rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
+        val rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
 
-        for (Reward reward : rewardManager.getRewards().values()) {
+        for (val reward : rewardManager.getRewards().values()) {
+            items.add(() -> {
+                val rewardStatus = timedPlayer.canCollect(reward);
+                if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) return null;
 
-            RewardStatus rewardStatus = timedPlayer.canCollect(reward);
-            if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) continue;
-
-            List<String> replacedLore = rewardLore(reward, rewardStatus, MessageValue.get(MessageValue::rewardLore));
-            items.add(() -> rewardInventoryItem(reward, rewardStatus, replacedLore));
+                val replacedLore = rewardLore(reward, rewardStatus, MessageValue.get(MessageValue::rewardLore));
+                return rewardInventoryItem(reward, rewardStatus, replacedLore);
+            });
 
         }
 
@@ -177,7 +176,7 @@ public final class OnlineTimeView extends PagedInventory {
                 .wrap()
         ).defaultCallback(callback -> {
 
-            Player player = callback.getPlayer();
+            val player = callback.getPlayer();
             if (!rewardStatus.isCanCollect()) {
 
                 player.sendMessage(rewardStatus.getMessage());
@@ -185,8 +184,8 @@ public final class OnlineTimeView extends PagedInventory {
 
             }
 
-            int avaliableSpaces = 0;
-            for (ItemStack content : player.getInventory().getContents()) {
+            var avaliableSpaces = 0;
+            for (val content : player.getInventory().getContents()) {
 
                 if (content != null && content.getType() != Material.AIR) continue;
                 ++avaliableSpaces;
@@ -202,7 +201,7 @@ public final class OnlineTimeView extends PagedInventory {
 
             }
 
-            for (String command : reward.getCommands()) {
+            for (val command : reward.getCommands()) {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
             }
 
@@ -211,7 +210,7 @@ public final class OnlineTimeView extends PagedInventory {
                     .replace("%reward%", reward.getColoredName())
             );
 
-            TimedPlayer timedPlayer = timedPlayerManager.getByName(player.getName());
+            val timedPlayer = timedPlayerManager.getByName(player.getName());
             timedPlayer.getCollectedRewards().add(reward.getName());
 
             if (FeatureValue.get(FeatureValue::type)) {
@@ -231,7 +230,7 @@ public final class OnlineTimeView extends PagedInventory {
     }
 
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {
-        AtomicInteger currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
+        val currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
         return InventoryItem.of(new ItemBuilder(Material.HOPPER)
                 .name("&6Filtro de recompensas")
                 .setLore(
@@ -255,19 +254,14 @@ public final class OnlineTimeView extends PagedInventory {
 
     private List<String> rewardLore(Reward reward, RewardStatus rewardStatus, List<String> list) {
 
-        List<String> lore = new ArrayList<>();
-        for (String line : list) {
-
+        val lore = new ArrayList<String>();
+        for (val line : list) {
             if (line.contains("%reward_description%")) lore.addAll(reward.getDescription());
             else {
-
-                lore.add(line
-                    .replace("%time%", TimeUtils.format(reward.getTime()))
+                lore.add(line.replace("%time%", TimeUtils.format(reward.getTime()))
                     .replace("%collect_message%", rewardStatus.getMessage())
                 );
-
             }
-
         }
 
         return lore;
