@@ -16,7 +16,7 @@ public final class TypeUtil {
                 val material = Material.valueOf("LEGACY_" + materialName);
                 return new ItemStack(Bukkit.getUnsafe().fromLegacy(new org.bukkit.material.MaterialData(material, (byte) damage)));
             } catch (Exception error) {
-                NextOnlineTime.getInstance().getLogger().warning("O material " + materialName + " é nulo");
+                NextOnlineTime.getInstance().getLogger().warning("O material " + materialName + " é nulo, verifique a categories.yml");
                 return null;
             }
         }

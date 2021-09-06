@@ -3,6 +3,7 @@ package com.nextplugins.onlinetime.parser;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.utils.ColorUtils;
+import lombok.val;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -24,10 +25,13 @@ public class RewardParser {
 
         try {
 
+            val icon = this.itemParser.parseSection(section);
+            if (icon == null) return null;
+
             return Reward.builder()
                 .name(section.getName())
                 .coloredName(ColorUtils.colored(section.getString("name")))
-                .icon(this.itemParser.parseSection(section))
+                .icon(icon)
                 .time(TimeUnit.MINUTES.toMillis(section.getInt("time")))
                 .description(ColorUtils.colored(section.getStringList("description")))
                 .commands(section.getStringList("commands"))
