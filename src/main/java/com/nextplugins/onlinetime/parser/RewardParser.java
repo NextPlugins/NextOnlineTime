@@ -29,13 +29,14 @@ public class RewardParser {
             if (icon == null) return null;
 
             return Reward.builder()
-                .name(section.getName())
-                .coloredName(ColorUtils.colored(section.getString("name")))
-                .icon(icon)
-                .time(TimeUnit.MINUTES.toMillis(section.getInt("time")))
-                .description(ColorUtils.colored(section.getStringList("description")))
-                .commands(section.getStringList("commands"))
-                .build();
+                    .name(section.getName())
+                    .coloredName(ColorUtils.colored(section.getString("name")))
+                    .icon(icon)
+                    .time(TimeUnit.MINUTES.toMillis(section.getInt("time")))
+                    .description(ColorUtils.colored(section.getStringList("description")))
+                    .permission(section.getString("permission", null))
+                    .commands(section.getStringList("commands"))
+                    .build();
 
         } catch (Exception exception) {
 

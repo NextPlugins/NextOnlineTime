@@ -144,7 +144,7 @@ public final class OnlineTimeView extends PagedInventory {
         val rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
 
         for (val reward : rewardManager.getRewards().values()) {
-            if (!player.hasPermission(reward.getPermission())) continue;
+            if (reward.getPermission() != null && !player.hasPermission(reward.getPermission())) continue;
 
             items.add(() -> {
                 val rewardStatus = timedPlayer.canCollect(reward);
