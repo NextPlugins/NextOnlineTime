@@ -32,3 +32,21 @@ reward2:
   commands:
     - 'coins add %player% 5000'
     - 'give %player% diamond_pickaxe'
+
+reward3:
+  name: '&cPacote inicial VIP 1'
+  permission: 'vip.usar'
+  description:
+    - '&7Utilize este pacote para melhorar'
+    - '&7seus equipamentos'
+    - ''
+    - '&fItens:'
+    - ''
+    - '&8- &715000 coins'
+    - '&8- &7Picareta de Diamante'
+  time: 15 # in minutes
+  material: DIAMOND_PICKAXE
+  data: 0
+  commands:
+    - 'coins add %player% 15000'
+    - 'give %player% diamond_pickaxe'

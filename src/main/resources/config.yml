@@ -39,7 +39,8 @@ type: false
 # Taxa na criação de cheques
 # Para desabilitar o sistema de cheque, coloque -1
 # O valor de exemplo abaixo siginifica 10% de taxa, caso ele coloque 10 horas, o cheque só terá 9 horas
-checkTax: 10
+# Habilite apenas se o type: tiver true
+checkTax: -1
 
 # Item do cheque de tempo
 checkItem:

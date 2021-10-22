@@ -79,7 +79,7 @@ public final class OnlineTimeView extends PagedInventory {
         val timedPlayer = timedPlayerManager.getByName(player.getName());
 
         val integer = FeatureValue.get(FeatureValue::check);
-        if (integer >= 0) {
+        if (integer >= 0 && FeatureValue.get(FeatureValue::type)) {
 
             val lore = new ArrayList<String>();
 
@@ -144,6 +144,8 @@ public final class OnlineTimeView extends PagedInventory {
         val rewardFilter = playerRewardFilter.getOrDefault(viewer.getName(), -1);
 
         for (val reward : rewardManager.getRewards().values()) {
+            if (!player.hasPermission(reward.getPermission())) continue;
+
             items.add(() -> {
                 val rewardStatus = timedPlayer.canCollect(reward);
                 if (rewardFilter != -1 && rewardFilter != rewardStatus.getCode()) return null;

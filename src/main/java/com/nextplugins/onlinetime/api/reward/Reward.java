@@ -17,6 +17,7 @@ public class Reward {
 
     private final String name;
     private final String coloredName;
+    private final String permission;
 
     private final ItemStack icon;
 
