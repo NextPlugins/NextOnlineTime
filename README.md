@@ -32,10 +32,6 @@ e `rewards.yml`, em que você pode configurar o sql, recompensas, modo de funcio
 opções.
 
 ## Dependências
-
-O plugin não precisa de nenhuma dependência. As dependências de desenvolvimento são automaticamente baixadas por causa
-da tecnologia `PDM`
-
 Caso queira usar o sistema de **NPC** os plugins `Citizens` e `HolographicDisplays` serão necessários
 
 ## Placeholders
