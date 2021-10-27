@@ -37,7 +37,7 @@ Caso queira usar o sistema de **NPC** os plugins `Citizens` e `HolographicDispla
 ## Placeholders
 
 O plugin conta com uma placeholder para o jogador visualizar resumidamente o tempo que ele passou no servidor.
-%onlinetime_time% (Caso use featherboard, use {placeholderapi_online_time}
+%onlinetime_time% (Caso use featherboard, use {placeholderapi_onlinetime_time}
 
 ### Tecnologias usadas
 
