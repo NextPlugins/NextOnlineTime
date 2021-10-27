@@ -153,7 +153,6 @@ public final class OnlineTimeView extends PagedInventory {
                 val replacedLore = rewardLore(reward, rewardStatus, MessageValue.get(MessageValue::rewardLore));
                 return rewardInventoryItem(timedPlayer, reward, replacedLore);
             });
-
         }
 
         return items;
@@ -162,16 +161,13 @@ public final class OnlineTimeView extends PagedInventory {
 
     @Override
     protected void update(Viewer viewer, InventoryEditor editor) {
-
         super.update(viewer, editor);
         configureInventory(viewer, viewer.getEditor());
-
     }
 
     private InventoryItem rewardInventoryItem(TimedPlayer timedPlayer,
                                               Reward reward,
                                               List<String> lore) {
-
         return InventoryItem.of(
                 new ItemBuilder(reward.getIcon())
                         .name(reward.getColoredName())
@@ -219,7 +215,6 @@ public final class OnlineTimeView extends PagedInventory {
 
             callback.updateInventory();
         });
-
     }
 
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {

@@ -23,12 +23,10 @@ public final class ConfigurationManager {
      * @return instance of class
      */
     public ConfigurationManager saveDefault() {
-
         NextOnlineTime instance = NextOnlineTime.getInstance();
         instance.saveResource(this.config, false);
 
         return this;
-
     }
 
     /**

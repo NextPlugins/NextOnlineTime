@@ -49,7 +49,6 @@ public final class MessageValue {
     private final String sendedTime = message("sendTime.sended");
     private final String receivedTime = message("sendTime.received");
 
-    private final String noPermission = message("rewardInfo.no-permission");
     private final String alreadyCollected = message("rewardInfo.already-collected");
     private final String noTimeToCollect = message("rewardInfo.no-time-collect");
     private final String canCollect = message("rewardInfo.canCollect");
