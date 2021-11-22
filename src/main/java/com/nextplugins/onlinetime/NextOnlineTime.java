@@ -68,18 +68,16 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Override
     public void onLoad() {
-
         saveDefaultConfig();
+
         messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
         rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
         conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
         npcConfig = ConfigurationManager.of("npc.yml").saveDefault().load();
-
     }
 
     @Override
     public void onEnable() {
-
         getLogger().info("Iniciando carregamento do plugin.");
 
         val loadTime = Stopwatch.createStarted();
@@ -109,10 +107,8 @@ public final class NextOnlineTime extends JavaPlugin {
         npcManager.init();
 
         configurePlaceholder(pluginManager);
-
         loadConversors();
         loadCheckItem();
-
         registerTopUpdaterTask();
 
         getCommand("tempo").setExecutor(new OnlineTimeCommand());
@@ -130,36 +126,27 @@ public final class NextOnlineTime extends JavaPlugin {
 
         loadTime.stop();
         getLogger().log(Level.INFO, "Plugin inicializado com sucesso. ({0})", loadTime);
-
     }
 
     @Override
     public void onDisable() {
-
         Bukkit.getOnlinePlayers().forEach(timedPlayerManager::purge);
 
         if (npcManager.isEnabled()) {
-
             NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
-            runnable.despawn();
-
+            runnable.clear();
         }
-
     }
 
     private void loadCheckItem() {
-
         checkManager.setCheckItem(itemParser.parseSection(
             getConfig().getConfigurationSection("checkItem")
         ));
-
     }
 
     private void loadConversors() {
-
         val atlasConversor = "AtlasTempoOnline";
         if (conversorsConfig.getBoolean(atlasConversor + ".use")) {
-
             val section = conversorsConfig.getConfigurationSection(atlasConversor);
             val connector = configureSqlProvider(section);
 
@@ -170,12 +157,10 @@ public final class NextOnlineTime extends JavaPlugin {
             );
 
             conversorManager.registerConversor(conversor);
-
         }
 
         val onlineTimePlusConversor = "OnlineTimePlus";
         if (conversorsConfig.getBoolean(onlineTimePlusConversor + ".use")) {
-
             val section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
             val connector = configureSqlProvider(section);
 
@@ -186,16 +171,12 @@ public final class NextOnlineTime extends JavaPlugin {
             );
 
             conversorManager.registerConversor(conversor);
-
         }
-
     }
 
     private SQLConnector configureSqlProvider(ConfigurationSection section) {
-
         SQLConnector connector;
         if (section.getBoolean("connection.mysql.enable")) {
-
             val mysqlSection = section.getConfigurationSection("connection.mysql");
 
             connector = MySQLDatabaseType.builder()
@@ -205,38 +186,29 @@ public final class NextOnlineTime extends JavaPlugin {
                 .database(mysqlSection.getString("database"))
                 .build()
                 .connect();
-
         } else {
-
             val sqliteSection = section.getConfigurationSection("connection.sqlite");
 
             connector = SQLiteDatabaseType.builder()
                 .file(new File(sqliteSection.getString("file")))
                 .build()
                 .connect();
-
         }
 
         return connector;
-
     }
 
     private void configurePlaceholder(PluginManager pluginManager) {
-
         if (!pluginManager.isPluginEnabled("PlaceholderAPI")) return;
 
         PlaceholderRegister.of(this).register();
         getLogger().info("Bind with PlaceholderAPI successfully");
-
     }
 
     private void registerTopUpdaterTask() {
-
         val scheduler = Bukkit.getScheduler();
-
         val updaterTime = getConfig().getInt("updaterTime");
         val timeFormat = parseTime(getConfig().getString("timeFormat"));
-
         val updateTimeInTicks = timeFormat.toSeconds(updaterTime) * 20;
 
         scheduler.runTaskTimerAsynchronously(
@@ -245,16 +217,13 @@ public final class NextOnlineTime extends JavaPlugin {
             updateTimeInTicks,
             updateTimeInTicks
         );
-
     }
 
     private TimeUnit parseTime(String string) {
-
         val timeUnit = TimeUnit.valueOf(string);
 
         if (timeUnit != TimeUnit.HOURS && timeUnit != TimeUnit.MINUTES) return TimeUnit.MINUTES;
         return timeUnit;
-
     }
 
 }

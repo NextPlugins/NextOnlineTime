@@ -212,7 +212,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 config.save(configManager.getFile());
 
                 NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
-                runnable.despawn();
+                runnable.clear();
 
                 player.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
 

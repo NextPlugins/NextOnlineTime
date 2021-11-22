@@ -25,32 +25,28 @@ import java.util.List;
 public class NPCRunnable implements Runnable {
 
     private final Plugin plugin;
-    @Getter private NPC NPC;
-    @Getter private Hologram hologram;
+    @Getter
+    private int npcId;
 
     @Override
     public void run() {
-
         Location location = NPCValue.get(NPCValue::position);
         if (location == null) return;
 
         spawnDefault(location);
-
     }
 
     /**
      * Default spawn of npc & hologram
      */
     public void spawnDefault(Location location) {
-
         Bukkit.getScheduler().runTask(this.plugin, () -> spawn(
-            location,
-            NPCValue.get(NPCValue::npcName),
-            NPCValue.get(NPCValue::skinNick),
-            NPCValue.get(NPCValue::hologramMessage),
-            NPCValue.get(NPCValue::heightToAdd)
+                location,
+                NPCValue.get(NPCValue::npcName),
+                NPCValue.get(NPCValue::skinNick),
+                NPCValue.get(NPCValue::hologramMessage),
+                NPCValue.get(NPCValue::heightToAdd)
         ));
-
     }
 
     /**
@@ -63,57 +59,60 @@ public class NPCRunnable implements Runnable {
                          String skinNick,
                          List<String> hologramMessage,
                          double hologramAddition) {
-
         // prevent duplicate npc / holograms
-        despawn();
+        clear();
 
         val registry = CitizensAPI.getNPCRegistry();
 
         // npc implementation
         val npc = registry.createNPC(EntityType.PLAYER, npcName);
-        npc.data().set(NPC.PLAYER_SKIN_UUID_METADATA, Bukkit.getOfflinePlayer(skinNick).getName());
+        npc.data().set("player-skin-name", skinNick);
+        npc.data().set("nextonlinetime", true);
         npc.setProtected(true);
         npc.spawn(location);
 
         if (NPCValue.get(NPCValue::lookCLose)) {
-
             val lookClose = new LookClose();
             lookClose.lookClose(true);
 
             npc.addTrait(lookClose);
-
         }
 
-        this.NPC = npc;
+        npcId = npc.getId();
 
         // hologram implementation
         if (hologramMessage.isEmpty()) return true;
 
-        val hologram = HologramsAPI.createHologram(this.plugin, location.clone().add(0, hologramAddition, 0));
-
+        val hologram = HologramsAPI.createHologram(plugin, location.clone().add(0, hologramAddition, 0));
         for (int i = 0; i < hologramMessage.size(); i++) {
-
             String line = hologramMessage.get(i);
             hologram.insertTextLine(i, line);
-
         }
 
-        this.hologram = hologram;
-
         return true;
-
     }
 
-    /**
-     * Delete cached npc and hologram
-     */
-    public void despawn() {
+    public void clear() {
+        try {
+            for (val npc : CitizensAPI.getNPCRegistry()) {
+                if (!npc.data().has("nextonlinetime")) continue;
 
-        if (NPC == null || hologram == null) return;
+                npc.despawn();
+                npc.destroy();
+            }
 
-        NPC.destroy();
-        hologram.delete();
+        } catch (Exception exception) {
+            if (npcId != 0) {
+                val npc = CitizensAPI.getNPCRegistry().getById(npcId);
+                if (npc != null) {
+                    npc.despawn();
+                    npc.destroy();
+                }
+            }
+        }
 
+        npcId = 0;
+        HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
     }
 
 }

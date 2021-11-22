@@ -19,14 +19,12 @@ public class InteractNPCListener implements Listener {
 
     @EventHandler
     public void interactNpc(NPCRightClickEvent event) {
-
         if (event.getNPC() == null || !this.npcManager.isEnabled()) return;
 
         NPCRunnable runnable = (NPCRunnable) this.npcManager.getRunnable();
-        if (runnable.getNPC() == null || event.getNPC().getId() != runnable.getNPC().getId()) return;
+        if (event.getNPC().getId() != runnable.getNpcId()) return;
 
         event.getClicker().performCommand("tempo menu");
-
     }
 
 }
