@@ -26,7 +26,7 @@ public class NPCRunnable implements Runnable {
 
     private final Plugin plugin;
     @Getter
-    private int npcId;
+    private int npcId = -1;
 
     @Override
     public void run() {
@@ -95,23 +95,22 @@ public class NPCRunnable implements Runnable {
     public void clear() {
         try {
             for (val npc : CitizensAPI.getNPCRegistry()) {
-                if (!npc.data().has("nextonlinetime")) continue;
+                if (!npc.data().has("nextonlinetime") && !npc.getFullName().equals(NPCValue.get(NPCValue::npcName)))
+                    return;
 
                 npc.despawn();
                 npc.destroy();
             }
 
         } catch (Exception exception) {
-            if (npcId != 0) {
-                val npc = CitizensAPI.getNPCRegistry().getById(npcId);
-                if (npc != null) {
-                    npc.despawn();
-                    npc.destroy();
-                }
+            val npc = CitizensAPI.getNPCRegistry().getById(npcId);
+            if (npc != null) {
+                npc.despawn();
+                npc.destroy();
             }
         }
 
-        npcId = 0;
+        npcId = -1;
         HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
     }
 
