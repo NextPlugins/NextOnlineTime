@@ -24,47 +24,32 @@ public class TimedPlayerManager {
     @Getter private final Map<String, TimedPlayer> players = new HashMap<>();
 
     public TimedPlayer getByName(String name) {
-
         var timedPlayer = players.getOrDefault(name, null);
         if (timedPlayer == null) {
-
             timedPlayer = timedPlayerDAO.selectOne(name);
-
             if (timedPlayer == null) {
-
-                timedPlayer = TimedPlayer.builder()
-                    .name(name)
-                    .build();
-
+                timedPlayer = TimedPlayer.builder().name(name).build();
                 timedPlayerDAO.saveOne(timedPlayer);
-
             }
 
             timedPlayer.setLastUpdateTime(System.currentTimeMillis());
             players.put(name, timedPlayer);
-
         }
 
-
         return timedPlayer;
-
     }
 
     public void purge(Player player) {
-
         val timedPlayer = players.getOrDefault(player.getName(), null);
         if (timedPlayer == null) return;
 
         purge(timedPlayer);
         players.remove(player.getName());
-
     }
 
     public void purge(TimedPlayer timedPlayer) {
-
         timedPlayer.addTime(System.currentTimeMillis() - timedPlayer.getLastUpdateTime());
         timedPlayerDAO.saveOne(timedPlayer);
-
     }
 
 }

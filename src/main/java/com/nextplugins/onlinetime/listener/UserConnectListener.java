@@ -23,26 +23,20 @@ public class UserConnectListener implements Listener {
 
     @EventHandler
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-
         if (!conversorManager.isConverting()) return;
 
         event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
         event.setKickMessage(ColorUtils.colored("&cO servidor está no meio de uma conversão de dados, aguarde"));
-
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-
         this.timedPlayerManager.getByName(event.getPlayer().getName());
-
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-
         this.timedPlayerManager.purge(event.getPlayer());
-
     }
 
 }

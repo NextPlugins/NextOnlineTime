@@ -8,7 +8,6 @@ public final class TimedPlayerAdapter implements SQLResultAdapter<TimedPlayer> {
 
     @Override
     public TimedPlayer adaptResult(SimpleResultSet resultSet) {
-
         String userName = resultSet.get("name");
         int timeInServer = resultSet.get("time");
 
@@ -23,7 +22,6 @@ public final class TimedPlayerAdapter implements SQLResultAdapter<TimedPlayer> {
         for (String name : collectedRewards.split(",")) timedPlayer.getCollectedRewards().add(name);
 
         return timedPlayer;
-
     }
 
 }

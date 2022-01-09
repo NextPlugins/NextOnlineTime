@@ -195,10 +195,6 @@ public final class OnlineTimeView extends PagedInventory {
                 return;
             }
 
-            for (val command : reward.getCommands()) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
-            }
-
             player.sendMessage(
                     MessageValue.get(MessageValue::collectedReward)
                             .replace("%reward%", reward.getColoredName())
@@ -214,6 +210,10 @@ public final class OnlineTimeView extends PagedInventory {
             }
 
             callback.updateInventory();
+
+            for (val command : reward.getCommands()) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+            }
         });
     }
 

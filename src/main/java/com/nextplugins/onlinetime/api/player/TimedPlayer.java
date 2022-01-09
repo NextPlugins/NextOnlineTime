@@ -17,9 +17,10 @@ import java.util.List;
 @Builder
 public class TimedPlayer {
 
-    @Builder.Default private final List<String> collectedRewards = new ArrayList<>();
+    @Builder.Default private List<String> collectedRewards = new ArrayList<>();
     private String name;
     private long lastUpdateTime;
+
     @Builder.Default private long timeInServer = 0;
 
     public synchronized void addTime(long time) {
@@ -31,8 +32,10 @@ public class TimedPlayer {
     }
 
     public RewardStatus canCollect(Reward reward) {
-        if (this.collectedRewards.contains(reward.getName())) return RewardStatus.COLLECTED;
-        if (this.timeInServer < reward.getTime()) return RewardStatus.NO_TIME;
+        if (collectedRewards == null) collectedRewards = new ArrayList<>();
+        if (collectedRewards.contains(reward.getName())) return RewardStatus.COLLECTED;
+        if (timeInServer < reward.getTime()) return RewardStatus.NO_TIME;
+
         return RewardStatus.CAN_COLLECT;
     }
 
