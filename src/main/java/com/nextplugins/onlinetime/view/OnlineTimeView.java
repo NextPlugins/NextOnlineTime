@@ -87,7 +87,7 @@ public final class OnlineTimeView extends PagedInventory {
             if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
 
             editor.setItem(4, InventoryItem.of(
-                            new ItemBuilder("MrSnowDK")
+                            new ItemBuilder("kadoo")
                                     .name("&6Cheque de Tempo")
                                     .setLore(lore)
                                     .wrap()

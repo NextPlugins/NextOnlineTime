@@ -78,7 +78,9 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Iniciando carregamento do plugin.");
+        Bukkit.getConsoleSender().sendMessage("");
+        Bukkit.getConsoleSender().sendMessage("§f[§a⚡§f]§a " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f ativo!");
+        Bukkit.getConsoleSender().sendMessage("");
 
         val loadTime = Stopwatch.createStarted();
         val pluginManager = Bukkit.getPluginManager();
@@ -125,13 +127,14 @@ public final class NextOnlineTime extends JavaPlugin {
         MetricProvider.of(this).register();
 
         loadTime.stop();
-        getLogger().log(Level.INFO, "Plugin inicializado com sucesso. ({0})", loadTime);
     }
 
     @Override
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(timedPlayerManager::purge);
-
+        Bukkit.getConsoleSender().sendMessage("");
+        Bukkit.getConsoleSender().sendMessage("§f[§c⚡§f]§c " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f desativado!");
+        Bukkit.getConsoleSender().sendMessage("");
         if (npcManager.isEnabled()) {
             NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
             runnable.clear();
