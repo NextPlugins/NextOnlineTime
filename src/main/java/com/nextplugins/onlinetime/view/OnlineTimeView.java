@@ -20,6 +20,7 @@ import com.nextplugins.onlinetime.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
+import com.nextplugins.onlinetime.utils.PrefixUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.val;
 import lombok.var;
@@ -104,7 +105,7 @@ public final class OnlineTimeView extends PagedInventory {
 
         editor.setItem(48, InventoryItem.of(
                         new ItemBuilder(viewer.getPlayer().getName())
-                                .name("&a" + viewer.getPlayer().getName())
+                                .name(PrefixUtils.getPrefix(viewer.getPlayer()) + viewer.getPlayer().getName())
                                 .setLore(
                                         "&fConfira seu progresso abaixo:",
                                         "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())

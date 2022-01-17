@@ -18,14 +18,17 @@ public class ItemBuilder {
 
     public ItemBuilder(ItemStack item) {
         this.item = item;
+        hideAttributes();
     }
 
     public ItemBuilder(Material type) {
         this(new ItemStack(type));
+        hideAttributes();
     }
 
     public ItemBuilder(Material type, int quantity, short data) {
         this(new ItemStack(type, quantity, data));
+        hideAttributes();
     }
 
     public ItemBuilder(String name) {
@@ -34,7 +37,7 @@ public class ItemBuilder {
 
         SkullMeta meta = (SkullMeta) item.getItemMeta();
         meta.setOwner(name);
-
+        hideAttributes();
         item.setItemMeta(meta);
     }
 
@@ -42,6 +45,7 @@ public class ItemBuilder {
         ItemMeta itemMeta = item.getItemMeta();
         consumer.accept(itemMeta);
         item.setItemMeta(itemMeta);
+        hideAttributes();
         return this;
     }
 
@@ -91,4 +95,10 @@ public class ItemBuilder {
         return item;
     }
 
+    public ItemBuilder hideAttributes() {
+        ItemMeta im = this.item.getItemMeta();
+        im.addItemFlags(ItemFlag.values());
+        this.item.setItemMeta(im);
+        return this;
+    }
 }
