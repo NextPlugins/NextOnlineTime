@@ -1,6 +1,6 @@
 package com.nextplugins.onlinetime.parser;
 
-import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TypeUtil;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,14 +31,14 @@ public final class ItemParser {
                 );
             }
 
-            if (section.contains("name")) itemBuilder.name(ColorUtils.colored(section.getString("name")));
+            if (section.contains("name")) itemBuilder.name(ColorUtil.colored(section.getString("name")));
             if (section.contains("glow") && section.getBoolean("glow")) itemBuilder.glow();
 
             if (section.contains("description")) {
 
                 final List<String> lore = new ArrayList<>();
                 for (String description : section.getStringList("description")) {
-                    lore.add(ColorUtils.colored(description));
+                    lore.add(ColorUtil.colored(description));
                 }
 
                 itemBuilder.setLore(lore);

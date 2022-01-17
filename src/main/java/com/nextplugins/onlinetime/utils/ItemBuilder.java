@@ -61,18 +61,18 @@ public class ItemBuilder {
     }
 
     public ItemBuilder name(String name) {
-        return changeItemMeta(it -> it.setDisplayName(ColorUtils.colored(name)));
+        return changeItemMeta(it -> it.setDisplayName(ColorUtil.colored(name)));
     }
 
     public ItemBuilder setLore(String... lore) {
-        return changeItemMeta(it -> it.setLore(Arrays.asList(ColorUtils.colored(lore))));
+        return changeItemMeta(it -> it.setLore(Arrays.asList(ColorUtil.colored(lore))));
     }
 
     public ItemBuilder setLore(List<String> lore) {
         return changeItemMeta(it -> it.setLore(
             lore
                 .stream()
-                .map(ColorUtils::colored)
+                .map(ColorUtil::colored)
                 .collect(Collectors.toList()))
         );
     }

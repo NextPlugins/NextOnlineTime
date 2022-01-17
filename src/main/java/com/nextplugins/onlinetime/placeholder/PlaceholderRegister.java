@@ -1,8 +1,8 @@
-package com.nextplugins.onlinetime.listener;
+package com.nextplugins.onlinetime.placeholder;
 
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
-import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.AllArgsConstructor;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -50,7 +50,7 @@ public final class PlaceholderRegister extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String params) {
 
-        if (!params.equalsIgnoreCase("time")) return ColorUtils.colored("&cParametro inválido");
+        if (!params.equalsIgnoreCase("time")) return ColorUtil.colored("&cParametro inválido");
 
         TimedPlayer timedPlayer = this.plugin.getTimedPlayerManager().getByName(player.getName());
         return TimeUtils.formatOne(timedPlayer.getTimeInServer());

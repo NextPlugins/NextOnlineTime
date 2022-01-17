@@ -28,6 +28,7 @@ dependencies {
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
+    implementation 'com.github.Yuhtin:update-checker:60104e14e4'
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
     implementation 'de.tr7zw:item-nbt-api:2.9.0'
@@ -56,6 +57,7 @@ bukkit {
 shadowJar {
     archiveName("${project.name}-${project.version}.jar")
 
+    relocate 'com.yuhtin.updatechecker', 'com.nextplugins.onlinetime.libs.updatechecker'
     relocate 'com.henryfabio.minecraft.inventoryapi', 'com.nextplugins.onlinetime.libs.inventoryapi'
 
     relocate 'com.henryfabio.sqlprovider', 'com.nextplugins.onlinetime.libs.sqlprovider'

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.henryfabio.sqlprovider.executor.adapter.SQLResultAdapter;
 import com.henryfabio.sqlprovider.executor.result.SimpleResultSet;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
-import com.nextplugins.onlinetime.models.objects.AtlasTimedPlayer;
+import com.nextplugins.onlinetime.api.models.objects.AtlasTimedPlayer;
 
 /**
  * @author Yuhtin

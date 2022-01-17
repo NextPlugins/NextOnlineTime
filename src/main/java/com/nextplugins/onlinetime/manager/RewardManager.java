@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.manager;
 
 import com.nextplugins.onlinetime.api.reward.Reward;
-import com.nextplugins.onlinetime.models.comparators.RewardComparator;
+import com.nextplugins.onlinetime.api.models.comparators.RewardComparator;
 import com.nextplugins.onlinetime.parser.RewardParser;
 import lombok.Getter;
 

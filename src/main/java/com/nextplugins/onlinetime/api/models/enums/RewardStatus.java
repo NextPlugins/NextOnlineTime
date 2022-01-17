@@ -1,4 +1,4 @@
-package com.nextplugins.onlinetime.models.enums;
+package com.nextplugins.onlinetime.api.models.enums;
 
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import lombok.AllArgsConstructor;

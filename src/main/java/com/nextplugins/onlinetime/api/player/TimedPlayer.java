@@ -1,7 +1,7 @@
 package com.nextplugins.onlinetime.api.player;
 
 import com.nextplugins.onlinetime.api.reward.Reward;
-import com.nextplugins.onlinetime.models.enums.RewardStatus;
+import com.nextplugins.onlinetime.api.models.enums.RewardStatus;
 import lombok.Builder;
 import lombok.Data;
 

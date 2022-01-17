@@ -10,7 +10,7 @@ import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
-import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.LocationUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
@@ -185,10 +185,10 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
                 runnable.spawnDefault(location);
 
-                player.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
+                player.sendMessage(ColorUtil.colored("&aNPC setado com sucesso."));
 
             } catch (Exception exception) {
-                player.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
+                player.sendMessage(ColorUtil.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
             }
 
             return true;
@@ -214,10 +214,10 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
                 runnable.clear();
 
-                player.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
+                player.sendMessage(ColorUtil.colored("&aNPC deletado com sucesso."));
 
             } catch (Exception exception) {
-                player.sendMessage(ColorUtils.colored("&cNão foi possível deletar o npc."));
+                player.sendMessage(ColorUtil.colored("&cNão foi possível deletar o npc."));
             }
 
             return true;
@@ -237,7 +237,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
             if (pluginConversor == null) return true;
 
-            player.sendMessage(ColorUtils.colored(
+            player.sendMessage(ColorUtil.colored(
                 "&aIniciando conversão de dados do plugin " + pluginConversor.getConversorName() + "."
             ));
 
@@ -247,7 +247,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
             Set<TimedPlayer> timedPlayers = pluginConversor.lookupPlayers();
             if (timedPlayers == null) {
 
-                player.sendMessage(ColorUtils.colored(
+                player.sendMessage(ColorUtil.colored(
                     "&cOcorreu um erro, veja se configurou corretamente o conversor."
                 ));
                 return true;
@@ -267,7 +267,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
     private Conversor checkConversor(CommandSender sender, String conversor) {
         if (conversorManager.isConverting()) {
-            sender.sendMessage(ColorUtils.colored(
+            sender.sendMessage(ColorUtil.colored(
                 "&cVocê já está convertendo uma tabela, aguarde a finalização da mesma."
             ));
             return null;
@@ -275,7 +275,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
         final int maxPlayers = sender instanceof Player ? 1 : 0;
         if (Bukkit.getOnlinePlayers().size() > maxPlayers) {
-            sender.sendMessage(ColorUtils.colored(
+            sender.sendMessage(ColorUtil.colored(
                 "&cEsta função só pode ser usada com apenas você online."
             ));
             return null;
@@ -283,7 +283,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
 
         Conversor pluginConversor = conversorManager.getByName(conversor);
         if (pluginConversor == null) {
-            sender.sendMessage(ColorUtils.colored(
+            sender.sendMessage(ColorUtil.colored(
                 "&cEste conversor é inválido, conversores válidos: " + conversorManager.availableConversors()
             ));
         }

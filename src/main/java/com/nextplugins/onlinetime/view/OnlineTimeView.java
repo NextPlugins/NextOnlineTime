@@ -16,9 +16,9 @@ import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
-import com.nextplugins.onlinetime.models.enums.RewardStatus;
+import com.nextplugins.onlinetime.api.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
-import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.val;
@@ -64,12 +64,10 @@ public final class OnlineTimeView extends PagedInventory {
 
     @Override
     protected void configureViewer(PagedViewer viewer) {
-
         val pagedViewer = viewer.getConfiguration();
 
         pagedViewer.itemPageLimit(21);
         pagedViewer.border(Border.of(1, 1, 2, 1));
-
     }
 
     @Override
@@ -122,7 +120,7 @@ public final class OnlineTimeView extends PagedInventory {
                                 .wrap()
                 ).defaultCallback(callback -> {
                             if (topTimedPlayerManager.checkUpdate()) {
-                                callback.getPlayer().sendMessage(ColorUtils.colored("&aO ranking está atualizando, aguarde."));
+                                callback.getPlayer().sendMessage(ColorUtil.colored("&aO ranking está atualizando, aguarde."));
                                 return;
                             }
 
@@ -135,7 +133,6 @@ public final class OnlineTimeView extends PagedInventory {
 
     @Override
     protected List<InventoryItemSupplier> createPageItems(PagedViewer viewer) {
-
         val items = new ArrayList<InventoryItemSupplier>();
 
         val player = viewer.getPlayer();
@@ -156,7 +153,6 @@ public final class OnlineTimeView extends PagedInventory {
         }
 
         return items;
-
     }
 
     @Override

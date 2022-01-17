@@ -13,7 +13,8 @@ import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
-import com.nextplugins.onlinetime.listener.PlaceholderRegister;
+import com.nextplugins.onlinetime.placeholder.PlaceholderRegister;
+import com.nextplugins.onlinetime.listener.UpdateCheckerListener;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.*;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
@@ -21,6 +22,7 @@ import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
+import com.yuhtin.updatechecker.UpdateChecker;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -41,6 +43,7 @@ public final class NextOnlineTime extends JavaPlugin {
      */
     private static final int PLUGIN_ID = 10042;
 
+    private UpdateChecker updateChecker;
     private SQLConnector sqlConnector;
 
     private FileConfiguration messagesConfig;
@@ -68,6 +71,9 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        updateChecker = new UpdateChecker(this, "NextPlugins");
+        updateChecker.check();
+
         saveDefaultConfig();
 
         messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
@@ -81,7 +87,14 @@ public final class NextOnlineTime extends JavaPlugin {
         getLogger().info("Iniciando carregamento do plugin.");
 
         val loadTime = Stopwatch.createStarted();
-        val pluginManager = Bukkit.getPluginManager();
+        if (updateChecker.canUpdate()) {
+            getLogger().info("");
+            getLogger().info("ATENÇÃO!");
+            getLogger().info("Você está usando uma versão antiga deste plugin!");
+            getLogger().info("Nova versão: " + updateChecker.getMoreRecentVersion());
+            getLogger().info("Baixe aqui: " + updateChecker.getDownloadLink());
+            getLogger().info("");
+        }
 
         InventoryManager.enable(this);
 
@@ -106,6 +119,7 @@ public final class NextOnlineTime extends JavaPlugin {
         inventoryRegistry.init();
         npcManager.init();
 
+        val pluginManager = Bukkit.getPluginManager();
         configurePlaceholder(pluginManager);
         loadConversors();
         loadCheckItem();
@@ -113,6 +127,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         getCommand("tempo").setExecutor(new OnlineTimeCommand());
 
+        val updateCheckerListener = new UpdateCheckerListener();
         val checkUseListener = new CheckUseListener(timedPlayerManager);
         val userConnectListener = new UserConnectListener(
             timedPlayerManager,
@@ -121,6 +136,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         pluginManager.registerEvents(checkUseListener, this);
         pluginManager.registerEvents(userConnectListener, this);
+        pluginManager.registerEvents(updateCheckerListener, this);
 
         MetricProvider.of(this).register();
 

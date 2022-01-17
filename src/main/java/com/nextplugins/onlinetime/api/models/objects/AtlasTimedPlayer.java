@@ -1,4 +1,4 @@
-package com.nextplugins.onlinetime.models.objects;
+package com.nextplugins.onlinetime.api.models.objects;
 
 import lombok.Data;
 

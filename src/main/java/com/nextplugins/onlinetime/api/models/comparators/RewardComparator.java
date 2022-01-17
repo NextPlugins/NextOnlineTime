@@ -1,4 +1,4 @@
-package com.nextplugins.onlinetime.models.comparators;
+package com.nextplugins.onlinetime.api.models.comparators;
 
 import com.nextplugins.onlinetime.api.reward.Reward;
 

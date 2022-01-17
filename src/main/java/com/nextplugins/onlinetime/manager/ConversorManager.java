@@ -5,7 +5,7 @@ import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.utils.ActionBarUtils;
-import com.nextplugins.onlinetime.utils.ColorUtils;
+import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -82,7 +82,7 @@ public class ConversorManager {
 
                 }
 
-                if (sender != null) sender.sendMessage(ColorUtils.colored(
+                if (sender != null) sender.sendMessage(ColorUtil.colored(
                     "&aConversão terminada em &2" + TimeUtils.format(System.currentTimeMillis() - initial) + "&a.",
                     "&aVocê &lnão &aprecisa reiniciar o servidor para salvar as alterações."
                 ));
@@ -101,7 +101,7 @@ public class ConversorManager {
 
             if (!player.isOnline()) return;
 
-            String format = ColorUtils.colored(String.format(CONVERSION_FORMAT,
+            String format = ColorUtil.colored(String.format(CONVERSION_FORMAT,
                 conversorName,
                 converted,
                 timedPlayers.size(),
@@ -110,7 +110,7 @@ public class ConversorManager {
 
             ActionBarUtils.sendActionBar(
                 player,
-                ColorUtils.colored(format)
+                ColorUtil.colored(format)
             );
 
 
