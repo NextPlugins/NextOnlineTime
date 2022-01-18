@@ -47,14 +47,13 @@ public final class OnlineTimeCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            List<String> messages = sender.hasPermission("nextonlinetime.admin")
-                ? MessageValue.get(MessageValue::helpMessageAdmin)
-                : MessageValue.get(MessageValue::helpMessage);
-
+            if (!player.hasPermission("aspectmania.gerente")) {
+                inventoryRegistry.getMainInventory().openInventory(player);
+            }
+            List<String> messages = MessageValue.get(MessageValue::helpMessageAdmin);
             for (String message : messages) {
                 player.sendMessage(message.replace("%label%", "tempo"));
             }
-
             return true;
         }
 
@@ -96,7 +95,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         // send
 
         if (subCommand.equalsIgnoreCase("enviar")) {
-            if (!player.hasPermission("nextonlinetime.sendtime")) {
+            if (!player.hasPermission("aspectmania.gerente")) {
                 player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
                 return true;
             }
@@ -167,7 +166,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         // set npc
 
         if (subCommand.equalsIgnoreCase("setnpc")) {
-            if (!player.hasPermission("nextonlinetime.admin")) {
+            if (!player.hasPermission("aspectmania.gerente")) {
                 player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
                 return true;
             }
@@ -197,7 +196,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         // delete npc
 
         if (subCommand.equalsIgnoreCase("delnpc")) {
-            if (!player.hasPermission("nextonlinetime.admin")) {
+            if (!player.hasPermission("aspectmania.gerente")) {
                 player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
                 return true;
             }
@@ -226,7 +225,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         // conversor
 
         if (subCommand.equalsIgnoreCase("conversor")) {
-            if (!player.hasPermission("nextonlinetime.admin")) {
+            if (!player.hasPermission("aspectmania.gerente")) {
                 player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
                 return true;
             }
