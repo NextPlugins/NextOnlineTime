@@ -88,12 +88,16 @@ public final class NextOnlineTime extends JavaPlugin {
 
         val loadTime = Stopwatch.createStarted();
         if (updateChecker.canUpdate()) {
+            val lastRelease = updateChecker.getLastRelease();
+
             getLogger().info("");
-            getLogger().info("ATENÇÃO!");
-            getLogger().info("Você está usando uma versão antiga deste plugin!");
-            getLogger().info("Nova versão: " + updateChecker.getMoreRecentVersion());
-            getLogger().info("Baixe aqui: " + updateChecker.getDownloadLink());
+            getLogger().info("[NextUpdate] ATENÇÃO!");
+            getLogger().info("[NextUpdate] Você está usando uma versão antiga do NextOnlineTime!");
+            getLogger().info("[NextUpdate] Nova versão: " + lastRelease.getVersion());
+            getLogger().info("[NextUpdate] Baixe aqui: " + lastRelease.getDownloadURL());
             getLogger().info("");
+        } else {
+            getLogger().info("[NextUpdate] Olá! Vim aqui revisar se a versão do NextOnlineTime está atualizada, e pelo visto sim! Obrigado por usar nossos plugins!");
         }
 
         InventoryManager.enable(this);
