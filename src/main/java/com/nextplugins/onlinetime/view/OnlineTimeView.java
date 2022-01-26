@@ -107,8 +107,10 @@ public final class OnlineTimeView extends PagedInventory {
                         new ItemBuilder(viewer.getPlayer().getName())
                                 .name(PrefixUtils.getPrefix(viewer.getPlayer()) + viewer.getPlayer().getName())
                                 .setLore(
-                                        "&fConfira seu progresso abaixo:",
-                                        "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())
+                                        "",
+                                        "&8Confira seu progresso abaixo:",
+                                        "&f Total de tempo online: ", "&7 " + TimeUtils.format(timedPlayer.getTimeInServer()),
+                                                ""
                                 )
                                 .wrap()
                 )
@@ -118,12 +120,12 @@ public final class OnlineTimeView extends PagedInventory {
 
         editor.setItem(50, InventoryItem.of(
                         new ItemBuilder(Material.GOLD_INGOT)
-                                .name("&6TOP Online")
-                                .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
+                                .name("&9&lTEMPO ONLINE")
+                                .setLore("&7Clique para ver os top jogadores", "&7com mais tempo online no servidor")
                                 .wrap()
                 ).defaultCallback(callback -> {
                             if (topTimedPlayerManager.checkUpdate()) {
-                                callback.getPlayer().sendMessage(ColorUtils.colored("&aO ranking está atualizando, aguarde."));
+                                callback.getPlayer().sendMessage(ColorUtils.colored("&9&lTEMPO ONLINE &7O ranking está atualizando, aguarde."));
                                 return;
                             }
 
@@ -221,7 +223,7 @@ public final class OnlineTimeView extends PagedInventory {
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {
         val currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
         return InventoryItem.of(new ItemBuilder(Material.HOPPER)
-                        .name("&6Filtro de recompensas")
+                        .name("&9&lFILTRO DE RECOMPENSAS")
                         .setLore(
                                 "&7Veja apenas as recompensas que deseja",
                                 "",
@@ -230,7 +232,7 @@ public final class OnlineTimeView extends PagedInventory {
                                 getColorByFilter(currentFilter.get(), 1) + " Recompensas bloqueadas",
                                 getColorByFilter(currentFilter.get(), 2) + " Recompensas coletadas",
                                 "",
-                                "&aClique para mudar o filtro!"
+                                "&9Clique aqui para mudar o filtro!"
                         )
                         .wrap())
                 .defaultCallback(event -> {
@@ -258,7 +260,7 @@ public final class OnlineTimeView extends PagedInventory {
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {
-        return currentFilter == loopFilter ? " &b▶" : "&8";
+        return currentFilter == loopFilter ? " &b➤" : "&8";
     }
 
 }

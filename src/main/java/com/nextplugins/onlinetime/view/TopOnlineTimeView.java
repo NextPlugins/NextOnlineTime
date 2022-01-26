@@ -10,6 +10,7 @@ import com.henryfabio.minecraft.inventoryapi.viewer.impl.simple.SimpleViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
+import com.nextplugins.onlinetime.utils.PrefixUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import com.nextplugins.onlinetime.utils.TypeUtil;
 
@@ -26,7 +27,7 @@ public final class TopOnlineTimeView extends SimpleInventory {
         super(
             "online-time.top",
             "TOP Online",
-            4 * 9
+            5 * 9
         );
 
         topTimedPlayerManager = NextOnlineTime.getInstance().getTopTimedPlayerManager();
@@ -35,13 +36,15 @@ public final class TopOnlineTimeView extends SimpleInventory {
     @Override
     protected void configureInventory(Viewer viewer, InventoryEditor editor) {
 
-        editor.setItem(31, DefaultItem.BACK.toInventoryItem(viewer));
+        editor.setItem(40, DefaultItem.BACK.toInventoryItem(viewer));
 
         editor.setItem(32, InventoryItem.of(new ItemBuilder(TypeUtil.convertFromLegacy("DOUBLE_PLANT", 0))
-            .name("&6Próxima Atualização")
+            .name("&9§lPRÓXIMA ATUALIZAÇÃO")
             .setLore(
-                "&7O top tempo será atualizado em",
-                "&f" + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis())
+                    "",
+                "&7 O top tempo será atualizado em",
+                "&f " + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis()),
+                        ""
             )
             .wrap()));
 
@@ -57,7 +60,7 @@ public final class TopOnlineTimeView extends SimpleInventory {
 
             editor.setItem(slot, InventoryItem.of(new ItemBuilder(name)
                 .name("&a" + name + " &7#" + position)
-                .setLore("&7Total de tempo: &f" + TimeUtils.format(time))
+                .setLore("", "&f Total de tempo: ", "&7 " + TimeUtils.format(time), "")
                 .wrap()));
 
             ++slot;
