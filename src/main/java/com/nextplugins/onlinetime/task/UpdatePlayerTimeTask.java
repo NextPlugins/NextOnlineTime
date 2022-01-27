@@ -26,13 +26,13 @@ public class UpdatePlayerTimeTask implements Runnable {
                 player.sendMessage("§a§lBOA! §aUma nova recompensa foi liberada no §f/tempo§a.");
                 return;
             }
-            if (timedPlayer.getTimeInServer() >= 35940000 && timedPlayer.getTimeInServer() <= 36232490) {
-                player.sendTitle("§9§lGG!", "§fVocê está online a mais de 10 horas.");
+            if (timedPlayer.getTimeInServer() >= 14340000 && timedPlayer.getTimeInServer() <= 14632490) {
+                player.sendTitle("§9§lGG!", "§fVocê está online a mais de 4 horas.");
                 player.sendMessage("§a§lBOA! §aUma nova recompensa foi liberada no §f/tempo§a.");
                 return;
             }
-            if (timedPlayer.getTimeInServer() >= 14340000 && timedPlayer.getTimeInServer() <= 14632490) {
-                player.sendTitle("§9§lGG!", "§fVocê está online a mais de 4 horas.");
+            if (timedPlayer.getTimeInServer() >= 35940000 && timedPlayer.getTimeInServer() <= 36232490) {
+                player.sendTitle("§9§lGG!", "§fVocê está online a mais de 10 horas.");
                 player.sendMessage("§a§lBOA! §aUma nova recompensa foi liberada no §f/tempo§a.");
                 return;
             }
