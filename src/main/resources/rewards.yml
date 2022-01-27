@@ -1,52 +1,118 @@
 reward1:
-  name: '&cPacote inicial'
+  name: '&9&LRECOMPENSA &7#1'
   description:
-    - '&7Utilize este pacote para começar'
-    - '&7sua jogatina no servidor'
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
     - ''
-    - '&fItens:'
-    - ''
-    - '&8- &72500 coins'
-    - '&8- &7Picareta de Ferro'
-  time: 5 # in minutes
-  material: IRON_PICKAXE
-  glow: true
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f3x Chave Meteóro'
+    - '&9 ▎ &f4k de Tokens'
+  time: 30 # in minutes
+  material: STORAGE_MINECART
+  glow: false
   data: 0
   commands:
-    - 'coins add %player% 2500'
-    - 'give %player% iron_pickaxe'
-
+    - 'crate give %player% meteoro 3'
+    - 'token add %player% 4000'
+#2
 reward2:
-  name: '&cPacote inicial 2'
+  name: '&9&LRECOMPENSA &7#2'
   description:
-    - '&7Utilize este pacote para melhorar'
-    - '&7seus equipamentos'
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
     - ''
-    - '&fItens:'
-    - ''
-    - '&8- &75000 coins'
-    - '&8- &7Picareta de Diamante'
-  time: 15 # in minutes
-  material: DIAMOND_PICKAXE
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f4x Chave Meteóro'
+    - '&9 ▎ &f2x Chave Asteroide'
+  time: 60 # in minutes
+  material: STORAGE_MINECART
+  glow: false
   data: 0
   commands:
-    - 'coins add %player% 5000'
-    - 'give %player% diamond_pickaxe'
-
+    - 'crate give %player% meteoro 4'
+    - 'crate give %player% asteroide 2'
+#3
 reward3:
-  name: '&cPacote inicial VIP 1'
-  permission: 'vip.usar'
+  name: '&9&LRECOMPENSA &7#3'
   description:
-    - '&7Utilize este pacote para melhorar'
-    - '&7seus equipamentos'
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
     - ''
-    - '&fItens:'
-    - ''
-    - '&8- &715000 coins'
-    - '&8- &7Picareta de Diamante'
-  time: 15 # in minutes
-  material: DIAMOND_PICKAXE
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f2x Chave Asteroide'
+    - '&9 ▎ &f1x Boss Chimpanzé'
+  time: 120 # in minutes
+  material: STORAGE_MINECART
+  glow: false
   data: 0
   commands:
-    - 'coins add %player% 15000'
-    - 'give %player% diamond_pickaxe'
+    - 'bosses give %player% chimpanze 1'
+    - 'crate give %player% asteroide 2'
+#4
+reward4:
+  name: '&9&LRECOMPENSA &7#4'
+  description:
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
+    - ''
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f1x Boss Chimpanzé'
+    - '&9 ▎ &f1x Matadora de Boss (❤10)'
+  time: 240 # in minutes
+  material: STORAGE_MINECART
+  glow: false
+  data: 0
+  commands:
+    - 'bosses give %player% chimpanze 1'
+    - 'bosses givesword %player% 10'
+#5
+reward5:
+  name: '&9&LRECOMPENSA &7#5'
+  description:
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
+    - ''
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f2x Chave Cometa'
+    - '&9 ▎ &f1x Chave Cósmica'
+  time: 360 # in minutes
+  material: STORAGE_MINECART
+  glow: false
+  data: 0
+  commands:
+    - 'crate give %player% cometa 2'
+    - 'crate give %player% cosmica 1'
+#6
+reward6:
+  name: '&9&LRECOMPENSA &7#6'
+  description:
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
+    - ''
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f1x Matadora de Boss (❤25)'
+    - '&9 ▎ &f10k de Tokens'
+  time: 480 # in minutes
+  material: STORAGE_MINECART
+  glow: false
+  data: 0
+  commands:
+    - 'bosses givesword %player% 25'
+    - 'token add %player% 10000'
+#7
+reward7:
+  name: '&9&LRECOMPENSA &7#7'
+  description:
+    - ' &7Utilize este pacote para começar'
+    - ' &7sua jogatina no servidor'
+    - ''
+    - '&8Itens desta recompensa:'
+    - '&9 ▎ &f1x Boss Girafa'
+    - '&9 ▎ &f2x Chave Cósmica'
+  time: 600 # in minutes
+  material: STORAGE_MINECART
+  glow: false
+  data: 0
+  commands:
+    - 'bosses give %player% girafa 1'
+    - 'crate give %player% cosmica 2'

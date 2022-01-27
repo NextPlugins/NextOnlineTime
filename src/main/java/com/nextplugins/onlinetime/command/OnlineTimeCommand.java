@@ -3,23 +3,17 @@ package com.nextplugins.onlinetime.command;
 import com.nextplugins.onlinetime.NextOnlineTime;
 import com.nextplugins.onlinetime.api.conversion.Conversor;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
-import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
 import com.nextplugins.onlinetime.manager.ConversorManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
-import com.nextplugins.onlinetime.npc.manager.NPCManager;
-import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
-import com.nextplugins.onlinetime.utils.LocationUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +29,6 @@ public final class OnlineTimeCommand implements CommandExecutor {
     private final TimedPlayerManager timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
     private final ConversorManager conversorManager = NextOnlineTime.getInstance().getConversorManager();
     private final InventoryRegistry inventoryRegistry = NextOnlineTime.getInstance().getInventoryRegistry();
-    private final NPCManager npcManager = NextOnlineTime.getInstance().getNpcManager();
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -49,6 +42,7 @@ public final class OnlineTimeCommand implements CommandExecutor {
         if (args.length == 0) {
             if (!player.hasPermission("aspectmania.gerente")) {
                 inventoryRegistry.getMainInventory().openInventory(player);
+                return true;
             }
             List<String> messages = MessageValue.get(MessageValue::helpMessageAdmin);
             for (String message : messages) {
@@ -159,65 +153,6 @@ public final class OnlineTimeCommand implements CommandExecutor {
                 .replace("%time%", TimeUtils.format(timeInMillis))
                 .replace("%sender%", player.getName())
             );
-
-            return true;
-        }
-
-        // set npc
-
-        if (subCommand.equalsIgnoreCase("setnpc")) {
-            if (!player.hasPermission("aspectmania.gerente")) {
-                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
-                return true;
-            }
-
-            Location location = player.getLocation();
-            ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
-
-            FileConfiguration config = configManager.load();
-            config.set("position", LocationUtils.serialize(location));
-
-            try {
-
-                config.save(configManager.getFile());
-
-                NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
-                runnable.spawnDefault(location);
-
-                player.sendMessage(ColorUtils.colored("&aNPC setado com sucesso."));
-
-            } catch (Exception exception) {
-                player.sendMessage(ColorUtils.colored("&cNão foi possível setar o npc, o sistema está desabilitado por falta de dependência."));
-            }
-
-            return true;
-        }
-
-        // delete npc
-
-        if (subCommand.equalsIgnoreCase("delnpc")) {
-            if (!player.hasPermission("aspectmania.gerente")) {
-                player.sendMessage(ChatColor.RED + "Você não tem permissão para utilizar este comando");
-                return true;
-            }
-
-            ConfigurationManager configManager = ConfigurationManager.of("npc.yml");
-
-            FileConfiguration config = configManager.load();
-            config.set("position", "");
-
-            try {
-
-                config.save(configManager.getFile());
-
-                NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
-                runnable.clear();
-
-                player.sendMessage(ColorUtils.colored("&aNPC deletado com sucesso."));
-
-            } catch (Exception exception) {
-                player.sendMessage(ColorUtils.colored("&cNão foi possível deletar o npc."));
-            }
 
             return true;
         }

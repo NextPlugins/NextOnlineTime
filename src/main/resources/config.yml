@@ -24,7 +24,7 @@ connection:
 
 # De quanto em quantos minutos irá atualizar o tempo dos jogadores
 # Recomendado: 5 minutos
-updaterTime: 5
+updaterTime: 1
 
 # Formatos: MINUTES ou HOURS
 # Recomendado: MINUTES
@@ -44,9 +44,10 @@ checkTax: -1
 
 # Item do cheque de tempo
 checkItem:
-  name: '&3&LCHEQUE DE TEMPO'
+  name: '&9&LCHEQUE DE TEMPO'
   material: PAPER
   data: 0
   description:
-    - '&fTempo: &b%time%'
+    - '&f Tempo: &b%time%'
+    - ''
     - '&7Você receberá o tempo em seu /tempo'

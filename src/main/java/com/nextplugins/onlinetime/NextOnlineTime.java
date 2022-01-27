@@ -16,8 +16,6 @@ import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.*;
-import com.nextplugins.onlinetime.npc.manager.NPCManager;
-import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
@@ -31,7 +29,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 @Getter
 public final class NextOnlineTime extends JavaPlugin {
@@ -46,11 +43,9 @@ public final class NextOnlineTime extends JavaPlugin {
     private FileConfiguration messagesConfig;
     private FileConfiguration rewardsConfig;
     private FileConfiguration conversorsConfig;
-    private FileConfiguration npcConfig;
 
     private TimedPlayerDAO timedPlayerDAO;
 
-    private NPCManager npcManager;
     private CheckManager checkManager;
     private RewardManager rewardManager;
     private InventoryRegistry inventoryRegistry;
@@ -73,7 +68,6 @@ public final class NextOnlineTime extends JavaPlugin {
         messagesConfig = ConfigurationManager.of("messages.yml").saveDefault().load();
         rewardsConfig = ConfigurationManager.of("rewards.yml").saveDefault().load();
         conversorsConfig = ConfigurationManager.of("conversors.yml").saveDefault().load();
-        npcConfig = ConfigurationManager.of("npc.yml").saveDefault().load();
     }
 
     @Override
@@ -90,7 +84,6 @@ public final class NextOnlineTime extends JavaPlugin {
         sqlConnector = configureSqlProvider(getConfig());
         timedPlayerDAO = new TimedPlayerDAO(new SQLExecutor(sqlConnector));
 
-        npcManager = new NPCManager();
         rewardManager = new RewardManager();
         inventoryRegistry = new InventoryRegistry();
         conversorManager = new ConversorManager(timedPlayerDAO);
@@ -106,7 +99,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
         checkManager.init();
         inventoryRegistry.init();
-        npcManager.init();
 
         configurePlaceholder(pluginManager);
         loadConversors();
@@ -135,10 +127,6 @@ public final class NextOnlineTime extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage("");
         Bukkit.getConsoleSender().sendMessage("§f[§c⚡§f]§c " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f desativado!");
         Bukkit.getConsoleSender().sendMessage("");
-        if (npcManager.isEnabled()) {
-            NPCRunnable runnable = (NPCRunnable) npcManager.getRunnable();
-            runnable.clear();
-        }
     }
 
     private void loadCheckItem() {
