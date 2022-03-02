@@ -17,6 +17,7 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 
     maven { url = 'https://repo.codemc.org/repository/maven-public' }
+    maven { url = 'https://repo.nickuc.com/maven2/' }
     maven { url = 'https://repo.citizensnpcs.co/' }
 
     maven { url = 'https://jitpack.io/' }
@@ -27,6 +28,7 @@ dependencies {
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
+    compileOnly 'com.nickuc.chat:nchat-api:4.2'
 
     implementation 'com.github.juliarn:npc-lib:2.6-RELEASE'
     implementation 'com.github.Yuhtin:update-checker:1.2'

@@ -69,7 +69,6 @@ public enum TimeUtils {
     }
 
     public static String formatOne(long time) {
-
         if (time == 0) return "0s";
 
         long days = TimeUnit.MILLISECONDS.toDays(time);
@@ -81,8 +80,24 @@ public enum TimeUtils {
         if (hours > 0) return plural(hours, "hora");
         if (minutes > 0) return plural(minutes, "minuto");
         if (second > 0) return plural(second, "segundo");
-        return "0s";
 
+        return "0s";
+    }
+
+    public static String formatOneLetter(long time) {
+        if (time == 0) return "0s";
+
+        long days = TimeUnit.MILLISECONDS.toDays(time);
+        long hours = TimeUnit.MILLISECONDS.toHours(time) - (days * 24);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - (TimeUnit.MILLISECONDS.toHours(time) * 60);
+        long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
+
+        if (days > 0) return plural(days, "d");
+        if (hours > 0) return plural(hours, "h");
+        if (minutes > 0) return plural(minutes, "m");
+        if (second > 0) return plural(second, "s");
+
+        return "0s";
     }
 
     public static String plural(long quantity, String message) {

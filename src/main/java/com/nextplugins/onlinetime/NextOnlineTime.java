@@ -12,14 +12,12 @@ import com.nextplugins.onlinetime.api.metric.MetricProvider;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
-import com.nextplugins.onlinetime.listener.CheckUseListener;
-import com.nextplugins.onlinetime.placeholder.PlaceholderRegister;
-import com.nextplugins.onlinetime.listener.UpdateCheckerListener;
-import com.nextplugins.onlinetime.listener.UserConnectListener;
+import com.nextplugins.onlinetime.listener.registry.ListenerRegistry;
 import com.nextplugins.onlinetime.manager.*;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
+import com.nextplugins.onlinetime.placeholder.PlaceholderRegister;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import com.yuhtin.updatechecker.UpdateChecker;
@@ -131,16 +129,7 @@ public final class NextOnlineTime extends JavaPlugin {
 
         getCommand("tempo").setExecutor(new OnlineTimeCommand());
 
-        val updateCheckerListener = new UpdateCheckerListener();
-        val checkUseListener = new CheckUseListener(timedPlayerManager);
-        val userConnectListener = new UserConnectListener(
-            timedPlayerManager,
-            conversorManager
-        );
-
-        pluginManager.registerEvents(checkUseListener, this);
-        pluginManager.registerEvents(userConnectListener, this);
-        pluginManager.registerEvents(updateCheckerListener, this);
+        new ListenerRegistry(this);
 
         MetricProvider.of(this).register();
 
