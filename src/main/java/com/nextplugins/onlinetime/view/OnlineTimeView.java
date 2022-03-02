@@ -8,6 +8,7 @@ import com.henryfabio.minecraft.inventoryapi.viewer.Viewer;
 import com.henryfabio.minecraft.inventoryapi.viewer.configuration.border.Border;
 import com.henryfabio.minecraft.inventoryapi.viewer.impl.paged.PagedViewer;
 import com.nextplugins.onlinetime.NextOnlineTime;
+import com.nextplugins.onlinetime.api.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
@@ -16,7 +17,6 @@ import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
-import com.nextplugins.onlinetime.api.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtil;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
@@ -47,11 +47,10 @@ public final class OnlineTimeView extends PagedInventory {
     private final TopTimedPlayerManager topTimedPlayerManager;
 
     public OnlineTimeView() {
-
         super(
-                "online-time.main",
-                "Seu tempo no servidor",
-                6 * 9
+            "online-time.main",
+            "Seu tempo no servidor",
+            6 * 9
         );
 
         checkManager = NextOnlineTime.getInstance().getCheckManager();
@@ -59,7 +58,6 @@ public final class OnlineTimeView extends PagedInventory {
         inventoryRegistry = NextOnlineTime.getInstance().getInventoryRegistry();
         timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
         topTimedPlayerManager = NextOnlineTime.getInstance().getTopTimedPlayerManager();
-
     }
 
     @Override
@@ -72,7 +70,6 @@ public final class OnlineTimeView extends PagedInventory {
 
     @Override
     protected void configureInventory(Viewer viewer, InventoryEditor editor) {
-
         val player = viewer.getPlayer();
         val timedPlayer = timedPlayerManager.getByName(player.getName());
 
@@ -85,50 +82,49 @@ public final class OnlineTimeView extends PagedInventory {
             if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
 
             editor.setItem(4, InventoryItem.of(
-                            new ItemBuilder("MrSnowDK")
-                                    .name("&6Cheque de Tempo")
-                                    .setLore(lore)
-                                    .wrap()
-                    ).defaultCallback(callback -> {
+                    new ItemBuilder("MrSnowDK")
+                        .name("&6Cheque de Tempo")
+                        .setLore(lore)
+                        .wrap()
+                ).defaultCallback(callback -> {
 
-                        player.closeInventory();
-                        player.sendMessage(MessageValue.get(MessageValue::checkMessage).toArray(new String[]{}));
-                        checkManager.sendCheckRequisition(player);
+                    player.closeInventory();
+                    player.sendMessage(MessageValue.get(MessageValue::checkMessage).toArray(new String[]{}));
+                    checkManager.sendCheckRequisition(player);
 
-                    })
+                })
             );
 
         }
 
         editor.setItem(48, InventoryItem.of(
-                        new ItemBuilder(viewer.getPlayer().getName())
-                                .name("&a" + viewer.getPlayer().getName())
-                                .setLore(
-                                        "&fConfira seu progresso abaixo:",
-                                        "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())
-                                )
-                                .wrap()
-                )
+                new ItemBuilder(viewer.getPlayer().getName())
+                    .name("&a" + viewer.getPlayer().getName())
+                    .setLore(
+                        "&fConfira seu progresso abaixo:",
+                        "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())
+                    )
+                    .wrap()
+            )
         );
 
         editor.setItem(49, changeFilterInventoryItem(viewer));
 
         editor.setItem(50, InventoryItem.of(
-                        new ItemBuilder(Material.GOLD_INGOT)
-                                .name("&6TOP Online")
-                                .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
-                                .wrap()
-                ).defaultCallback(callback -> {
-                            if (topTimedPlayerManager.checkUpdate()) {
-                                callback.getPlayer().sendMessage(ColorUtil.colored("&aO ranking está atualizando, aguarde."));
-                                return;
-                            }
+                new ItemBuilder(Material.GOLD_INGOT)
+                    .name("&6TOP Online")
+                    .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
+                    .wrap()
+            ).defaultCallback(callback -> {
+                    if (topTimedPlayerManager.checkUpdate()) {
+                        callback.getPlayer().sendMessage(ColorUtil.colored("&aO ranking está atualizando, aguarde."));
+                        return;
+                    }
 
-                            inventoryRegistry.getTopInventory().openInventory(callback.getPlayer());
-                        }
-                )
+                    inventoryRegistry.getTopInventory().openInventory(callback.getPlayer());
+                }
+            )
         );
-
     }
 
     @Override
@@ -165,10 +161,10 @@ public final class OnlineTimeView extends PagedInventory {
                                               Reward reward,
                                               List<String> lore) {
         return InventoryItem.of(
-                new ItemBuilder(reward.getIcon())
-                        .name(reward.getColoredName())
-                        .setLore(lore)
-                        .wrap()
+            new ItemBuilder(reward.getIcon())
+                .name(reward.getColoredName())
+                .setLore(lore)
+                .wrap()
         ).defaultCallback(callback -> {
 
             val player = callback.getPlayer();
@@ -186,14 +182,14 @@ public final class OnlineTimeView extends PagedInventory {
 
             if (avaliableSpaces < reward.getCommands().size()) {
                 player.sendMessage(MessageValue.get(MessageValue::noSpace)
-                        .replace("%spaces%", String.valueOf(reward.getCommands().size() - avaliableSpaces))
+                    .replace("%spaces%", String.valueOf(reward.getCommands().size() - avaliableSpaces))
                 );
                 return;
             }
 
             player.sendMessage(
-                    MessageValue.get(MessageValue::collectedReward)
-                            .replace("%reward%", reward.getColoredName())
+                MessageValue.get(MessageValue::collectedReward)
+                    .replace("%reward%", reward.getColoredName())
             );
 
             timedPlayer.getCollectedRewards().add(reward.getName());
@@ -201,7 +197,7 @@ public final class OnlineTimeView extends PagedInventory {
             if (FeatureValue.get(FeatureValue::type)) {
                 timedPlayer.removeTime(reward.getTime());
                 player.sendMessage(MessageValue.get(MessageValue::usedTime)
-                        .replace("%time%", TimeUtils.format(reward.getTime()))
+                    .replace("%time%", TimeUtils.format(reward.getTime()))
                 );
             }
 
@@ -216,40 +212,39 @@ public final class OnlineTimeView extends PagedInventory {
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {
         val currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
         return InventoryItem.of(new ItemBuilder(Material.HOPPER)
-                        .name("&6Filtro de recompensas")
-                        .setLore(
-                                "&7Veja apenas as recompensas que deseja",
-                                "",
-                                getColorByFilter(currentFilter.get(), -1) + " Todas as recompensas",
-                                getColorByFilter(currentFilter.get(), 0) + " Recompensas liberadas",
-                                getColorByFilter(currentFilter.get(), 1) + " Recompensas bloqueadas",
-                                getColorByFilter(currentFilter.get(), 2) + " Recompensas coletadas",
-                                "",
-                                "&aClique para mudar o filtro!"
-                        )
-                        .wrap())
-                .defaultCallback(event -> {
+                .name("&6Filtro de recompensas")
+                .setLore(
+                    "&7Veja apenas as recompensas que deseja",
+                    "",
+                    getColorByFilter(currentFilter.get(), -1) + " Todas as recompensas",
+                    getColorByFilter(currentFilter.get(), 0) + " Recompensas liberadas",
+                    getColorByFilter(currentFilter.get(), 1) + " Recompensas bloqueadas",
+                    getColorByFilter(currentFilter.get(), 2) + " Recompensas coletadas",
+                    "",
+                    "&aClique para mudar o filtro!"
+                )
+                .wrap())
+            .defaultCallback(event -> {
 
-                    playerRewardFilter.put(viewer.getName(), currentFilter.incrementAndGet() > 2 ? -1 : currentFilter.get());
-                    event.updateInventory();
+                playerRewardFilter.put(viewer.getName(), currentFilter.incrementAndGet() > 2 ? -1 : currentFilter.get());
+                event.updateInventory();
 
-                });
+            });
     }
 
     private List<String> rewardLore(Reward reward, RewardStatus rewardStatus, List<String> list) {
-
         val lore = new ArrayList<String>();
+
         for (val line : list) {
             if (line.contains("%reward_description%")) lore.addAll(reward.getDescription());
             else {
                 lore.add(line.replace("%time%", TimeUtils.format(reward.getTime()))
-                        .replace("%collect_message%", rewardStatus.getMessage())
+                    .replace("%collect_message%", rewardStatus.getMessage())
                 );
             }
         }
 
         return lore;
-
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {
