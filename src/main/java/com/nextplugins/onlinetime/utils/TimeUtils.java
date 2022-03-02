@@ -92,10 +92,10 @@ public enum TimeUtils {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(time) - (TimeUnit.MILLISECONDS.toHours(time) * 60);
         long second = TimeUnit.MILLISECONDS.toSeconds(time) - (TimeUnit.MILLISECONDS.toMinutes(time) * 60);
 
-        if (days > 0) return plural(days, "d");
-        if (hours > 0) return plural(hours, "h");
-        if (minutes > 0) return plural(minutes, "m");
-        if (second > 0) return plural(second, "s");
+        if (days > 0) return days + "d";
+        if (hours > 0) return hours + "h";
+        if (minutes > 0) return minutes + "m";
+        if (second > 0) return second + "s";
 
         return "0s";
     }
