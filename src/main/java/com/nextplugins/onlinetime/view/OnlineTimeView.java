@@ -101,8 +101,9 @@ public final class OnlineTimeView extends PagedInventory {
                 new ItemBuilder(viewer.getPlayer().getName())
                     .name("&a" + viewer.getPlayer().getName())
                     .setLore(
-                        "&fConfira seu progresso abaixo:",
-                        "&fTotal de tempo online: &e" + TimeUtils.format(timedPlayer.getTimeInServer())
+                        "&7Confira seu progresso abaixo:",
+                        "&7Total de tempo online: &f" + TimeUtils.format(timedPlayer.getTimeInServer()),
+                        "&7Recompensas coletadas: &f" + timedPlayer.getCollectedRewards().size()
                     )
                     .wrap()
             )
@@ -113,7 +114,7 @@ public final class OnlineTimeView extends PagedInventory {
         editor.setItem(50, InventoryItem.of(
                 new ItemBuilder(Material.GOLD_INGOT)
                     .name("&6TOP Online")
-                    .setLore("&fClique para ver os top jogadores", "&fonlines no servidor")
+                    .setLore("&fClique para ver os top jogadores", "&fonline no servidor")
                     .wrap()
             ).defaultCallback(callback -> {
                     if (topTimedPlayerManager.checkUpdate()) {
