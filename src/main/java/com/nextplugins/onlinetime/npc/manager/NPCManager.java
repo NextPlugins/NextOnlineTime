@@ -1,7 +1,6 @@
 package com.nextplugins.onlinetime.npc.manager;
 
 import com.nextplugins.onlinetime.NextOnlineTime;
-import com.nextplugins.onlinetime.listener.InteractNPCListener;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -39,9 +38,6 @@ public class NPCManager {
         runnable.run();
 
         enabled = true;
-
-        InteractNPCListener interactNPCListener = new InteractNPCListener(this);
-        Bukkit.getPluginManager().registerEvents(interactNPCListener, plugin);
     }
 
 }
