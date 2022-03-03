@@ -1,32 +1,48 @@
 package com.nextplugins.onlinetime.npc.runnable;
 
+import com.github.juliarn.npc.NPC;
+import com.github.juliarn.npc.NPCPool;
+import com.github.juliarn.npc.event.PlayerNPCInteractEvent;
+import com.github.juliarn.npc.profile.Profile;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.nextplugins.onlinetime.configuration.values.NPCValue;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
-import net.citizensnpcs.trait.LookClose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Yuhtin
  * Github: https://github.com/Yuhtin
  */
 
-@RequiredArgsConstructor
-public class NPCRunnable implements Runnable {
+public class NPCRunnable implements Runnable, Listener {
 
     private final Plugin plugin;
-    @Getter
-    private int npcId = -1;
+    private final NPCPool npcPool;
+    @Getter private int npcId = -1;
+
+    public NPCRunnable(Plugin plugin) {
+        this.plugin = plugin;
+        this.npcPool = NPCPool.builder(plugin)
+            .spawnDistance(60)
+            .actionDistance(30)
+            .tabListRemoveTicks(20)
+            .build();
+
+        this.plugin.getServer().getPluginManager().registerEvents(
+            this,
+            this.plugin
+        );
+    }
 
     @Override
     public void run() {
@@ -40,13 +56,7 @@ public class NPCRunnable implements Runnable {
      * Default spawn of npc & hologram
      */
     public void spawnDefault(Location location) {
-        Bukkit.getScheduler().runTask(this.plugin, () -> spawn(
-                location,
-                NPCValue.get(NPCValue::npcName),
-                NPCValue.get(NPCValue::skinNick),
-                NPCValue.get(NPCValue::hologramMessage),
-                NPCValue.get(NPCValue::heightToAdd)
-        ));
+        Bukkit.getScheduler().runTask(this.plugin, () -> spawn(location, NPCValue.get(NPCValue::npcName), NPCValue.get(NPCValue::skinNick), NPCValue.get(NPCValue::hologramMessage), NPCValue.get(NPCValue::heightToAdd)));
     }
 
     /**
@@ -54,64 +64,51 @@ public class NPCRunnable implements Runnable {
      *
      * @param location to spawn the npc and hologram
      */
-    public boolean spawn(Location location,
-                         String npcName,
-                         String skinNick,
-                         List<String> hologramMessage,
-                         double hologramAddition) {
-        // prevent duplicate npc / holograms
+    public void spawn(Location location, String npcName, String skinNick, List<String> hologramMessage, double hologramAddition) {
         clear();
 
-        val registry = CitizensAPI.getNPCRegistry();
+        val profile = new Profile(skinNick);
+        profile.complete();
+        profile.setName(npcName);
+        profile.setUniqueId(UUID.randomUUID());
 
-        // npc implementation
-        val npc = registry.createNPC(EntityType.PLAYER, npcName);
-        npc.data().set("player-skin-name", skinNick);
-        npc.data().set("nextonlinetime", true);
-        npc.setProtected(true);
-        npc.spawn(location);
+        val npc = NPC.builder()
+            .profile(profile)
+            .location(location)
+            .imitatePlayer(false)
+            .lookAtPlayer(NPCValue.get(NPCValue::lookCLose))
+            .build(this.npcPool);
 
-        if (NPCValue.get(NPCValue::lookCLose)) {
-            val lookClose = new LookClose();
-            lookClose.lookClose(true);
+        npc.visibility().queueSpawn();
 
-            npc.addTrait(lookClose);
-        }
-
-        npcId = npc.getId();
+        npcId = npc.getEntityId();
 
         // hologram implementation
-        if (hologramMessage.isEmpty()) return true;
+        if (hologramMessage.isEmpty()) return;
 
         val hologram = HologramsAPI.createHologram(plugin, location.clone().add(0, hologramAddition, 0));
         for (int i = 0; i < hologramMessage.size(); i++) {
             String line = hologramMessage.get(i);
             hologram.insertTextLine(i, line);
         }
-
-        return true;
     }
 
     public void clear() {
-        try {
-            for (val npc : CitizensAPI.getNPCRegistry()) {
-                if (!npc.data().has("nextonlinetime") && !npc.getFullName().equals(NPCValue.get(NPCValue::npcName)))
-                    return;
-
-                npc.despawn();
-                npc.destroy();
-            }
-
-        } catch (Exception exception) {
-            val npc = CitizensAPI.getNPCRegistry().getById(npcId);
-            if (npc != null) {
-                npc.despawn();
-                npc.destroy();
-            }
-        }
+        this.npcPool.getNpc(npcId).ifPresent(npc -> npc.visibility().queueDestroy());
 
         npcId = -1;
         HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
+    }
+
+    @EventHandler
+    public void handleInteract(PlayerNPCInteractEvent event) {
+        final Player player = event.getPlayer();
+
+        if (event.getUseAction() == PlayerNPCInteractEvent.EntityUseAction.INTERACT) {
+            if (event.getNPC().getEntityId() == npcId) {
+                player.performCommand("tempo menu");
+            }
+        }
     }
 
 }

@@ -23,7 +23,6 @@ public class CheckUseListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-
         ItemStack item = event.getItem();
         if (item == null || item.getType() == Material.AIR) return;
 
@@ -39,8 +38,6 @@ public class CheckUseListener implements Listener {
         );
 
         event.getPlayer().setItemInHand(null);
-
     }
-
 
 }
