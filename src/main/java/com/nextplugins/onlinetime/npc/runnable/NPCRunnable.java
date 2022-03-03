@@ -2,6 +2,7 @@ package com.nextplugins.onlinetime.npc.runnable;
 
 import com.github.juliarn.npc.NPC;
 import com.github.juliarn.npc.NPCPool;
+import com.github.juliarn.npc.event.PlayerNPCInteractEvent;
 import com.github.juliarn.npc.profile.Profile;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -10,6 +11,9 @@ import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -20,7 +24,7 @@ import java.util.UUID;
  * Github: https://github.com/Yuhtin
  */
 
-public class NPCRunnable implements Runnable {
+public class NPCRunnable implements Runnable, Listener {
 
     private final Plugin plugin;
     private final NPCPool npcPool;
@@ -33,6 +37,11 @@ public class NPCRunnable implements Runnable {
             .actionDistance(30)
             .tabListRemoveTicks(20)
             .build();
+
+        this.plugin.getServer().getPluginManager().registerEvents(
+            this,
+            this.plugin
+        );
     }
 
     @Override
@@ -89,6 +98,17 @@ public class NPCRunnable implements Runnable {
 
         npcId = -1;
         HologramsAPI.getHolograms(plugin).forEach(Hologram::delete);
+    }
+
+    @EventHandler
+    public void handleInteract(PlayerNPCInteractEvent event) {
+        final Player player = event.getPlayer();
+
+        if (event.getUseAction() == PlayerNPCInteractEvent.EntityUseAction.INTERACT) {
+            if (event.getNPC().getEntityId() == npcId) {
+                player.performCommand("tempo menu");
+            }
+        }
     }
 
 }
