@@ -38,12 +38,12 @@ public final class TopOnlineTimeView extends SimpleInventory {
 
         editor.setItem(40, DefaultItem.BACK.toInventoryItem(viewer));
 
-        editor.setItem(32, InventoryItem.of(new ItemBuilder(TypeUtil.convertFromLegacy("DOUBLE_PLANT", 0))
+        editor.setItem(41, InventoryItem.of(new ItemBuilder(TypeUtil.convertFromLegacy("DOUBLE_PLANT", 0))
             .name("&9§lPRÓXIMA ATUALIZAÇÃO")
             .setLore(
                     "",
-                "&7 O top tempo será atualizado em",
-                "&f " + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis()),
+                "&f ▪ &7O top tempo será atualizado em",
+                " &f " + TimeUtils.format(topTimedPlayerManager.getNextUpdate() - System.currentTimeMillis()),
                         ""
             )
             .wrap()));

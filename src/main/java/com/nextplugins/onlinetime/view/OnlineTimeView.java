@@ -109,7 +109,7 @@ public final class OnlineTimeView extends PagedInventory {
                                 .setLore(
                                         "",
                                         "&8Confira seu progresso abaixo:",
-                                        "&f Total de tempo online: ", "&7 " + TimeUtils.format(timedPlayer.getTimeInServer()),
+                                        "&f ▪ Total de tempo online: ", " &7 " + TimeUtils.format(timedPlayer.getTimeInServer()),
                                                 ""
                                 )
                                 .wrap()
