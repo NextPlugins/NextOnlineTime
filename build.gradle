@@ -32,9 +32,9 @@ dependencies {
     implementation 'com.github.Yuhtin:update-checker:1.2'
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
-    implementation 'de.tr7zw:item-nbt-api:2.9.0'
+    implementation 'de.tr7zw:item-nbt-api:2.9.2'
 
-    def lombok = "org.projectlombok:lombok:1.18.22"
+    def lombok = "org.projectlombok:lombok:1.18.24"
     compileOnly lombok
     annotationProcessor lombok
 }
