@@ -1,6 +1,5 @@
 package com.nextplugins.onlinetime;
 
-import com.google.common.base.Stopwatch;
 import com.henryfabio.minecraft.inventoryapi.manager.InventoryManager;
 import com.henryfabio.sqlprovider.connector.SQLConnector;
 import com.henryfabio.sqlprovider.connector.type.impl.MySQLDatabaseType;
@@ -11,15 +10,16 @@ import com.nextplugins.onlinetime.api.conversion.impl.victor.OnlineTimePlusConve
 import com.nextplugins.onlinetime.api.metric.MetricProvider;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
+import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
 import com.nextplugins.onlinetime.listener.CheckUseListener;
-import com.nextplugins.onlinetime.placeholder.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UpdateCheckerListener;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.*;
 import com.nextplugins.onlinetime.npc.manager.NPCManager;
 import com.nextplugins.onlinetime.npc.runnable.NPCRunnable;
 import com.nextplugins.onlinetime.parser.ItemParser;
+import com.nextplugins.onlinetime.placeholder.PlaceholderRegister;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.task.UpdatePlayerTimeTask;
 import com.yuhtin.updatechecker.UpdateChecker;
@@ -138,7 +138,10 @@ public final class NextOnlineTime extends JavaPlugin {
             conversorManager
         );
 
-        pluginManager.registerEvents(checkUseListener, this);
+        if (FeatureValue.get(FeatureValue::check) != -1) {
+            pluginManager.registerEvents(checkUseListener, this);
+        }
+
         pluginManager.registerEvents(userConnectListener, this);
         pluginManager.registerEvents(updateCheckerListener, this);
 
