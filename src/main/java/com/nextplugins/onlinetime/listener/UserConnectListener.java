@@ -10,11 +10,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-/**
- * @author Yuhtin
- * Github: https://github.com/Yuhtin
- */
-
 @AllArgsConstructor
 public class UserConnectListener implements Listener {
 

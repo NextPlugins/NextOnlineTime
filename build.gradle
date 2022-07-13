@@ -1,8 +1,6 @@
 plugins {
     id 'java'
-
     id 'com.github.johnrengelman.shadow' version '5.0.0'
-
     id 'net.minecrell.plugin-yml.bukkit' version '0.3.0'
 }
 
@@ -26,19 +24,17 @@ repositories {
 dependencies {
 
     compileOnly 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
-    compileOnly 'net.luckperms:api:5.3'
+    compileOnly 'net.luckperms:api:5.4'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
+    compileOnly 'de.tr7zw:item-nbt-api:2.10.0'
 
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
-    implementation 'de.tr7zw:item-nbt-api:2.8.0'
 
-    def lombok = "org.projectlombok:lombok:1.18.16"
-    compileOnly lombok
-    annotationProcessor lombok
-
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 bukkit {
@@ -47,6 +43,7 @@ bukkit {
     website = 'https://github.com/NextPlugins'
     version = "${project.version}"
     load = 'POSTWORLD'
+    depend = ['NBTAPI']
     softDepend = ['PlaceholderAPI', 'Citizens', 'HolographicDisplays']
 
     commands {
@@ -64,7 +61,6 @@ shadowJar {
     relocate 'com.henryfabio.sqlprovider', 'com.nextplugins.onlinetime.libs.sqlprovider'
     relocate 'com.zaxxer.hikari', 'com.nextplugins.onlinetime.libs.hikari'
 
-    relocate 'de.tr7zw.changeme.nbtapi', 'com.nextplugins.onlinetime.libs.nbtapi'
     relocate 'de.tr7zw.annotations', 'com.nextplugins.onlinetime.libs.annotations'
 
 }
