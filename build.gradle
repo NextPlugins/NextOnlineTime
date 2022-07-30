@@ -22,13 +22,13 @@ repositories {
 }
 
 dependencies {
+    compileOnly fileTree(dir: './libs', include: '*.jar')
 
     compileOnly 'org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'net.luckperms:api:5.4'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
     compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
-    compileOnly 'de.tr7zw:item-nbt-api:2.10.0'
 
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
