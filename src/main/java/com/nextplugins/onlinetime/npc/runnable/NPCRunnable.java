@@ -3,6 +3,8 @@ package com.nextplugins.onlinetime.npc.runnable;
 import com.github.juliarn.npc.NPC;
 import com.github.juliarn.npc.NPCPool;
 import com.github.juliarn.npc.event.PlayerNPCInteractEvent;
+import com.github.juliarn.npc.event.PlayerNPCShowEvent;
+import com.github.juliarn.npc.modifier.MetadataModifier;
 import com.github.juliarn.npc.profile.Profile;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
@@ -109,6 +111,13 @@ public class NPCRunnable implements Runnable, Listener {
                 player.performCommand("tempo menu");
             }
         }
+    }
+
+    @EventHandler
+    public void handleShow(PlayerNPCShowEvent event) {
+        final NPC npc = event.getNPC();
+
+        event.send(npc.metadata().queue(MetadataModifier.EntityMetadata.SKIN_LAYERS, true));
     }
 
 }
