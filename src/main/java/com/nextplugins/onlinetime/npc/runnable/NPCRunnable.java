@@ -35,14 +35,14 @@ public class NPCRunnable implements Runnable, Listener {
     public NPCRunnable(Plugin plugin) {
         this.plugin = plugin;
         this.npcPool = NPCPool.builder(plugin)
-            .spawnDistance(60)
-            .actionDistance(30)
-            .tabListRemoveTicks(20)
-            .build();
+              .spawnDistance(60)
+              .actionDistance(30)
+              .tabListRemoveTicks(20)
+              .build();
 
         this.plugin.getServer().getPluginManager().registerEvents(
-            this,
-            this.plugin
+              this,
+              this.plugin
         );
     }
 
@@ -74,12 +74,16 @@ public class NPCRunnable implements Runnable, Listener {
         profile.setName(npcName);
         profile.setUniqueId(UUID.randomUUID());
 
+        val yaw = location.getYaw();
+        val pitch = location.getPitch();
+
         val npc = NPC.builder()
-            .profile(profile)
-            .location(location)
-            .imitatePlayer(false)
-            .lookAtPlayer(NPCValue.get(NPCValue::lookCLose))
-            .build(this.npcPool);
+              .profile(profile)
+              .location(location)
+              .imitatePlayer(false)
+              .lookAtPlayer(NPCValue.get(NPCValue::lookCLose))
+              .spawnCustomizer((spawnedNpc, player) -> spawnedNpc.rotation().queueRotate(yaw, pitch).send(player))
+              .build(this.npcPool);
 
         npc.visibility().queueSpawn();
 
