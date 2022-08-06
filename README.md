@@ -18,6 +18,7 @@ OnlineTimePlus, [vídeo demonstrativo](https://www.youtube.com/watch?v=8naKKD7pa
 |/tempo ver            |Exibe o tempo online de um jogador, caso não insira nenhum, mostrará o seu|`Nenhuma`|
 |/tempo menu           |Menu do sistema, mostrando as recompensas, top jogadores, opção de filtro e seu tempo online|`Nenhuma`
 |/tempo enviar         |Enviar tempo online a um jogador|`nextonlinetime.sendtime`|
+|/tempo setnpc         |Setar o npc do sistema de tempo online|`nextonlinetime.admin`|
 |/conversion           |Converte os dados do plugin selecionado|`nextonlinetime.admin`|
 
 ## Download
