@@ -12,7 +12,6 @@ import com.nextplugins.onlinetime.api.player.TimedPlayer;
 import com.nextplugins.onlinetime.api.reward.Reward;
 import com.nextplugins.onlinetime.configuration.values.FeatureValue;
 import com.nextplugins.onlinetime.configuration.values.MessageValue;
-import com.nextplugins.onlinetime.manager.CheckManager;
 import com.nextplugins.onlinetime.manager.RewardManager;
 import com.nextplugins.onlinetime.manager.TimedPlayerManager;
 import com.nextplugins.onlinetime.manager.TopTimedPlayerManager;
@@ -20,7 +19,6 @@ import com.nextplugins.onlinetime.models.enums.RewardStatus;
 import com.nextplugins.onlinetime.registry.InventoryRegistry;
 import com.nextplugins.onlinetime.utils.ColorUtils;
 import com.nextplugins.onlinetime.utils.ItemBuilder;
-import com.nextplugins.onlinetime.utils.PrefixUtils;
 import com.nextplugins.onlinetime.utils.TimeUtils;
 import lombok.val;
 import lombok.var;
@@ -41,7 +39,6 @@ public final class OnlineTimeView extends PagedInventory {
 
     private final Map<String, Integer> playerRewardFilter = new HashMap<>();
 
-    private final CheckManager checkManager;
     private final RewardManager rewardManager;
     private final InventoryRegistry inventoryRegistry;
     private final TimedPlayerManager timedPlayerManager;
@@ -55,7 +52,6 @@ public final class OnlineTimeView extends PagedInventory {
                 6 * 9
         );
 
-        checkManager = NextOnlineTime.getInstance().getCheckManager();
         rewardManager = NextOnlineTime.getInstance().getRewardManager();
         inventoryRegistry = NextOnlineTime.getInstance().getInventoryRegistry();
         timedPlayerManager = NextOnlineTime.getInstance().getTimedPlayerManager();
@@ -79,36 +75,11 @@ public final class OnlineTimeView extends PagedInventory {
         val player = viewer.getPlayer();
         val timedPlayer = timedPlayerManager.getByName(player.getName());
 
-        val integer = FeatureValue.get(FeatureValue::check);
-        if (integer >= 0 && FeatureValue.get(FeatureValue::type)) {
-
-            val lore = new ArrayList<String>();
-
-            lore.add("&fCrie um cheque com uma quantidade de tempo");
-            if (integer != 0) lore.add("&fVocê perderá &e" + integer + "% &fdo tempo inserido");
-
-            editor.setItem(4, InventoryItem.of(
-                            new ItemBuilder("kadoo")
-                                    .name("&6Cheque de Tempo")
-                                    .setLore(lore)
-                                    .wrap()
-                    ).defaultCallback(callback -> {
-
-                        player.closeInventory();
-                        player.sendMessage(MessageValue.get(MessageValue::checkMessage).toArray(new String[]{}));
-                        checkManager.sendCheckRequisition(player);
-
-                    })
-            );
-
-        }
-
         editor.setItem(48, InventoryItem.of(
                         new ItemBuilder(viewer.getPlayer().getName())
-                                .name(PrefixUtils.getPrefix(viewer.getPlayer()) + viewer.getPlayer().getName())
+                                .name("&eConfira seu progresso abaixo:")
                                 .setLore(
                                         "",
-                                        "&8Confira seu progresso abaixo:",
                                         "&f ▪ Total de tempo online: ", " &7 " + TimeUtils.format(timedPlayer.getTimeInServer()),
                                                 ""
                                 )
@@ -120,12 +91,12 @@ public final class OnlineTimeView extends PagedInventory {
 
         editor.setItem(50, InventoryItem.of(
                         new ItemBuilder(Material.GOLD_INGOT)
-                                .name("&9&lTEMPO ONLINE")
+                                .name("&6TOP Online")
                                 .setLore("&7Clique para ver os top jogadores", "&7com mais tempo online no servidor")
                                 .wrap()
                 ).defaultCallback(callback -> {
                             if (topTimedPlayerManager.checkUpdate()) {
-                                callback.getPlayer().sendMessage(ColorUtils.colored("&9&lTEMPO ONLINE &7O ranking está atualizando, aguarde."));
+                                callback.getPlayer().sendMessage(ColorUtils.colored("&c&lEI! &CO ranking está atualizando, aguarde."));
                                 return;
                             }
 
@@ -185,7 +156,7 @@ public final class OnlineTimeView extends PagedInventory {
                 return;
             }
 
-            var avaliableSpaces = 0;
+            int avaliableSpaces = 0;
             for (val content : player.getInventory().getContents()) {
                 if (content != null && content.getType() != Material.AIR) continue;
                 ++avaliableSpaces;
@@ -223,7 +194,7 @@ public final class OnlineTimeView extends PagedInventory {
     private InventoryItem changeFilterInventoryItem(Viewer viewer) {
         val currentFilter = new AtomicInteger(playerRewardFilter.getOrDefault(viewer.getName(), -1));
         return InventoryItem.of(new ItemBuilder(Material.HOPPER)
-                        .name("&9&lFILTRO DE RECOMPENSAS")
+                        .name("&6Filtro de recompensas")
                         .setLore(
                                 "&7Veja apenas as recompensas que deseja",
                                 "",
@@ -232,7 +203,7 @@ public final class OnlineTimeView extends PagedInventory {
                                 getColorByFilter(currentFilter.get(), 1) + " Recompensas bloqueadas",
                                 getColorByFilter(currentFilter.get(), 2) + " Recompensas coletadas",
                                 "",
-                                "&9Clique aqui para mudar o filtro!"
+                                "&aClique aqui para mudar o filtro!"
                         )
                         .wrap())
                 .defaultCallback(event -> {
@@ -260,7 +231,7 @@ public final class OnlineTimeView extends PagedInventory {
     }
 
     private String getColorByFilter(int currentFilter, int loopFilter) {
-        return currentFilter == loopFilter ? " &b➤" : "&8";
+        return currentFilter == loopFilter ? " &e▎&f" : "&8";
     }
 
 }

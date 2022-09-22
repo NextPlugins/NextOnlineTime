@@ -16,7 +16,6 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
 
     maven { url = 'https://repo.codemc.org/repository/maven-public' }
-    maven { url = 'https://repo.citizensnpcs.co/' }
 
     maven { url = 'https://jitpack.io/' }
 }
@@ -28,7 +27,6 @@ dependencies {
     compileOnly 'net.luckperms:api:5.4'
     compileOnly 'com.github.PlaceholderAPI:PlaceholderAPI:2.10.9'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0'
-    compileOnly 'net.citizensnpcs:citizens:2.0.27-SNAPSHOT'
 
     implementation 'com.github.HenryFabio:inventory-api:2.0.3'
     implementation 'com.github.HenryFabio:sql-provider:9561f20fd2'
@@ -44,7 +42,7 @@ bukkit {
     version = "${project.version}"
     load = 'POSTWORLD'
     depend = ['NBTAPI']
-    softDepend = ['PlaceholderAPI', 'Citizens', 'HolographicDisplays']
+    softDepend = ['PlaceholderAPI', 'HolographicDisplays']
 
     commands {
         tempo {

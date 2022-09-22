@@ -40,9 +40,6 @@ collected-reward: |
   &7
 used-time: '&9Você utilizou &f%time% &9para receber a recompensa.'
 no-space: '&cVocê precisa ter mais %spaces% no inventário.'
-check-created: '&9&lYAY! &fCheque de tempo criado com sucesso.'
-check-no-time: '&cAcabou o tempo para criar o cheque.'
-check-activated: '&9&lYAY! &fVocê ativou um cheque com &7%time%&f.'
 
 invalid-time: |
   &c

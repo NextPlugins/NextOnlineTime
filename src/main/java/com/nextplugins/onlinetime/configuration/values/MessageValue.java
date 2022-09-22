@@ -39,9 +39,6 @@ public final class MessageValue {
     private final String usedTime = message("used-time");
     private final String collectedReward = message("collected-reward");
     private final String noSpace = message("no-space");
-    private final String checkSucess = message("check-created");
-    private final String checkNoTime = message("check-no-time");
-    private final String checkActivated = message("check-activated");
 
     private final String invalidTime = message("invalid-time");
     private final String noTime = message("no-time");

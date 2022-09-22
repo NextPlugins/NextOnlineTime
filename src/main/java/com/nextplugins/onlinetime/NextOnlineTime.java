@@ -12,7 +12,6 @@ import com.nextplugins.onlinetime.api.metric.MetricProvider;
 import com.nextplugins.onlinetime.command.OnlineTimeCommand;
 import com.nextplugins.onlinetime.configuration.ConfigurationManager;
 import com.nextplugins.onlinetime.dao.TimedPlayerDAO;
-import com.nextplugins.onlinetime.listener.CheckUseListener;
 import com.nextplugins.onlinetime.listener.PlaceholderRegister;
 import com.nextplugins.onlinetime.listener.UserConnectListener;
 import com.nextplugins.onlinetime.manager.*;
@@ -46,7 +45,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private TimedPlayerDAO timedPlayerDAO;
 
-    private CheckManager checkManager;
     private RewardManager rewardManager;
     private InventoryRegistry inventoryRegistry;
     private ConversorManager conversorManager;
@@ -88,7 +86,6 @@ public final class NextOnlineTime extends JavaPlugin {
         inventoryRegistry = new InventoryRegistry();
         conversorManager = new ConversorManager(timedPlayerDAO);
         timedPlayerManager = new TimedPlayerManager(timedPlayerDAO);
-        checkManager = new CheckManager();
         topTimedPlayerManager = new TopTimedPlayerManager(timedPlayerDAO);
         updatePlayerTimeTask = new UpdatePlayerTimeTask(timedPlayerManager);
 
@@ -97,23 +94,19 @@ public final class NextOnlineTime extends JavaPlugin {
         rewardManager.loadRewards();
         timedPlayerDAO.createTable();
 
-        checkManager.init();
         inventoryRegistry.init();
 
         configurePlaceholder(pluginManager);
         loadConversors();
-        loadCheckItem();
         registerTopUpdaterTask();
 
         getCommand("tempo").setExecutor(new OnlineTimeCommand());
 
-        val checkUseListener = new CheckUseListener(timedPlayerManager);
         val userConnectListener = new UserConnectListener(
             timedPlayerManager,
             conversorManager
         );
 
-        pluginManager.registerEvents(checkUseListener, this);
         pluginManager.registerEvents(userConnectListener, this);
 
         MetricProvider.of(this).register();
@@ -127,12 +120,6 @@ public final class NextOnlineTime extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage("");
         Bukkit.getConsoleSender().sendMessage("§f[§c⚡§f]§c " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f desativado!");
         Bukkit.getConsoleSender().sendMessage("");
-    }
-
-    private void loadCheckItem() {
-        checkManager.setCheckItem(itemParser.parseSection(
-            getConfig().getConfigurationSection("checkItem")
-        ));
     }
 
     private void loadConversors() {

@@ -24,7 +24,7 @@ public class TimedPlayerManager {
     @Getter private final Map<String, TimedPlayer> players = new HashMap<>();
 
     public TimedPlayer getByName(String name) {
-        var timedPlayer = players.getOrDefault(name, null);
+        TimedPlayer timedPlayer = players.getOrDefault(name, null);
         if (timedPlayer == null) {
             timedPlayer = timedPlayerDAO.selectOne(name);
             if (timedPlayer == null) {
