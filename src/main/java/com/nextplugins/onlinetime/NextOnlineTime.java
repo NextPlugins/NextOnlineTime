@@ -70,7 +70,7 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onEnable() {
         val loadTime = Stopwatch.createStarted();
-        val pluginManager = Bukkit.getPluginManager();
+        final PluginManager pluginManager = Bukkit.getPluginManager();
 
         InventoryManager.enable(this);
 
