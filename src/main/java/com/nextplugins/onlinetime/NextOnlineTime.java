@@ -47,7 +47,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
     private RewardManager rewardManager;
     private InventoryRegistry inventoryRegistry;
-    private ConversorManager conversorManager;
     private TimedPlayerManager timedPlayerManager;
     private TopTimedPlayerManager topTimedPlayerManager;
 
@@ -70,10 +69,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage("");
-        Bukkit.getConsoleSender().sendMessage("§f[§a⚡§f]§a " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f ativo!");
-        Bukkit.getConsoleSender().sendMessage("");
-
         val loadTime = Stopwatch.createStarted();
         val pluginManager = Bukkit.getPluginManager();
 
@@ -84,7 +79,6 @@ public final class NextOnlineTime extends JavaPlugin {
 
         rewardManager = new RewardManager();
         inventoryRegistry = new InventoryRegistry();
-        conversorManager = new ConversorManager(timedPlayerDAO);
         timedPlayerManager = new TimedPlayerManager(timedPlayerDAO);
         topTimedPlayerManager = new TopTimedPlayerManager(timedPlayerDAO);
         updatePlayerTimeTask = new UpdatePlayerTimeTask(timedPlayerManager);
@@ -97,15 +91,11 @@ public final class NextOnlineTime extends JavaPlugin {
         inventoryRegistry.init();
 
         configurePlaceholder(pluginManager);
-        loadConversors();
         registerTopUpdaterTask();
 
         getCommand("tempo").setExecutor(new OnlineTimeCommand());
 
-        val userConnectListener = new UserConnectListener(
-            timedPlayerManager,
-            conversorManager
-        );
+        val userConnectListener = new UserConnectListener(timedPlayerManager);
 
         pluginManager.registerEvents(userConnectListener, this);
 
@@ -117,39 +107,6 @@ public final class NextOnlineTime extends JavaPlugin {
     @Override
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(timedPlayerManager::purge);
-        Bukkit.getConsoleSender().sendMessage("");
-        Bukkit.getConsoleSender().sendMessage("§f[§c⚡§f]§c " + this.getDescription().getName() + " v" + this.getDescription().getVersion() + "§f desativado!");
-        Bukkit.getConsoleSender().sendMessage("");
-    }
-
-    private void loadConversors() {
-        val atlasConversor = "AtlasTempoOnline";
-        if (conversorsConfig.getBoolean(atlasConversor + ".use")) {
-            val section = conversorsConfig.getConfigurationSection(atlasConversor);
-            val connector = configureSqlProvider(section);
-
-            val conversor = new AtlasOnlineTimeConversor(
-                atlasConversor,
-                section.getString("connection.table"),
-                connector
-            );
-
-            conversorManager.registerConversor(conversor);
-        }
-
-        val onlineTimePlusConversor = "OnlineTimePlus";
-        if (conversorsConfig.getBoolean(onlineTimePlusConversor + ".use")) {
-            val section = conversorsConfig.getConfigurationSection(onlineTimePlusConversor);
-            val connector = configureSqlProvider(section);
-
-            val conversor = new OnlineTimePlusConversor(
-                onlineTimePlusConversor,
-                section.getString("connection.table"),
-                connector
-            );
-
-            conversorManager.registerConversor(conversor);
-        }
     }
 
     private SQLConnector configureSqlProvider(ConfigurationSection section) {
